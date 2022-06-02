@@ -1,0 +1,79 @@
+name: Forms flow DEV CD
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: .
+
+jobs:
+  deploy-to-oc-multi-tenancy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login Openshift
+        shell: bash
+        run: |
+          oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT_SA_DEV_MULTITENANCY_TOKEN}} --insecure-skip-tls-verify
+      - name: Watch new rollout (trigger by image change in Openshift)
+        shell: bash
+        run: |
+          oc project formsflow-multitenancy
+          oc rollout latest dc/forms-flow-admin
+          oc rollout status dc/forms-flow-admin
+          oc rollout latest dc/forms-flow-forms
+          oc rollout status dc/forms-flow-forms
+          oc rollout latest dc/forms-flow-bpm
+          oc rollout status dc/forms-flow-bpm
+          oc rollout latest dc/forms-flow-web
+          oc rollout status dc/forms-flow-web
+          oc rollout latest dc/forms-flow-webapi
+          oc rollout status dc/forms-flow-webapi
+          oc rollout latest dc/forms-flow-analytics-server
+          oc rollout status dc/forms-flow-analytics-server
+          # oc rollout latest dc/forms-flow-analytics-worker
+          # oc rollout status dc/forms-flow-analytics-worker
+          # oc rollout latest dc/forms-flow-analytics-scheduler
+          # oc rollout status dc/forms-flow-analytics-scheduler
+          # oc rollout latest dc/forms-flow-analytics-scheduled-worker
+          # oc rollout status dc/forms-flow-analytics-scheduled-worker
+          # oc rollout latest dc/forms-flow-analytics-adhoc-worker
+          # oc rollout status dc/forms-flow-analytics-adhoc-worker
+          
+  deploy-to-oc-dev:
+    needs: deploy-to-oc-multi-tenancy-dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login Openshift
+        shell: bash
+        run: |
+          oc login --server=${{secrets.OPENSHIFT4_LOGIN_REGISTRY}} --token=${{secrets.OPENSHIFT_SA_DEV_TOKEN}} --insecure-skip-tls-verify
+      - name: Watch new rollout (trigger by image change in Openshift)
+        shell: bash
+        run: |
+          oc project formsflow-dev
+          oc rollout latest dc/forms-flow-forms
+          oc rollout status dc/forms-flow-forms
+          oc rollout latest dc/forms-flow-bpm
+          oc rollout status dc/forms-flow-bpm
+          oc rollout latest dc/forms-flow-web
+          oc rollout status dc/forms-flow-web
+          oc rollout latest dc/forms-flow-webapi
+          oc rollout status dc/forms-flow-webapi
+          oc rollout latest dc/forms-flow-analytics-server
+          oc rollout status dc/forms-flow-analytics-server
+          # oc rollout latest dc/forms-flow-analytics-worker
+          # oc rollout status dc/forms-flow-analytics-worker
+          # oc rollout latest dc/forms-flow-analytics-scheduler
+          # oc rollout status dc/forms-flow-analytics-scheduler
+          # oc rollout latest dc/forms-flow-analytics-scheduled-worker
+          # oc rollout status dc/forms-flow-analytics-scheduled-worker
+          # oc rollout latest dc/forms-flow-analytics-adhoc-worker
+          # oc rollout status dc/forms-flow-analytics-adhoc-worker
