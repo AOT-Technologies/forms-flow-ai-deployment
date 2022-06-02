@@ -1,0 +1,23 @@
+window["_env_"] = {
+NODE_ENV: "production",
+REACT_APP_CLIENT_ROLE: "formsflow-client",
+REACT_APP_STAFF_DESIGNER_ROLE: "formsflow-designer",
+REACT_APP_STAFF_REVIEWER_ROLE: "formsflow-reviewer",
+REACT_APP_CLIENT_ID:"",
+REACT_APP_STAFF_REVIEWER_ID:"",
+REACT_APP_STAFF_DESIGNER_ID:"",
+REACT_APP_ANONYMOUS_ID:"",
+REACT_APP_USER_RESOURCE_FORM_ID:"",
+REACT_APP_API_SERVER_URL:"{your-local-host}",
+REACT_APP_API_PROJECT_URL:"{your-local-host}",
+REACT_APP_KEYCLOAK_CLIENT:"forms-flow-web",
+REACT_APP_KEYCLOAK_URL_REALM:"{realm-name}",
+REACT_APP_KEYCLOAK_URL:"{your-local-host}",
+REACT_APP_WEB_BASE_URL:"{your-local-host}",
+REACT_APP_CAMUNDA_API_URI:"{your-local-host}",
+REACT_APP_WEBSOCKET_ENCRYPT_KEY:"giert989jkwrgb@DR55",
+REACT_APP_APPLICATION_NAME:"formsflow.ai",
+REACT_APP_WEB_BASE_CUSTOM_URL:"",
+REACT_APP_FORMIO_JWT_SECRET:"--- change me now ---",
+REACT_APP_USER_ACCESS_PERMISSIONS:{accessAllowApplications:false, accessAllowSubmissions:false}
+};
