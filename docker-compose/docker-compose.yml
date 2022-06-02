@@ -1,0 +1,3 @@
+# This docker-compose file will spin up an forms-flow-ai instance on a local host or on a server and it requires a minimum of 16GB Memory to distribute among containers.
+
+version: "3.7"
