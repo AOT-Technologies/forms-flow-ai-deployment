@@ -106,18 +106,6 @@ services:
     networks:
       - forms-flow-network
 
-  forms-flow-web:
-    container_name: forms-flow-web
-    image: formsflow/forms-flow-web:latest
-    volumes:
-      - ./config.js:/usr/share/nginx/html/config/config.js
-    ports:
-      - "3000:8080"
-    tty: true
-
-    networks:
-      - forms-flow-network
-
   forms-flow-webapi-db:
     container_name: forms-flow-webapi-db
     image: postgres:11
@@ -188,8 +176,8 @@ services:
     restart: unless-stopped
     container_name: keycloak
     volumes:
-      - ./imports:/opt/jboss/keycloak/imports
-      - ./themes/formsflow:/opt/jboss/keycloak/themes/formsflow
+      - ../scripts/imports:/opt/jboss/keycloak/imports
+      - ../scripts/themes/formsflow:/opt/jboss/keycloak/themes/formsflow
       
     command: 
       - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/formsflow-ai-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
