@@ -30,15 +30,15 @@ EXIT /B %ERRORLEVEL%
 
 :main
     call:set-common-properties
-    call:keycloak configuration\keycloak %~2 
+    call:keycloak ..\docker-compose %~2 
     if %~1==1 (
-        call:forms-flow-analytics configuration\forms-flow-analytics
+        call:forms-flow-analytics ..\docker-compose
     )
-    call:forms-flow-bpm configuration
-    call:forms-flow-api configuration %~1
-    call:forms-flow-forms configuration
-    call:config configuration
-    call:forms-flow-web configuration
+    call:forms-flow-bpm ..\docker-compose
+    call:forms-flow-api ..\docker-compose %~1
+    call:forms-flow-forms ..\docker-compose
+    call:config ..\docker-compose
+    call:forms-flow-web ..\docker-compose
     EXIT /B 0
 	
 :: #############################################################
@@ -51,6 +51,7 @@ EXIT /B %ERRORLEVEL%
   
 :set-common-properties
     set WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
+    set KEYCLOAK_BPM_CLIENT_SECRET=e4bdbd25-1467-4f7f-b993-bc4b1944c943
     EXIT /B 0
 
 :: #############################################################
@@ -59,20 +60,23 @@ EXIT /B %ERRORLEVEL%
 
 :keycloak
 
+        if exist %~1\.env (
+        del %~1\.env
+        )
 	if %~2==1 (
         set /p KEYCLOAK_URL="What is your Keycloak url?"
         set /p KEYCLOAK_URL_REALM="What is your keycloak url realm name?"
 		set /p KEYCLOAK_ADMIN_USERNAME="what is your keycloak admin user name?"
 		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
+                set /p KEYCLOAK_BPM_CLIENT_SECRET="what is your bpm client secret key?"
 	) else (
-	    docker-compose -f %~1\docker-compose.yml up --build -d
+	    docker-compose -f %~1\docker-compose.yml up -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
 		set KEYCLOAK_URL_REALM=forms-flow-ai
 		set KEYCLOAK_ADMIN_USERNAME=admin
 		set KEYCLOAK_ADMIN_PASSWORD=changeme
 	)
-        set /p KEYCLOAK_BPM_CLIENT_SECRET="What is your [Keycloak] forms-flow-bpm client secret key?"
  	EXIT /B 0
    
 :: #############################################################
@@ -106,6 +110,9 @@ EXIT /B %ERRORLEVEL%
 
 :config
 
+   if exist %~1\config.js (
+        del %~1\config.js
+    )
    set window["_env_"] = {
    set NODE_ENV= "production",
    set REACT_APP_CLIENT_ROLE= "formsflow-client",
@@ -166,7 +173,6 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-bpm
 
     SETLOCAL
-    call:clear-dir %~1
     set FORMSFLOW_API_URL=http://%ip-add%:5000
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
     set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
@@ -189,7 +195,6 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-analytics
 
     SETLOCAL
-    call:clear-dir %~1
     set REDASH_HOST=http://%ip-add%:7000
     set PYTHONUNBUFFERED=0
     set REDASH_LOG_LEVEL=INFO
@@ -217,8 +222,8 @@ EXIT /B %ERRORLEVEL%
     echo REDASH_REFERRER_POLICY=%REDASH_REFERRER_POLICY%>>%~1\.env
     echo REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=%REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS%>>%~1\.env
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml run --rm server create_db
-    docker-compose -f %~1\docker-compose.yml up --build -d
+    docker-compose -f %~1\analytics-docker-compose.yml run --rm server create_db
+    docker-compose -f %~1\analytics-docker-compose.yml up --build -d
 	timeout 5
     EXIT /B 0
 
@@ -254,22 +259,12 @@ EXIT /B %ERRORLEVEL%
     docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-webapi
 
 :: #############################################################
-:: ################### clearing .env ###########################
-:: #############################################################
-
-:clear-dir
-    if exist %~1\.env (
-        del %~1\.env
-    )
-    EXIT /B 0
-
-:: #############################################################
 :: ################### fetching role ids #######################
 :: #############################################################
 	
 :fetch-role-ids
 
-    timeout 10
+    timeout 15
     set /a len=0
     set /a attemptCount=1
 	echo %DESIGNER_ROLE_ID%
@@ -286,15 +281,15 @@ EXIT /B %ERRORLEVEL%
 	    ) else (
 		    echo Retrying attempt %attemptCount% of 6 Please wait 
 		    if %attemptCount%==2 (
-		        call:restart-forms-service configuration
+		        call:restart-forms-service ..\docker-compose
 		    )
 		    if %attemptCount%==4 (
-		        call:restart-forms-service configuration
+		        call:restart-forms-service ..\docker-compose
 		    )
 		    if %attemptCount%==6 (
-		        call:restart-forms-service configuration
+		        call:restart-forms-service ..\docker-compose
 		    )
-			timeout 10
+			timeout 15
             call:Loop
 		)
 	EXIT /B 0

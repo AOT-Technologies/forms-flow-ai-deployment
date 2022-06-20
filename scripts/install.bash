@@ -7,11 +7,11 @@ if [[ $choice == "y" ]]; then
 elif [[ $choice == "n" ]]; then
     ANALYTICS=0
 fi
-<<COMMENT
+
 #############################################################
 ######################### main function #####################
 #############################################################
-COMMENT
+
 function main
 {
   keycloak
@@ -25,14 +25,16 @@ function main
   installconfig
   forms-flow-web
 }
-<<COMMENT
+
 #############################################################
 ######################## creating config.js #################
 #############################################################
-COMMENT
+
 function installconfig
 {
    cd ..
+   if [[ -f config.js ]]; then
+     rm config.js
    window["_env_"] = "{"
    NODE_ENV= "production",
    REACT_APP_CLIENT_ROLE= "formsflow-client",
@@ -75,11 +77,11 @@ function installconfig
    echo REACT_APP_USER_ACCESS_PERMISSIONS:$REACT_APP_USER_ACCESS_PERMISSIONS>>config.js
    echo "}";>>config.js
 }
-<<COMMENT
+
 #############################################################
 ###################### forms-flow-Analytics #################
 #############################################################
-COMMENT
+
 function forms-flow-analytics
 {
     cd ../forms-flow-analytics/
@@ -113,11 +115,11 @@ function forms-flow-analytics
     docker-compose -f docker-compose.yml run --rm server create_db
     docker-compose -f docker-compose.yml up --build -d
 }
-<<COMMENT
+
 #############################################################
 ######################## forms-flow-bpm #####################
 #############################################################
-COMMENT
+
 function forms-flow-bpm
 {
     cd ..
@@ -137,11 +139,11 @@ function forms-flow-bpm
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
     docker-compose -f docker-compose.yml up --build -d forms-flow-bpm
 }
-<<COMMENT
+
 #############################################################
 ######################## forms-flow-webapi ##################
 #############################################################
-COMMENT
+
 function forms-flow-api
 {
     ipadd=$(hostname -i)
@@ -167,11 +169,11 @@ function forms-flow-api
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
     docker-compose -f docker-compose.yml up --build -d forms-flow-webapi
 }
-<<COMMENT
+
 #############################################################
 ######################## forms-flow-forms ###################
 #############################################################
-COMMENT
+
 function forms-flow-forms
 {
     ipadd=$(hostname -i)
@@ -193,11 +195,11 @@ function forms-flow-forms
     docker rm forms-flow-forms
     docker-compose -f docker-compose.yml up --build -d forms-flow-forms
 }
-<<COMMENT
+
 #############################################################
 ######################## fething role id's ##################
 #############################################################
-COMMENT
+
 function fetch-role-ids
 {
 email=admin@example.com
@@ -258,14 +260,16 @@ function forms-flow-web
 docker-compose -f docker-compose.yml up --build -d forms-flow-web
 echo "********************** formsflow.ai is successfully installed ****************************"
 }
-<<COMMENT
+
 #############################################################
 ########################### Keycloak ########################
 #############################################################
-COMMENT
+
 function keycloak
 {
     cd configuration/keycloak/
+	if [[ -f .env ]]; then
+     rm .env
     echo "Do you have an exsisting keycloak? [y/n]" 
     read value1
     function defaultinstallation

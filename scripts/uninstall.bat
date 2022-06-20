@@ -24,26 +24,10 @@ EXIT /B %ERRORLEVEL%
 :: #############################################################
 
 :main
-    set /p choice=Do you want to uninstall Keycloak? [y/n]
-    if %choice%==y (
-        call:keycloak configuration\keycloak
-    )
-    call:forms-flow-all configuration
-    call:forms-flow-analytics configuration\forms-flow-analytics
+    call:forms-flow-all ..\docker-compose
+    call:forms-flow-analytics ..\docker-compose
     call:prune-docker
     call:clear-dir configuration
-    EXIT /B 0
-	
-
-:: #############################################################
-:: ########################### Keycloak ########################
-:: #############################################################
-
-:keycloak
-
-    if exist %~1 (
-	    docker-compose -f %~1\docker-compose.yml down
-	)
     EXIT /B 0
    
 :: #############################################################
@@ -64,7 +48,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-analytics
 
     if exist %~1 (
-        docker-compose -f %~1\docker-compose.yml down
+        docker-compose -f %~1\analytics-docker-compose.yml down
 	)
     EXIT /B 0
 
