@@ -110,7 +110,7 @@ services:
     container_name: forms-flow-web
     image: formsflow/forms-flow-web:latest
     volumes:
-      - ./config.js:/usr/share/nginx/html/config/config.js
+      - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     ports:
       - "3000:8080"
     tty: true
@@ -184,12 +184,14 @@ services:
       - keycloak-server-network
 
   keycloak:
-    image: formsflow/keycloak:latest
+    image: quay.io/keycloak/keycloak:14.0.0
     restart: unless-stopped
     container_name: keycloak
+    volumes:
+      - ./configuration/imports:/opt/jboss/keycloak/imports
 
     command: 
-      - "-b 0.0.0.0 -Dkeycloak.import=/opt/keycloak/formsflow-ai-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+      - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/formsflow-ai-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db

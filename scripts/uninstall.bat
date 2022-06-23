@@ -27,7 +27,8 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-all ..\docker-compose
     call:forms-flow-analytics ..\docker-compose
     call:prune-docker
-    call:clear-dir configuration
+    call:clear-dir ..\docker-compose\configuration
+    call:clear-env ..\docker-compose
     EXIT /B 0
    
 :: #############################################################
@@ -57,7 +58,12 @@ EXIT /B %ERRORLEVEL%
 
 :clear-dir
     if exist %~1 (
-        del /Q /S "config.js" ".env"
+        del /Q /S "config.js"
+   EXIT /B 0
+
+:clear-env
+    if exist %~1 (
+        del /Q /S ".env"
    EXIT /B 0
 	
 :: #############################################################
