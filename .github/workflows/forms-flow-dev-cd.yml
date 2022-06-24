@@ -22,27 +22,21 @@ jobs:
       - name: Watch new rollout (trigger by image change in Openshift)
         shell: bash
         run: |
-          oc project formsflow-multitenancy
+          oc project ffp-dev
           oc rollout latest dc/forms-flow-admin
           oc rollout status dc/forms-flow-admin
-          oc rollout latest dc/forms-flow-forms
-          oc rollout status dc/forms-flow-forms
-          oc rollout latest dc/forms-flow-bpm
-          oc rollout status dc/forms-flow-bpm
+          oc rollout latest deployment/forms-flow-forms
+          oc rollout status deployment/forms-flow-forms
+          oc rollout latest deployment/forms-flow-bpm
+          oc rollout status deployment/forms-flow-bpm
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
-          oc rollout latest dc/forms-flow-webapi
-          oc rollout status dc/forms-flow-webapi
+          oc rollout latest deployment/forms-flow-webapi
+          oc rollout status deployment/forms-flow-webapi
+          oc rollout latest deployment/forms-flow-data-analysis
+          oc rollout status deployment/forms-flow-data-analysis
           oc rollout latest dc/forms-flow-analytics-server
           oc rollout status dc/forms-flow-analytics-server
-          # oc rollout latest dc/forms-flow-analytics-worker
-          # oc rollout status dc/forms-flow-analytics-worker
-          # oc rollout latest dc/forms-flow-analytics-scheduler
-          # oc rollout status dc/forms-flow-analytics-scheduler
-          # oc rollout latest dc/forms-flow-analytics-scheduled-worker
-          # oc rollout status dc/forms-flow-analytics-scheduled-worker
-          # oc rollout latest dc/forms-flow-analytics-adhoc-worker
-          # oc rollout status dc/forms-flow-analytics-adhoc-worker
           
   deploy-to-oc-dev:
     needs: deploy-to-oc-multi-tenancy-dev
@@ -58,22 +52,16 @@ jobs:
       - name: Watch new rollout (trigger by image change in Openshift)
         shell: bash
         run: |
-          oc project formsflow-dev
-          oc rollout latest dc/forms-flow-forms
-          oc rollout status dc/forms-flow-forms
-          oc rollout latest dc/forms-flow-bpm
-          oc rollout status dc/forms-flow-bpm
+          oc project ff-dev
+          oc rollout latest deployment/forms-flow-forms
+          oc rollout status deployment/forms-flow-forms
+          oc rollout latest deployment/forms-flow-bpm
+          oc rollout status deployment/forms-flow-bpm
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
-          oc rollout latest dc/forms-flow-webapi
-          oc rollout status dc/forms-flow-webapi
+          oc rollout latest deployment/forms-flow-webapi
+          oc rollout status deployment/forms-flow-webapi
+          oc rollout latest deployment/forms-flow-data-analysis
+          oc rollout status deployment/forms-flow-data-analysis
           oc rollout latest dc/forms-flow-analytics-server
           oc rollout status dc/forms-flow-analytics-server
-          # oc rollout latest dc/forms-flow-analytics-worker
-          # oc rollout status dc/forms-flow-analytics-worker
-          # oc rollout latest dc/forms-flow-analytics-scheduler
-          # oc rollout status dc/forms-flow-analytics-scheduler
-          # oc rollout latest dc/forms-flow-analytics-scheduled-worker
-          # oc rollout status dc/forms-flow-analytics-scheduled-worker
-          # oc rollout latest dc/forms-flow-analytics-adhoc-worker
-          # oc rollout status dc/forms-flow-analytics-adhoc-worker
