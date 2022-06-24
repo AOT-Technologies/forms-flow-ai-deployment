@@ -25,18 +25,19 @@ jobs:
           oc project ffp-dev
           oc rollout latest dc/forms-flow-admin
           oc rollout status dc/forms-flow-admin
-          oc rollout latest deployment/forms-flow-forms
-          oc rollout status deployment/forms-flow-forms
-          oc rollout latest deployment/forms-flow-bpm
-          oc rollout status deployment/forms-flow-bpm
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
-          oc rollout latest deployment/forms-flow-webapi
-          oc rollout status deployment/forms-flow-webapi
-          oc rollout latest deployment/forms-flow-data-analysis
-          oc rollout status deployment/forms-flow-data-analysis
-          oc rollout latest dc/forms-flow-analytics-server
-          oc rollout status dc/forms-flow-analytics-server
+          
+          oc scale deployment/forms-flow-forms --replicas=0
+          oc scale deployment/forms-flow-forms --replicas=1
+          oc scale deployment/forms-flow-bpm --replicas=0
+          oc scale deployment/forms-flow-bpm --replicas=1
+          oc scale deployment/forms-flow-webapi --replicas=0
+          oc scale deployment/forms-flow-webapi --replicas=1
+          oc scale deployment/forms-flow-data-analysis --replicas=0
+          oc scale deployment/forms-flow-data-analysis --replicas=1
+          oc scale deployment/forms-flow-analytics-server --replicas=0
+          oc scale deployment/forms-flow-analytics-server --replicas=1
           
   deploy-to-oc-dev:
     needs: deploy-to-oc-multi-tenancy-dev
@@ -53,15 +54,16 @@ jobs:
         shell: bash
         run: |
           oc project ff-dev
-          oc rollout latest deployment/forms-flow-forms
-          oc rollout status deployment/forms-flow-forms
-          oc rollout latest deployment/forms-flow-bpm
-          oc rollout status deployment/forms-flow-bpm
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
-          oc rollout latest deployment/forms-flow-webapi
-          oc rollout status deployment/forms-flow-webapi
-          oc rollout latest deployment/forms-flow-data-analysis
-          oc rollout status deployment/forms-flow-data-analysis
-          oc rollout latest dc/forms-flow-analytics-server
-          oc rollout status dc/forms-flow-analytics-server
+          
+          oc scale deployment/forms-flow-forms --replicas=0
+          oc scale deployment/forms-flow-forms --replicas=1
+          oc scale deployment/forms-flow-bpm --replicas=0
+          oc scale deployment/forms-flow-bpm --replicas=1
+          oc scale deployment/forms-flow-webapi --replicas=0
+          oc scale deployment/forms-flow-webapi --replicas=1
+          oc scale deployment/forms-flow-data-analysis --replicas=0
+          oc scale deployment/forms-flow-data-analysis --replicas=1
+          oc scale deployment/forms-flow-analytics-server --replicas=0
+          oc scale deployment/forms-flow-analytics-server --replicas=1
