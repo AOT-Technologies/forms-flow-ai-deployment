@@ -37,7 +37,7 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-bpm ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-forms ..\docker-compose
-    call:config ..\docker-compose
+    call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
     EXIT /B 0
 	
