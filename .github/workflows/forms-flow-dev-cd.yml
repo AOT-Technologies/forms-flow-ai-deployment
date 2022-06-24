@@ -32,8 +32,8 @@ jobs:
           oc scale deployment/forms-flow-forms --replicas=1
           oc scale deployment/forms-flow-bpm --replicas=0
           oc scale deployment/forms-flow-bpm --replicas=1
-          oc scale deployment/forms-flow-webapi --replicas=0
-          oc scale deployment/forms-flow-webapi --replicas=1
+          oc scale deployment/forms-flow-api --replicas=0
+          oc scale deployment/forms-flow-api --replicas=1
           oc scale deployment/forms-flow-data-analysis --replicas=0
           oc scale deployment/forms-flow-data-analysis --replicas=1
           oc scale deployment/forms-flow-analytics-server --replicas=0
@@ -61,8 +61,8 @@ jobs:
           oc scale deployment/forms-flow-forms --replicas=1
           oc scale deployment/forms-flow-bpm --replicas=0
           oc scale deployment/forms-flow-bpm --replicas=1
-          oc scale deployment/forms-flow-webapi --replicas=0
-          oc scale deployment/forms-flow-webapi --replicas=1
+          oc scale deployment/forms-flow-api --replicas=0
+          oc scale deployment/forms-flow-api --replicas=1
           oc scale deployment/forms-flow-data-analysis --replicas=0
           oc scale deployment/forms-flow-data-analysis --replicas=1
           oc scale deployment/forms-flow-analytics-server --replicas=0
