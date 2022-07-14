@@ -23,11 +23,11 @@ jobs:
         shell: bash
         run: |
           oc project ffp-dev
-          oc rollout latest dc/forms-flow-admin
-          oc rollout status dc/forms-flow-admin
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
           
+          oc scale deployment/forms-flow-admin --replicas=0
+          oc scale deployment/forms-flow-admin --replicas=1
           oc scale deployment/forms-flow-forms --replicas=0
           oc scale deployment/forms-flow-forms --replicas=1
           oc scale deployment/forms-flow-bpm --replicas=0
