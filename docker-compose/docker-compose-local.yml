@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-
   keycloak-db:
     image: postgres:14
     volumes:
@@ -10,8 +9,6 @@ services:
       POSTGRES_DB: ${KEYCLOAK_JDBC_DB:-keycloak}
       POSTGRES_USER: ${KEYCLOAK_JDBC_USER:-admin}
       POSTGRES_PASSWORD: ${KEYCLOAK_JDBC_PASSWORD:-changeme}
-    ports:
-      - "5431:5431"
       
   keycloak:
     image: quay.io/keycloak/keycloak:14.0.0
@@ -77,6 +74,7 @@ services:
 
   forms-flow-bpm:
     image: formsflow/forms-flow-bpm:latest
+    restart: unless-stopped
     depends_on:
       - keycloak
     environment:
@@ -104,6 +102,7 @@ services:
 
   forms-flow-webapi-db:
     image: postgres:11
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${FORMSFLOW_API_DB_USER:-postgres}
       POSTGRES_PASSWORD: ${FORMSFLOW_API_DB_PASSWORD:-changeme}
