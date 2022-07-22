@@ -54,9 +54,9 @@ jobs:
         shell: bash
         run: |
           oc project ff-dev
-          oc rollout latest dc/forms-flow-web
-          oc rollout status dc/forms-flow-web
           
+          oc scale deployment/forms-flow-web --replicas=0
+          oc scale deployment/forms-flow-web --replicas=1
           oc scale deployment/forms-flow-forms --replicas=0
           oc scale deployment/forms-flow-forms --replicas=1
           oc scale deployment/forms-flow-bpm --replicas=0
