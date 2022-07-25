@@ -22,27 +22,22 @@ jobs:
       - name: Watch new rollout (trigger by image change in Openshift)
         shell: bash
         run: |
-          oc project formsflow-multitenancy
-          oc rollout latest dc/forms-flow-admin
-          oc rollout status dc/forms-flow-admin
-          oc rollout latest dc/forms-flow-forms
-          oc rollout status dc/forms-flow-forms
-          oc rollout latest dc/forms-flow-bpm
-          oc rollout status dc/forms-flow-bpm
+          oc project ffp-dev
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
-          oc rollout latest dc/forms-flow-webapi
-          oc rollout status dc/forms-flow-webapi
-          oc rollout latest dc/forms-flow-analytics-server
-          oc rollout status dc/forms-flow-analytics-server
-          # oc rollout latest dc/forms-flow-analytics-worker
-          # oc rollout status dc/forms-flow-analytics-worker
-          # oc rollout latest dc/forms-flow-analytics-scheduler
-          # oc rollout status dc/forms-flow-analytics-scheduler
-          # oc rollout latest dc/forms-flow-analytics-scheduled-worker
-          # oc rollout status dc/forms-flow-analytics-scheduled-worker
-          # oc rollout latest dc/forms-flow-analytics-adhoc-worker
-          # oc rollout status dc/forms-flow-analytics-adhoc-worker
+          
+          oc scale deployment/forms-flow-admin --replicas=0
+          oc scale deployment/forms-flow-admin --replicas=1
+          oc scale deployment/forms-flow-forms --replicas=0
+          oc scale deployment/forms-flow-forms --replicas=1
+          oc scale deployment/forms-flow-bpm --replicas=0
+          oc scale deployment/forms-flow-bpm --replicas=1
+          oc scale deployment/forms-flow-api --replicas=0
+          oc scale deployment/forms-flow-api --replicas=1
+          oc scale deployment/forms-flow-data-analysis --replicas=0
+          oc scale deployment/forms-flow-data-analysis --replicas=1
+          oc scale deployment/forms-flow-analytics-server --replicas=0
+          oc scale deployment/forms-flow-analytics-server --replicas=1
           
   deploy-to-oc-dev:
     needs: deploy-to-oc-multi-tenancy-dev
@@ -58,22 +53,17 @@ jobs:
       - name: Watch new rollout (trigger by image change in Openshift)
         shell: bash
         run: |
-          oc project formsflow-dev
-          oc rollout latest dc/forms-flow-forms
-          oc rollout status dc/forms-flow-forms
-          oc rollout latest dc/forms-flow-bpm
-          oc rollout status dc/forms-flow-bpm
+          oc project ff-dev
           oc rollout latest dc/forms-flow-web
           oc rollout status dc/forms-flow-web
-          oc rollout latest dc/forms-flow-webapi
-          oc rollout status dc/forms-flow-webapi
-          oc rollout latest dc/forms-flow-analytics-server
-          oc rollout status dc/forms-flow-analytics-server
-          # oc rollout latest dc/forms-flow-analytics-worker
-          # oc rollout status dc/forms-flow-analytics-worker
-          # oc rollout latest dc/forms-flow-analytics-scheduler
-          # oc rollout status dc/forms-flow-analytics-scheduler
-          # oc rollout latest dc/forms-flow-analytics-scheduled-worker
-          # oc rollout status dc/forms-flow-analytics-scheduled-worker
-          # oc rollout latest dc/forms-flow-analytics-adhoc-worker
-          # oc rollout status dc/forms-flow-analytics-adhoc-worker
+          
+          oc scale deployment/forms-flow-forms --replicas=0
+          oc scale deployment/forms-flow-forms --replicas=1
+          oc scale deployment/forms-flow-bpm --replicas=0
+          oc scale deployment/forms-flow-bpm --replicas=1
+          oc scale deployment/forms-flow-api --replicas=0
+          oc scale deployment/forms-flow-api --replicas=1
+          oc scale deployment/forms-flow-data-analysis --replicas=0
+          oc scale deployment/forms-flow-data-analysis --replicas=1
+          oc scale deployment/forms-flow-analytics-server --replicas=0
+          oc scale deployment/forms-flow-analytics-server --replicas=1
