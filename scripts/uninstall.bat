@@ -38,7 +38,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-all
 
     if exist %~1 (
-        docker-compose -f %~1\docker-compose.yml down
+        docker-compose -f %~1\docker-compose-local.yml down
 	)
     EXIT /B 0
 

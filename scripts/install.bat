@@ -70,7 +70,7 @@ EXIT /B %ERRORLEVEL%
 		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
                 set /p KEYCLOAK_BPM_CLIENT_SECRET="what is your bpm client secret key?"
 	) else (
-	    docker-compose -f %~1\docker-compose.yml up -d keycloak
+	    docker-compose -f %~1\docker-compose-local.yml up -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
 		set KEYCLOAK_URL_REALM=forms-flow-ai
@@ -93,7 +93,7 @@ EXIT /B %ERRORLEVEL%
     echo FORMIO_ROOT_PASSWORD=%FORMIO_ROOT_PASSWORD%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
 
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-forms
 	call:fetch-role-ids
     EXIT /B 0
 	
@@ -101,7 +101,7 @@ EXIT /B %ERRORLEVEL%
    
     docker stop forms-flow-forms
     docker rm forms-flow-forms
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-forms
     EXIT /B 0
 
 :: #########################################################################
@@ -163,7 +163,7 @@ EXIT /B %ERRORLEVEL%
 
 :forms-flow-web
 
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-web
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-web
     EXIT /B 0
 
 :: #############################################################
@@ -185,7 +185,7 @@ EXIT /B %ERRORLEVEL%
     echo WEBSOCKET_ENCRYPT_KEY=%WEBSOCKET_ENCRYPT_KEY%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-bpm
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-bpm
     EXIT /B 0  
 
 :: #############################################################
@@ -256,7 +256,7 @@ EXIT /B %ERRORLEVEL%
     echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-webapi
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-webapi
 
 :: #############################################################
 :: ################### fetching role ids #######################
