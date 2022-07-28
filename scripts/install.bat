@@ -70,7 +70,7 @@ EXIT /B %ERRORLEVEL%
 		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
                 set /p KEYCLOAK_BPM_CLIENT_SECRET="what is your bpm client secret key?"
 	) else (
-	    docker-compose -f %~1\docker-compose-local.yml up -d keycloak
+	    docker-compose -f %~1\docker-compose-local.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
 		set KEYCLOAK_URL_REALM=forms-flow-ai
@@ -115,9 +115,6 @@ EXIT /B %ERRORLEVEL%
     )
    set window["_env_"] = {
    set NODE_ENV= "production",
-   set REACT_APP_CLIENT_ROLE= "formsflow-client",
-   set REACT_APP_STAFF_DESIGNER_ROLE= "formsflow-designer",
-   set REACT_APP_STAFF_REVIEWER_ROLE= "formsflow-reviewer",
    set REACT_APP_API_SERVER_URL="http://%ip-add%:3001",
    set REACT_APP_API_PROJECT_URL="http://%ip-add%:3001",
    set REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
@@ -133,14 +130,6 @@ EXIT /B %ERRORLEVEL%
    
    echo window["_env_"] = {>>%~1\config.js
    echo NODE_ENV:%NODE_ENV%>>%~1\config.js
-   echo REACT_APP_CLIENT_ROLE:%REACT_APP_CLIENT_ROLE%>>%~1\config.js
-   echo REACT_APP_STAFF_DESIGNER_ROLE:%REACT_APP_STAFF_DESIGNER_ROLE%>>%~1\config.js
-   echo REACT_APP_STAFF_REVIEWER_ROLE:%REACT_APP_STAFF_REVIEWER_ROLE%>>%~1\config.js
-   echo REACT_APP_CLIENT_ID:"%CLIENT_ROLE_ID%",>>%~1\config.js
-   echo REACT_APP_STAFF_REVIEWER_ID:"%REVIEWER_ROLE_ID%",>>%~1\config.js
-   echo REACT_APP_STAFF_DESIGNER_ID:"%DESIGNER_ROLE_ID%",>>%~1\config.js
-   echo REACT_APP_ANONYMOUS_ID:"%ANONYMOUS_ID%",>>%~1\config.js
-   echo REACT_APP_USER_RESOURCE_FORM_ID:"%USER_RESOURCE_ID%",>>%~1\config.js
    echo REACT_APP_API_SERVER_URL:%REACT_APP_API_SERVER_URL%>>%~1\config.js
    echo REACT_APP_API_PROJECT_URL:%REACT_APP_API_PROJECT_URL%>>%~1\config.js
    echo REACT_APP_KEYCLOAK_CLIENT:%REACT_APP_KEYCLOAK_CLIENT%>>%~1\config.js
@@ -258,38 +247,4 @@ EXIT /B %ERRORLEVEL%
     ENDLOCAL
     docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-webapi
 
-:: #############################################################
-:: ################### fetching role ids #######################
-:: #############################################################
-	
-:fetch-role-ids
 
-    timeout 15
-    set /a len=0
-    set /a attemptCount=1
-	echo %DESIGNER_ROLE_ID%
-    :Loop 
-	    call fetch_role_ids.bat
-        if defined DESIGNER_ROLE_ID ( 
-            EXIT /B 0
-        )
-        echo Could not find Role Ids, Kindly make sure the localhost:3001 is up.
-        set /a attemptCount+=1
-        if %attemptCount% GTR  6 (
-            echo Unable to find form role ids, please fix the issue and retry.
-            EXIT /B 0
-	    ) else (
-		    echo Retrying attempt %attemptCount% of 6 Please wait 
-		    if %attemptCount%==2 (
-		        call:restart-forms-service ..\docker-compose
-		    )
-		    if %attemptCount%==4 (
-		        call:restart-forms-service ..\docker-compose
-		    )
-		    if %attemptCount%==6 (
-		        call:restart-forms-service ..\docker-compose
-		    )
-			timeout 15
-            call:Loop
-		)
-	EXIT /B 0

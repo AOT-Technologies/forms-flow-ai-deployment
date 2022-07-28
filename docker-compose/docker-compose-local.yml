@@ -26,6 +26,9 @@ services:
       - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-changeme}
     ports:
       - "8080:8080"
+    depends_on:
+      - keycloak-db
+      
       
   forms-flow-forms-db:
     image: mongo:5.0
@@ -42,14 +45,14 @@ services:
       - "27018:27017"
       
   forms-flow-web:
-    image: formsflow/forms-flow-web:latest
+    image: formsflow/forms-flow-web:v5.0.0-alpha
     volumes:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     ports:
       - "3000:8080"
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:latest
+    image: formsflow/forms-flow-forms:v5.0.0-alpha
     restart: always
     environment:
       DEBUG: formio:*
@@ -73,7 +76,7 @@ services:
       - "5432:5432"
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:latest
+    image: formsflow/forms-flow-bpm:v5.0.0-alpha
     restart: unless-stopped
     depends_on:
       - keycloak
@@ -113,7 +116,7 @@ services:
       - "6432:5432"
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:latest
+    image: formsflow/forms-flow-webapi:v5.0.0-alpha
     links:
       - forms-flow-webapi-db
     volumes:

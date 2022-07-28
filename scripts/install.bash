@@ -37,9 +37,6 @@ function installconfig
      rm config.js
    window["_env_"] = "{"
    NODE_ENV= "production",
-   REACT_APP_CLIENT_ROLE= "formsflow-client",
-   REACT_APP_STAFF_DESIGNER_ROLE= "formsflow-designer",
-   REACT_APP_STAFF_REVIEWER_ROLE= "formsflow-reviewer",
    REACT_APP_API_SERVER_URL="http://$ipadd:3001",
    REACT_APP_API_PROJECT_URL="http://$ipadd:3001",
    REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
@@ -55,14 +52,6 @@ function installconfig
 	
    echo window["_env_"] = "{">>config.js
    echo NODE_ENV:%NODE_ENV%>>config.js
-   echo REACT_APP_CLIENT_ROLE:$REACT_APP_CLIENT_ROLE>>config.js
-   echo REACT_APP_STAFF_DESIGNER_ROLE:$REACT_APP_STAFF_DESIGNER_ROLE>>config.js
-   echo REACT_APP_STAFF_REVIEWER_ROLE:$REACT_APP_STAFF_REVIEWER_ROLE>>config.js
-   echo REACT_APP_CLIENT_ID:""${id[3]}"",>>config.js
-   echo REACT_APP_STAFF_REVIEWER_ID:""${id[4]}"",>>config.js
-   echo REACT_APP_STAFF_DESIGNER_ID:""${id[0]}"",>>config.js
-   echo REACT_APP_ANONYMOUS_ID:""${id[1]}"",>>config.js
-   echo REACT_APP_USER_RESOURCE_FORM_ID:""${id[5]}"",>>config.js
    echo REACT_APP_API_SERVER_URL:$REACT_APP_API_SERVER_URL>>config.js
    echo REACT_APP_API_PROJECT_URL:$REACT_APP_API_PROJECT_URL>>config.js
    echo REACT_APP_KEYCLOAK_CLIENT:$REACT_APP_KEYCLOAK_CLIENT>>config.js
@@ -128,7 +117,7 @@ function forms-flow-bpm
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
-	WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
+	  WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
 
     echo KEYCLOAK_URL=$KEYCLOAK_URL>>.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET%>>.env
@@ -195,66 +184,6 @@ function forms-flow-forms
     docker rm forms-flow-forms
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-forms
 }
-
-#############################################################
-######################## fething role id's ##################
-#############################################################
-
-function fetch-role-ids
-{
-email=admin@example.com
-password=changeme
-host=http://localhost:3001
-
-response=$(curl  -s -D - -o /dev/null "$host"/user/login -H 'Content-Type: application/json' --data '{"data": {"email" : "'$email'","password": "'$password'"}}'  | grep ^x-jwt-token*)
-token=${response:13}
-role_data=$(curl -H "x-jwt-token:${token//[$'\t\r\n ']}" -s  "$host"/role)
-
-bkpIFS="$IFS"
-
-IFS=',{}][' read -r -a array <<<"$role_data"
-
-id=()
-role=()
-index=0
-for i in "${array[@]}"
-do
-        if [ "${i:1:3}" == "_id" ]
-        then
-                id[$index]=${i:7:-1}
-        elif [ "${i:1:5}" == "title" ]
-        then
-                role[$index]="${i:9:-1}"
-                ((index+=1))
-        fi
-
-done
-
-
-user_data=$(curl -H "x-jwt-token:${token//[$'\t\r\n ']}" -s  "$host"/user)
-
-bkpIFS="$IFS"
-
-IFS=',{}][' read -r -a array <<<"$user_data"
-
-for i in "${array[@]}"
-do
-        if [ "${i:1:3}" == "_id" ]
-        then        
-                id[$index]=${i:7:-1}
-        elif [ "${i:1:5}" == "title" ]
-        then
-                role[$index]="${i:9:-1}"
-                ((index+=1))
-        fi
-
-done
-for i in $(seq 0 $index)
-do
-        key=$role[$i]
-        val=$id[$i]
-}
-
 function forms-flow-web
 {
 docker-compose -f docker-compose-local.yml up --build -d forms-flow-web
