@@ -1,5 +1,5 @@
 #!/bin/bash
-ipadd=$(hostname -i)
+ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 echo "Do you wish to continue installation that include ANALYTICS? [y/n]" 
 read choice
 if [[ $choice == "y" ]]; then
@@ -32,23 +32,26 @@ function main
 
 function installconfig
 {
-   cd ..
+   mkdir ../configuration	
+   cd ../configuration/
+   pwd
    if [[ -f config.js ]]; then
      rm config.js
-   window["_env_"] = "{"
-   NODE_ENV= "production",
-   REACT_APP_API_SERVER_URL="http://$ipadd:3001",
-   REACT_APP_API_PROJECT_URL="http://$ipadd:3001",
-   REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
-   REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai",
-   REACT_APP_KEYCLOAK_URL="http://$ipadd:8080",
-   REACT_APP_WEB_BASE_URL="http://$ipadd:5000",
-   REACT_APP_CAMUNDA_API_URI="http://$ipadd:8000/camunda",
-   REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55",
-   REACT_APP_APPLICATION_NAME="formsflow.ai",
-   REACT_APP_WEB_BASE_CUSTOM_URL="",
-   REACT_APP_FORMIO_JWT_SECRET="--- change me now ---",
-   REACT_APP_USER_ACCESS_PERMISSIONS={accessAllowApplications:false, accessAllowSubmissions:false}
+   fi
+   window["_env_"]="{"
+   NODE_ENV="production"
+   REACT_APP_API_SERVER_URL="http://$ipadd:3001"
+   REACT_APP_API_PROJECT_URL="http://$ipadd:3001"
+   REACT_APP_KEYCLOAK_CLIENT="forms-flow-web"
+   REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai"
+   REACT_APP_KEYCLOAK_URL="http://$ipadd:8080"
+   REACT_APP_WEB_BASE_URL="http://$ipadd:5000"
+   REACT_APP_CAMUNDA_API_URI="http://$ipadd:8000/camunda"
+   REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
+   REACT_APP_APPLICATION_NAME="formsflow.ai"
+   REACT_APP_WEB_BASE_CUSTOM_URL=""
+   REACT_APP_FORMIO_JWT_SECRET="--- change me now ---"
+   REACT_APP_USER_ACCESS_PERMISSIONS="{accessAllowApplications:false,accessAllowSubmissions:false}"
 	
    echo window["_env_"] = "{">>config.js
    echo NODE_ENV:%NODE_ENV%>>config.js
@@ -73,7 +76,6 @@ function installconfig
 
 function forms-flow-analytics
 {
-    cd ../forms-flow-analytics/
     REDASH_HOST=http://$ipadd:7000
     PYTHONUNBUFFERED=0
     REDASH_LOG_LEVEL=INFO
@@ -111,9 +113,7 @@ function forms-flow-analytics
 
 function forms-flow-bpm
 {
-    cd ..
-    ipadd=$(hostname -i)
-
+    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
@@ -135,7 +135,7 @@ function forms-flow-bpm
 
 function forms-flow-api
 {
-    ipadd=$(hostname -i)
+    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMSFLOW_API_URL=http://$ipadd:5000
     CAMUNDA_API_URL=http://$ipadd:8000/camunda
     FORMSFLOW_API_CORS_ORIGINS=*
@@ -144,6 +144,7 @@ function forms-flow-api
         read INSIGHT_API_KEY
         INSIGHT_API_URL=http://$ipadd:7000
     )
+    fi
     echo KEYCLOAK_URL=$KEYCLOAK_URL>>.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET>>.env
     echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM>>.env
@@ -155,6 +156,7 @@ function forms-flow-api
         echo INSIGHT_API_URL=$INSIGHT_API_URL>>.env
         echo INSIGHT_API_KEY=$INSIGHT_API_KEY>>.env
     )
+    fi
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-webapi
 }
@@ -165,7 +167,8 @@ function forms-flow-api
 
 function forms-flow-forms
 {
-    ipadd=$(hostname -i)
+    cd ../docker-compose
+    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMIO_ROOT_EMAIL=admin@example.com
     FORMIO_ROOT_PASSWORD=changeme
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
@@ -176,9 +179,9 @@ function forms-flow-forms
 
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-forms
     sleep 20
-    fetch-role-ids
+#    fetch-role-ids
 
-:restart-forms-service
+#restart-forms-service
    
     docker stop forms-flow-forms
     docker rm forms-flow-forms
@@ -186,6 +189,7 @@ function forms-flow-forms
 }
 function forms-flow-web
 {
+cd ../docker-compose/
 docker-compose -f docker-compose-local.yml up --build -d forms-flow-web
 echo "********************** formsflow.ai is successfully installed ****************************"
 }
@@ -196,19 +200,22 @@ echo "********************** formsflow.ai is successfully installed ************
 
 function keycloak
 {
-    cd configuration/keycloak/
-	if [[ -f .env ]]; then
+    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+    cd ../docker-compose/
+    if [[ -f .env ]]; then
      rm .env
+    fi
     echo "Do you have an exsisting keycloak? [y/n]" 
     read value1
     function defaultinstallation
     {
+	echo $ipadd
         echo WE ARE SETING UP OUR DEFAULT KEYCLOCK FOR YOU
         printf "%s " "Press enter to continue"
         read that
-        ipadd=$(hostname -i)
+        ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
         echo Please wait, keycloak is setting up!
-        docker-compose up -d
+        docker-compose -f docker-compose-local.yml up -d
         KEYCLOAK_URL_REALM=forms-flow-ai
         KEYCLOAK_URL=http://{your-ip-address}:8080
         KEYCLOAK_URL=http://$ipadd:8080
