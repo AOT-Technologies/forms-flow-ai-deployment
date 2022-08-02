@@ -117,7 +117,8 @@ function forms-flow-bpm
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
-	  WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
+	BPM_BASE_URL=http://$ipadd:8000/engine-bpm
+	WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
 
     echo KEYCLOAK_URL=$KEYCLOAK_URL>>.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET%>>.env
@@ -126,6 +127,7 @@ function forms-flow-bpm
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN>>.env
     echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY>>.env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
+	echo BPM_BASE_URL=$BPM_BASE_URL>>.env
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-bpm
 }
 
