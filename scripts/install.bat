@@ -165,6 +165,7 @@ EXIT /B %ERRORLEVEL%
     set FORMSFLOW_API_URL=http://%ip-add%:5000
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
     set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
+    set BPM_BASE_URL=http://%ip-add%:8000/engine-bpm
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
@@ -173,6 +174,7 @@ EXIT /B %ERRORLEVEL%
     echo WEBSOCKET_SECURITY_ORIGIN=%WEBSOCKET_SECURITY_ORIGIN%>>%~1\.env
     echo WEBSOCKET_ENCRYPT_KEY=%WEBSOCKET_ENCRYPT_KEY%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
+    echo BPM_BASE_URL=%BPM_BASE_URL%>>%~1\.env
     ENDLOCAL
     docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-bpm
     EXIT /B 0  

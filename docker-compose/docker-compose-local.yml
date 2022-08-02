@@ -26,7 +26,7 @@ services:
       - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-changeme}
     ports:
       - "8080:8080"
-    depends_on:
+    links:
       - keycloak-db
       
       
@@ -63,6 +63,8 @@ services:
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET}
     ports:
       - "3001:3001"
+    links:
+      - forms-flow-forms-db
       
   forms-flow-bpm-db:
     image: postgres:latest
@@ -77,9 +79,7 @@ services:
 
   forms-flow-bpm:
     image: formsflow/forms-flow-bpm:v5.0.0-alpha
-    restart: unless-stopped
-    depends_on:
-      - keycloak
+    restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_URL_REALM=${KEYCLOAK_URL_REALM:-forms-flow-ai}
@@ -102,10 +102,14 @@ services:
       - IDENTITY_PROVIDER_MAX_RESULT_SIZE=${IDENTITY_PROVIDER_MAX_RESULT_SIZE:-250}
     ports:
       - "8000:8080"
+    links:
+      - forms-flow-bpm-db
+      - keycloak
+      
 
   forms-flow-webapi-db:
     image: postgres:11
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_USER: ${FORMSFLOW_API_DB_USER:-postgres}
       POSTGRES_PASSWORD: ${FORMSFLOW_API_DB_PASSWORD:-changeme}
