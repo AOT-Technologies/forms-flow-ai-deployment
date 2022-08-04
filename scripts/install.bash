@@ -20,8 +20,8 @@ function main
   elif [[ $ANALYTICS == 0 ]]; then
     forms-flow-bpm
   fi
-  forms-flow-api
   forms-flow-forms
+  forms-flow-api
   installconfig
   forms-flow-web
 }
