@@ -1,5 +1,5 @@
 #!/bin/bash
-ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+ipadd=$(hostname -I | awk '{print $1}')
 echo "Do you wish to continue installation that include ANALYTICS? [y/n]" 
 read choice
 if [[ $choice == "y" ]]; then
@@ -170,7 +170,6 @@ function forms-flow-api
 function forms-flow-forms
 {
     cd ../docker-compose
-    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMIO_ROOT_EMAIL=admin@example.com
     FORMIO_ROOT_PASSWORD=changeme
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
@@ -202,7 +201,6 @@ echo "********************** formsflow.ai is successfully installed ************
 
 function keycloak
 {
-    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     cd ../docker-compose/
     if [[ -f .env ]]; then
      rm .env
@@ -211,11 +209,9 @@ function keycloak
     read value1
     function defaultinstallation
     {
-	echo $ipadd
         echo WE ARE SETING UP OUR DEFAULT KEYCLOCK FOR YOU
         printf "%s " "Press enter to continue"
         read that
-        ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
         echo Please wait, keycloak is setting up!
         docker-compose -f docker-compose-local.yml up -d
         KEYCLOAK_URL_REALM=forms-flow-ai
