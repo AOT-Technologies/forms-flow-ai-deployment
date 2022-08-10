@@ -7,14 +7,6 @@ Do you want analytics to include in the installation?-localhost:7000
 formsflow.ai leverages Redash to build interactive dashboards and gain insights. answer any of these options eg: y - Yes, n - No.
 Do you have an existing keycloak?
 The formsflow.ai framework is hooked up with Keycloak Identity Management Server. Answer any of these options eg: y - Yes, n - No.
-What is your [Keycloak] forms-flow-bpm client secret key?
-
-    Go to http://localhost:8080 in the browser
-    Login to KeyCloak Realm with admin privileges
-    Configure > Clients >
-        Click on Client ID = forms-flow-bpm
-        Got to Credentials Tab
-        Copy the secret value if present else click on the Regenerate secret button and copy the value
 
 What is your Keycloak URL?
 For existing keycloak users provide your keycloak URL, localhost is not supported please provide your IP / hostname
