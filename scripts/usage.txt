@@ -25,3 +25,6 @@ This file can be run multiple times, it will update the source if any new update
 This will remove the source directory, remove images and prune all the dangling images.
 
 Make sure that their is no any important docker container in the docker, since the uninstall command will remove all the containers in the docker.
+
+
+NOTE: Each time you restart or start again from the begginning, Remember to Delete all the images from docker-desktop, And prune volumes,network, and container.
