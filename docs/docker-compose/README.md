@@ -27,6 +27,7 @@ In this document, you will see the basic details to install and run the applicat
 
 ### Running the application- "Analytics"
 
+* Run `docker-compose -f analytics-docker-compose.yml run --rm server create_db` to setup database and to create tables.
 * Run `docker-compose -f analytics-docker-compose.yml up --build -d` to start analytics.
    
 *NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose -f docker-compose-local.yml up --build -d`*
