@@ -170,6 +170,7 @@ EXIT /B %ERRORLEVEL%
     echo BPM_BASE_URL=%BPM_BASE_URL%>>%~1\.env
     ENDLOCAL
     docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-bpm
+    timeout 6
     EXIT /B 0  
 
 :: #############################################################
