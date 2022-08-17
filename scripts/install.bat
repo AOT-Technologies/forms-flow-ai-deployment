@@ -34,8 +34,8 @@ EXIT /B %ERRORLEVEL%
     if %~1==1 (
         call:forms-flow-analytics ..\docker-compose
     )
-    call:forms-flow-bpm ..\docker-compose
     call:forms-flow-forms ..\docker-compose
+    call:forms-flow-bpm ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
@@ -94,16 +94,9 @@ EXIT /B %ERRORLEVEL%
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
 
     docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-forms
-	call:fetch-role-ids
+    timeout 5
     EXIT /B 0
 	
-:restart-forms-service
-   
-    docker stop forms-flow-forms
-    docker rm forms-flow-forms
-    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-forms
-    EXIT /B 0
-
 :: #########################################################################
 :: #########################   config.js    ################################
 :: #########################################################################

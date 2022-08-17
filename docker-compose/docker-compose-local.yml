@@ -32,6 +32,7 @@ services:
       
   forms-flow-forms-db:
     image: mongo:5.0
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${FORMIO_DB_USERNAME:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${FORMIO_DB_PASSWORD:-changeme}
@@ -101,7 +102,6 @@ services:
       - DATA_BUFFER_SIZE=${DATA_BUFFER_SIZE:-2}
       - IDENTITY_PROVIDER_MAX_RESULT_SIZE=${IDENTITY_PROVIDER_MAX_RESULT_SIZE:-250}
       - DATA_ANALYSIS_URL=${DATA_ANALYSIS_URL}
-      - BPM_BASE_URL=${BPM_BASE_URL}
       - CUSTOM_SUBMISSION_URL=${CUSTOM_SUBMISSION_URL}
       - CUSTOM_SUBMISSION_ENABLED=${CUSTOM_SUBMISSION_ENABLED:-false}
     ports:
@@ -125,6 +125,7 @@ services:
 
   forms-flow-webapi:
     image: formsflow/forms-flow-webapi:v5.0.0-alpha
+    restart: always
     links:
       - forms-flow-webapi-db
     volumes:
