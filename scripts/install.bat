@@ -36,9 +36,9 @@ EXIT /B %ERRORLEVEL%
     )
     call:forms-flow-forms ..\docker-compose
     call:forms-flow-bpm ..\docker-compose
-    call:forms-flow-api ..\docker-compose %~1
     call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
+    call:forms-flow-api ..\docker-compose %~1
     EXIT /B 0
 	
 :: #############################################################
@@ -68,6 +68,7 @@ EXIT /B %ERRORLEVEL%
         set /p KEYCLOAK_URL_REALM="What is your keycloak url realm name?"
 		set /p KEYCLOAK_ADMIN_USERNAME="what is your keycloak admin user name?"
 		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
+                set /p KEYCLOAK_BPM_CLIENT_SECRET="what is your bpm client secret key?"
 	) else (
 	    docker-compose -f %~1\docker-compose-local.yml up --build -d keycloak
 		timeout 5
@@ -157,7 +158,6 @@ EXIT /B %ERRORLEVEL%
     set FORMSFLOW_API_URL=http://%ip-add%:5000
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
     set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
-    set BPM_BASE_URL=http://%ip-add%:8000/engine-bpm
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
@@ -166,7 +166,6 @@ EXIT /B %ERRORLEVEL%
     echo WEBSOCKET_SECURITY_ORIGIN=%WEBSOCKET_SECURITY_ORIGIN%>>%~1\.env
     echo WEBSOCKET_ENCRYPT_KEY=%WEBSOCKET_ENCRYPT_KEY%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
-    echo BPM_BASE_URL=%BPM_BASE_URL%>>%~1\.env
     ENDLOCAL
     docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-bpm
     timeout 6
@@ -220,7 +219,7 @@ EXIT /B %ERRORLEVEL%
     SETLOCAL
 
     set FORMSFLOW_API_URL=http://%ip-add%:5000
-    set CAMUNDA_API_URL=http://%ip-add%:8000/camunda
+    set BPM_API_URL=http://%ip-add%:8000/camunda
     set FORMSFLOW_API_CORS_ORIGINS=*
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"

@@ -117,7 +117,6 @@ function forms-flow-bpm
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
-	BPM_BASE_URL=http://$ipadd:8000/engine-bpm
 	WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
 
     echo KEYCLOAK_URL=$KEYCLOAK_URL>>.env
@@ -127,7 +126,6 @@ function forms-flow-bpm
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN>>.env
     echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY>>.env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
-	echo BPM_BASE_URL=$BPM_BASE_URL>>.env
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-bpm
 }
 
@@ -139,7 +137,7 @@ function forms-flow-api
 {
     ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMSFLOW_API_URL=http://$ipadd:5000
-    CAMUNDA_API_URL=http://$ipadd:8000/camunda
+    BPM_API_URL=http://$ipadd:8000/camunda
     FORMSFLOW_API_CORS_ORIGINS=*
     if [[ $ANALYTICS == 1 ]]; then (
         echo What is your Redash API key?
@@ -152,7 +150,7 @@ function forms-flow-api
     echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM>>.env
     echo KEYCLOAK_ADMIN_USERNAME=$KEYCLOAK_ADMIN_USERNAME>>.env
     echo KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD>>.env
-    echo CAMUNDA_API_URL=$CAMUNDA_API_URL>>.env
+    echo BPM_API_URL=$BPM_API_URL>>.env
     echo FORMSFLOW_API_CORS_ORIGINS=$FORMSFLOW_API_CORS_ORIGINS>>.env
     if [[ $ANALYTICS == 1 ]]; then ( 
         echo INSIGHT_API_URL=$INSIGHT_API_URL>>.env
