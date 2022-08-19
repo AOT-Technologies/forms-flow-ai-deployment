@@ -22,7 +22,7 @@ The application uses Postgres and Mongo DB for persistence.The below templates c
 
 Postgres HA and Non-HA templates can be used.
 
-A sample patroni templates can be found at [patroni-build.yaml](./Databases/patroni-build.yaml) , [patroni-build.yaml](../Databases/patroni-build.yaml) , [patroni-deployment.yaml](./Databases/patroni-deployment.yaml) , [patroni-deployment-prereq.yaml](./Databases/patroni-deployment-prereq.yaml)
+A sample patroni templates can be found at [patroni-build.yaml](./Databases/patroni-build.yaml) , [patroni-build.yaml](./Databases/patroni-build.yaml) , [patroni-deployment.yaml](./Databases/patroni-deployment.yaml) , [patroni-deployment-prereq.yaml](./Databases/patroni-deployment-prereq.yaml)
 
 To avail the latest patroni templates ,Please refer to [BCDevOps/platform-services/patroni templates](https://github.com/BCDevOps/platform-services/tree/master/apps/pgsql/patroni)
 
@@ -41,7 +41,7 @@ A sample Mongo non-HA templates can be found at [mongodb-nonha.yaml](./Databases
 
 The forms-flow-ai secret contain most of the values which are mandatory for application to work.
 
-running the [formio_secrets_param.yaml](formio_secrets.yaml) with proper values should create the required secret.
+running the [formio_secrets_param.yaml](./formio_secrets.yaml) with proper values should create the required secret.
 
 There are other secrets which are needed as well. They are mostly Mongo , Postgres,Redash secrets as in the below screenshot
 
@@ -66,3 +66,17 @@ Each project needs a build configuration and images/image stream to work with.An
 An example deployment config will look like below
 
 ![](dc.png "Deployment Config")
+
+[Dockerfile](https://github.com/AOT-Technologies/forms-flow-ai/blob/develop/forms-flow-web/Dockerfile)
+[openshift_Dockerfile](https://github.com/AOT-Technologies/forms-flow-ai/blob/develop/forms-flow-web/openshift_Dockerfile)
+[openshift_custom_Dockerfile](https://github.com/AOT-Technologies/forms-flow-ai/blob/develop/forms-flow-web/openshift_custom_Dockerfile)
+
+# Docker files
+
+the project has different deployment topoloiges and there are different docker files for each purpose as below
+
+| filename        | sample reference           | Purpose  |
+| ------------- |:-------------:| -----:|
+| Dockerfile      | [Dockerfile](https://github.com/AOT-Technologies/forms-flow-ai/blob/develop/forms-flow-web/Dockerfile) | Dockerfile to support docker compose |
+| openshift_Dockerfile      | [openshift_Dockerfile](https://github.com/AOT-Technologies/forms-flow-ai/blob/develop/forms-flow-web/openshift_Dockerfile)      |   Openshift based deployment |
+| openshift_custom_Dockerfile | [openshift_custom_Dockerfile](https://github.com/AOT-Technologies/forms-flow-ai/blob/develop/forms-flow-web/openshift_custom_Dockerfile)      |    To allow customisation and build from this repo.Helps to copy stuff from the buidling repo and merge to the product. |
