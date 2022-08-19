@@ -21,9 +21,9 @@ function main
     forms-flow-bpm
   fi
   forms-flow-forms
-  forms-flow-api
   installconfig
   forms-flow-web
+  forms-flow-api
 }
 
 #############################################################
