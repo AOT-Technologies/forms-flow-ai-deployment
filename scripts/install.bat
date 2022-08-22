@@ -68,7 +68,6 @@ EXIT /B %ERRORLEVEL%
         set /p KEYCLOAK_URL_REALM="What is your keycloak url realm name?"
 		set /p KEYCLOAK_ADMIN_USERNAME="what is your keycloak admin user name?"
 		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
-                set /p KEYCLOAK_BPM_CLIENT_SECRET="what is your bpm client secret key?"
 	) else (
 	    docker-compose -f %~1\docker-compose-local.yml up --build -d keycloak
 		timeout 5
