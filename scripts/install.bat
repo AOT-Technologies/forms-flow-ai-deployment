@@ -37,8 +37,8 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-forms ..\docker-compose
     call:forms-flow-bpm ..\docker-compose
     call:config ..\docker-compose\configuration
-    call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
+    call:forms-flow-web ..\docker-compose
     EXIT /B 0
 	
 :: #############################################################
@@ -229,7 +229,7 @@ EXIT /B %ERRORLEVEL%
     echo KEYCLOAK_URL_REALM=%KEYCLOAK_URL_REALM%>>%~1\.env
     echo KEYCLOAK_ADMIN_USERNAME=%KEYCLOAK_ADMIN_USERNAME%>>%~1\.env
     echo KEYCLOAK_ADMIN_PASSWORD=%KEYCLOAK_ADMIN_PASSWORD%>>%~1\.env
-    echo CAMUNDA_API_URL=%CAMUNDA_API_URL%>>%~1\.env
+    echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
     echo FORMSFLOW_API_CORS_ORIGINS=%FORMSFLOW_API_CORS_ORIGINS%>>%~1\.env
     if %~2==1 (
         echo INSIGHT_API_URL=%INSIGHT_API_URL%>>%~1\.env
