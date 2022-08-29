@@ -15,29 +15,19 @@ In this document, you will see the basic details to install and run the applicat
 
 * Make sure your current working directory is "/forms-flow-ai-deployment/docker-compose".
 * Rename the file [sample.env](./sample.env) to **.env** if you are installing manually.
+* Edit the config.js file and add the corresponding ip address and set the realm name as "forms-flow-ai" or the realm name of yours.
 * Modify the environment variables in the newly created **.env** file if needed. Environment variables are given in the table below,
 * **NOTE : `{your-ip-address}` given inside the `.env` file should be changed to your host system IP address. Please take special care to identify the correct IP address if your system has multiple network cards**
 
-* Run `docker-compose -f docker-compose-local.yml up -d keycloak` to start keycloak
-* Follow the below steps for mapping the role IDs.   
-   - Start the forms-flow-forms service. 
-       - Run `docker-compose -f docker-compose-local.yml up -d forms-flow-forms` to start. 
-       
-#### Health Check
-
-   - Access forms-flow-forms at port defaulted to 3001 i.e. http://localhost:3001/ .
-   
-           Default Login Credentials
-           -----------------
-           User Name / Email : admin@example.com
-           Password  : changeme   
+* Run `docker-compose -f docker-compose-local.yml up -d keycloak` to start keycloak  
+* Run `docker-compose -f docker-compose-local.yml up -d` to start.   
                    
 *NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose -f docker-compose-local.yml up --build -d`*
 
 
-### Running the application
+### Running the application- "Analytics"
 
-* Run `docker-compose -f docker-compose-local.yml up -d` to start.
+* Run `docker-compose -f analytics-docker-compose.yml run --rm server create_db` to setup database and to create tables.
 * Run `docker-compose -f analytics-docker-compose.yml up --build -d` to start analytics.
    
 *NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose -f docker-compose-local.yml up --build -d`*

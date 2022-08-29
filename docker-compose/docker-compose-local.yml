@@ -26,9 +26,13 @@ services:
       - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-changeme}
     ports:
       - "8080:8080"
+    links:
+      - keycloak-db
+      
       
   forms-flow-forms-db:
     image: mongo:5.0
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${FORMIO_DB_USERNAME:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${FORMIO_DB_PASSWORD:-changeme}
@@ -42,14 +46,14 @@ services:
       - "27018:27017"
       
   forms-flow-web:
-    image: formsflow/forms-flow-web:latest
+    image: formsflow/forms-flow-web:v5.0.0-alpha
     volumes:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     ports:
       - "3000:8080"
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:latest
+    image: formsflow/forms-flow-forms:v5.0.0-alpha
     restart: always
     environment:
       DEBUG: formio:*
@@ -60,6 +64,8 @@ services:
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET}
     ports:
       - "3001:3001"
+    links:
+      - forms-flow-forms-db
       
   forms-flow-bpm-db:
     image: postgres:latest
@@ -73,10 +79,8 @@ services:
       - "5432:5432"
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:latest
-    restart: unless-stopped
-    depends_on:
-      - keycloak
+    image: formsflow/forms-flow-bpm:v5.0.0-alpha
+    restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_URL_REALM=${KEYCLOAK_URL_REALM:-forms-flow-ai}
@@ -97,12 +101,19 @@ services:
       - WEBSOCKET_ENCRYPT_KEY=${WEBSOCKET_ENCRYPT_KEY:-giert989jkwrgb@DR55}
       - DATA_BUFFER_SIZE=${DATA_BUFFER_SIZE:-2}
       - IDENTITY_PROVIDER_MAX_RESULT_SIZE=${IDENTITY_PROVIDER_MAX_RESULT_SIZE:-250}
+      - DATA_ANALYSIS_URL=${DATA_ANALYSIS_URL}
+      - CUSTOM_SUBMISSION_URL=${CUSTOM_SUBMISSION_URL}
+      - CUSTOM_SUBMISSION_ENABLED=${CUSTOM_SUBMISSION_ENABLED:-false}
     ports:
       - "8000:8080"
+    links:
+      - forms-flow-bpm-db
+      - keycloak
+      
 
   forms-flow-webapi-db:
     image: postgres:11
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_USER: ${FORMSFLOW_API_DB_USER:-postgres}
       POSTGRES_PASSWORD: ${FORMSFLOW_API_DB_PASSWORD:-changeme}
@@ -113,7 +124,8 @@ services:
       - "6432:5432"
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:latest
+    image: formsflow/forms-flow-webapi:v5.0.0-alpha
+    restart: always
     links:
       - forms-flow-webapi-db
     volumes:
@@ -125,7 +137,7 @@ services:
       BPM_TOKEN_API: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/protocol/openid-connect/token
       BPM_CLIENT_ID: ${KEYCLOAK_BPM_CLIENT_ID:-forms-flow-bpm}
       BPM_CLIENT_SECRET: ${KEYCLOAK_BPM_CLIENT_SECRET:-e4bdbd25-1467-4f7f-b993-bc4b1944c943}
-      BPM_API_BASE: ${CAMUNDA_API_URL}
+      BPM_API_URL: ${BPM_API_URL}
       FORMSFLOW_API_CORS_ORIGINS: ${FORMSFLOW_API_CORS_ORIGINS:-*}
       JWT_OIDC_WELL_KNOWN_CONFIG: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/.well-known/openid-configuration
       JWT_OIDC_ALGORITHMS: 'RS256'
@@ -137,6 +149,13 @@ services:
       KEYCLOAK_URL: ${KEYCLOAK_URL}
       KEYCLOAK_URL_REALM: ${KEYCLOAK_URL_REALM:-forms-flow-ai}
       WEB_API_BASE_URL: ${FORMSFLOW_API_URL}
+      FORMIO_URL: ${FORMIO_DEFAULT_PROJECT_URL}
+      FORMIO_ROOT_EMAIL: ${FORMIO_ROOT_EMAIL:-admin@example.com}
+      FORMIO_ROOT_PASSWORD: ${FORMIO_ROOT_PASSWORD:-changeme}
+      CHROME_DRIVER_PATH: ${CHROME_DRIVER_PATH}
+      CUSTOM_SUBMISSION_URL: ${CUSTOM_SUBMISSION_URL}
+      CUSTOM_SUBMISSION_ENABLED: ${CUSTOM_SUBMISSION_ENABLED}
+      FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
     ports:
       - "5000:5000"
       
