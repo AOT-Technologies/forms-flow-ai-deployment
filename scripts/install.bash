@@ -1,5 +1,8 @@
 #!/bin/bash
 ipadd=$(hostname -I | awk '{print $1}')
+KEYCLOAK_BPM_CLIENT_SECRET="e4bdbd25-1467-4f7f-b993-bc4b1944c943"
+KEYCLOAK_URL="http://$ipadd:8080"
+KEYCLOAK_URL_REALM="forms-flow-ai"
 echo "Do you wish to continue installation that include ANALYTICS? [y/n]" 
 read choice
 if [[ $choice == "y" ]]; then
@@ -7,7 +10,6 @@ if [[ $choice == "y" ]]; then
 elif [[ $choice == "n" ]]; then
     ANALYTICS=0
 fi
-
 #############################################################
 ######################### main function #####################
 #############################################################
@@ -18,12 +20,12 @@ function main
   if [[ $ANALYTICS == 1 ]]; then
     forms-flow-analytics
   elif [[ $ANALYTICS == 0 ]]; then
-    forms-flow-bpm
+    forms-flow-forms
   fi
-  forms-flow-forms
+  forms-flow-bpm
   installconfig
-  forms-flow-web
   forms-flow-api
+  forms-flow-web
 }
 
 #############################################################
@@ -113,19 +115,18 @@ function forms-flow-analytics
 
 function forms-flow-bpm
 {
-    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
-	WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
+    WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
 
-    echo KEYCLOAK_URL=$KEYCLOAK_URL>>.env
-    echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET%>>.env
-    echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM>>.env
-    echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
-    echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN>>.env
-    echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY>>.env
-    echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
+    echo KEYCLOAK_URL=$KEYCLOAK_URL >> .env
+    echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >>.env
+    echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM >>.env
+    echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL >>.env
+    echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN >> .env
+    echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY >> .env
+    echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL >> .env
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-bpm
 }
 
@@ -135,7 +136,6 @@ function forms-flow-bpm
 
 function forms-flow-api
 {
-    ipadd=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
     FORMSFLOW_API_URL=http://$ipadd:5000
     BPM_API_URL=http://$ipadd:8000/camunda
     FORMSFLOW_API_CORS_ORIGINS=*
@@ -145,16 +145,16 @@ function forms-flow-api
         INSIGHT_API_URL=http://$ipadd:7000
     )
     fi
-    echo KEYCLOAK_URL=$KEYCLOAK_URL>>.env
-    echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET>>.env
-    echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM>>.env
-    echo KEYCLOAK_ADMIN_USERNAME=$KEYCLOAK_ADMIN_USERNAME>>.env
-    echo KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD>>.env
-    echo BPM_API_URL=$BPM_API_URL>>.env
-    echo FORMSFLOW_API_CORS_ORIGINS=$FORMSFLOW_API_CORS_ORIGINS>>.env
+    echo KEYCLOAK_URL=$KEYCLOAK_URL >>.env
+    echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
+    echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM >> .env
+    echo KEYCLOAK_ADMIN_USERNAME=$KEYCLOAK_ADMIN_USERNAME >> .env
+    echo KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD >> .env
+    echo BPM_API_URL=$BPM_API_URL >> .env
+    echo FORMSFLOW_API_CORS_ORIGINS=$FORMSFLOW_API_CORS_ORIGINS >> .env
     if [[ $ANALYTICS == 1 ]]; then ( 
-        echo INSIGHT_API_URL=$INSIGHT_API_URL>>.env
-        echo INSIGHT_API_KEY=$INSIGHT_API_KEY>>.env
+        echo INSIGHT_API_URL=$INSIGHT_API_URL >> .env
+        echo INSIGHT_API_KEY=$INSIGHT_API_KEY >> .env
     )
     fi
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
@@ -177,14 +177,7 @@ function forms-flow-forms
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
 
     docker-compose -f docker-compose-local.yml up --build -d forms-flow-forms
-    sleep 20
-#    fetch-role-ids
 
-#restart-forms-service
-   
-    docker stop forms-flow-forms
-    docker rm forms-flow-forms
-    docker-compose -f docker-compose-local.yml up --build -d forms-flow-forms
 }
 function forms-flow-web
 {
@@ -212,14 +205,7 @@ function keycloak
         read that
         echo Please wait, keycloak is setting up!
         docker-compose -f docker-compose-local.yml up -d
-        KEYCLOAK_URL_REALM=forms-flow-ai
-        KEYCLOAK_URL=http://{your-ip-address}:8080
-        KEYCLOAK_URL=http://$ipadd:8080
-        echo What is your [Keycloak] forms-flow-bpm client secret key?
-        read KEYCLOAK_BPM_CLIENT_SECRET
-
-        printf "%s " "Press enter to continue"
-        read that
+	echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
     }
     
     function INSTALL_WITH_EXISTING_KEYCLOAK
@@ -245,9 +231,9 @@ function orderwithanalytics
   echo installation will be completed in the following order:
   echo 1. keycloak
   echo 2. analytics
-  echo 3. Camunda
-  echo 4. webapi
-  echo 5. forms
+  echo 3. forms
+  echo 4. camunda
+  echo 5. webapi
   echo 6. web
   printf "%s " "Press enter to continue"
   read that
@@ -257,9 +243,9 @@ function withoutanalytics
 {
   echo installation will be completed in the following order:
   echo 1. keycloak
-  echo 2. Camunda
-  echo 3. webapi
-  echo 4. forms
+  echo 2. forms
+  echo 3. camunda
+  echo 4. webapi
   echo 5. web 
   printf "%s " "Press enter to continue"
   read that
