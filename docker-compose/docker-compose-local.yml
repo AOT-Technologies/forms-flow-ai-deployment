@@ -49,6 +49,8 @@ services:
     image: formsflow/forms-flow-web:v5.0.0-alpha
     volumes:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
+    links:
+      - forms-flow-webapi
     ports:
       - "3000:8080"
 
@@ -110,7 +112,6 @@ services:
       - forms-flow-bpm-db
       - keycloak
       
-
   forms-flow-webapi-db:
     image: postgres:11
     restart: always
