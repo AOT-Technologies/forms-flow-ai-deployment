@@ -19,10 +19,10 @@ In this document, you will see the basic details to install and run the applicat
 * Modify the environment variables in the newly created **.env** file if needed. Environment variables are given in the table below,
 * **NOTE : `{your-ip-address}` given inside the `.env` file should be changed to your host system IP address. Please take special care to identify the correct IP address if your system has multiple network cards**
 
-* Run `docker-compose -f docker-compose.yml up -d keycloak` to start keycloak  
-* Run `docker-compose -f docker-compose.yml up -d` to start.   
+* Run `docker-compose up -d keycloak` to start keycloak  
+* Run `docker-compose up -d` to start.   
                    
-*NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose -f docker-compose.yml up --build -d`*
+*NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose up --build -d`*
 
 
 ### Running the application- "Analytics"
@@ -30,7 +30,7 @@ In this document, you will see the basic details to install and run the applicat
 * Run `docker-compose -f analytics-docker-compose.yml run --rm server create_db` to setup database and to create tables.
 * Run `docker-compose -f analytics-docker-compose.yml up --build -d` to start analytics.
    
-*NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose -f docker-compose.yml up --build -d`*
+*NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose up --build -d`*
 
 #### To stop the application
 
