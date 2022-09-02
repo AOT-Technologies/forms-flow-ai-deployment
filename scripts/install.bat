@@ -34,11 +34,11 @@ EXIT /B %ERRORLEVEL%
     if %~1==1 (
         call:forms-flow-analytics ..\docker-compose
     )
-    call:forms-flow-bpm ..\docker-compose
-    call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-forms ..\docker-compose
+    call:forms-flow-bpm ..\docker-compose
     call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
+    call:forms-flow-api ..\docker-compose %~1
     EXIT /B 0
 	
 :: #############################################################
@@ -68,9 +68,8 @@ EXIT /B %ERRORLEVEL%
         set /p KEYCLOAK_URL_REALM="What is your keycloak url realm name?"
 		set /p KEYCLOAK_ADMIN_USERNAME="what is your keycloak admin user name?"
 		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
-                set /p KEYCLOAK_BPM_CLIENT_SECRET="what is your bpm client secret key?"
 	) else (
-	    docker-compose -f %~1\docker-compose.yml up -d keycloak
+	    docker-compose -f %~1\docker-compose-local.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
 		set KEYCLOAK_URL_REALM=forms-flow-ai
@@ -93,17 +92,10 @@ EXIT /B %ERRORLEVEL%
     echo FORMIO_ROOT_PASSWORD=%FORMIO_ROOT_PASSWORD%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
 
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
-	call:fetch-role-ids
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-forms
+    timeout 5
     EXIT /B 0
 	
-:restart-forms-service
-   
-    docker stop forms-flow-forms
-    docker rm forms-flow-forms
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
-    EXIT /B 0
-
 :: #########################################################################
 :: #########################   config.js    ################################
 :: #########################################################################
@@ -115,9 +107,6 @@ EXIT /B %ERRORLEVEL%
     )
    set window["_env_"] = {
    set NODE_ENV= "production",
-   set REACT_APP_CLIENT_ROLE= "formsflow-client",
-   set REACT_APP_STAFF_DESIGNER_ROLE= "formsflow-designer",
-   set REACT_APP_STAFF_REVIEWER_ROLE= "formsflow-reviewer",
    set REACT_APP_API_SERVER_URL="http://%ip-add%:3001",
    set REACT_APP_API_PROJECT_URL="http://%ip-add%:3001",
    set REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
@@ -133,14 +122,6 @@ EXIT /B %ERRORLEVEL%
    
    echo window["_env_"] = {>>%~1\config.js
    echo NODE_ENV:%NODE_ENV%>>%~1\config.js
-   echo REACT_APP_CLIENT_ROLE:%REACT_APP_CLIENT_ROLE%>>%~1\config.js
-   echo REACT_APP_STAFF_DESIGNER_ROLE:%REACT_APP_STAFF_DESIGNER_ROLE%>>%~1\config.js
-   echo REACT_APP_STAFF_REVIEWER_ROLE:%REACT_APP_STAFF_REVIEWER_ROLE%>>%~1\config.js
-   echo REACT_APP_CLIENT_ID:"%CLIENT_ROLE_ID%",>>%~1\config.js
-   echo REACT_APP_STAFF_REVIEWER_ID:"%REVIEWER_ROLE_ID%",>>%~1\config.js
-   echo REACT_APP_STAFF_DESIGNER_ID:"%DESIGNER_ROLE_ID%",>>%~1\config.js
-   echo REACT_APP_ANONYMOUS_ID:"%ANONYMOUS_ID%",>>%~1\config.js
-   echo REACT_APP_USER_RESOURCE_FORM_ID:"%USER_RESOURCE_ID%",>>%~1\config.js
    echo REACT_APP_API_SERVER_URL:%REACT_APP_API_SERVER_URL%>>%~1\config.js
    echo REACT_APP_API_PROJECT_URL:%REACT_APP_API_PROJECT_URL%>>%~1\config.js
    echo REACT_APP_KEYCLOAK_CLIENT:%REACT_APP_KEYCLOAK_CLIENT%>>%~1\config.js
@@ -163,7 +144,7 @@ EXIT /B %ERRORLEVEL%
 
 :forms-flow-web
 
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-web
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-web
     EXIT /B 0
 
 :: #############################################################
@@ -185,7 +166,8 @@ EXIT /B %ERRORLEVEL%
     echo WEBSOCKET_ENCRYPT_KEY=%WEBSOCKET_ENCRYPT_KEY%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-bpm
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-bpm
+    timeout 6
     EXIT /B 0  
 
 :: #############################################################
@@ -236,7 +218,7 @@ EXIT /B %ERRORLEVEL%
     SETLOCAL
 
     set FORMSFLOW_API_URL=http://%ip-add%:5000
-    set CAMUNDA_API_URL=http://%ip-add%:8000/camunda
+    set BPM_API_URL=http://%ip-add%:8000/camunda
     set FORMSFLOW_API_CORS_ORIGINS=*
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"
@@ -247,7 +229,7 @@ EXIT /B %ERRORLEVEL%
     echo KEYCLOAK_URL_REALM=%KEYCLOAK_URL_REALM%>>%~1\.env
     echo KEYCLOAK_ADMIN_USERNAME=%KEYCLOAK_ADMIN_USERNAME%>>%~1\.env
     echo KEYCLOAK_ADMIN_PASSWORD=%KEYCLOAK_ADMIN_PASSWORD%>>%~1\.env
-    echo CAMUNDA_API_URL=%CAMUNDA_API_URL%>>%~1\.env
+    echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
     echo FORMSFLOW_API_CORS_ORIGINS=%FORMSFLOW_API_CORS_ORIGINS%>>%~1\.env
     if %~2==1 (
         echo INSIGHT_API_URL=%INSIGHT_API_URL%>>%~1\.env
@@ -256,40 +238,6 @@ EXIT /B %ERRORLEVEL%
     echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-webapi
+    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-webapi
 
-:: #############################################################
-:: ################### fetching role ids #######################
-:: #############################################################
-	
-:fetch-role-ids
 
-    timeout 15
-    set /a len=0
-    set /a attemptCount=1
-	echo %DESIGNER_ROLE_ID%
-    :Loop 
-	    call fetch_role_ids.bat
-        if defined DESIGNER_ROLE_ID ( 
-            EXIT /B 0
-        )
-        echo Could not find Role Ids, Kindly make sure the localhost:3001 is up.
-        set /a attemptCount+=1
-        if %attemptCount% GTR  6 (
-            echo Unable to find form role ids, please fix the issue and retry.
-            EXIT /B 0
-	    ) else (
-		    echo Retrying attempt %attemptCount% of 6 Please wait 
-		    if %attemptCount%==2 (
-		        call:restart-forms-service ..\docker-compose
-		    )
-		    if %attemptCount%==4 (
-		        call:restart-forms-service ..\docker-compose
-		    )
-		    if %attemptCount%==6 (
-		        call:restart-forms-service ..\docker-compose
-		    )
-			timeout 15
-            call:Loop
-		)
-	EXIT /B 0
