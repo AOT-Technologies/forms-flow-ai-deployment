@@ -196,8 +196,6 @@ function keycloak
     if [[ -f .env ]]; then
      rm .env
     fi
-    echo "Do you have an exsisting keycloak? [y/n]" 
-    read value1
     function defaultinstallation
     {
         echo WE ARE SETING UP OUR DEFAULT KEYCLOCK FOR YOU
@@ -205,26 +203,8 @@ function keycloak
         read that
         echo Please wait, keycloak is setting up!
         docker-compose -f docker-compose.yml up -d
-	echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
+	      echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
     }
-    
-    function INSTALL_WITH_EXISTING_KEYCLOAK
-    {
-      echo What is your Keycloak url?
-      read KEYCLOAK_URL
-      echo What is your keycloak url realm name?
-      read KEYCLOAK_URL_REALM
-	  echo what is your keycloak admin user name?
-      read KEYCLOAK_ADMIN_USERNAME
-	  echo what is your keycloak admin password?
-      read KEYCLOAK_ADMIN_PASSWORD
-    }
-    
-     if [[ "$value1" == "y" ]]; then  
-        INSTALL_WITH_EXISTING_KEYCLOAK
-     elif [[ "$value1" == "n" ]]; then  
-         defaultinstallation
-     fi  
 }
 function orderwithanalytics
 {
