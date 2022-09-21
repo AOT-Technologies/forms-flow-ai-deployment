@@ -6,12 +6,6 @@ if %choice%==y (
 ) else (
     set /a analytics=0
 )
-set /p choice=Do you have an existing keycloak?[y/n]?
-if %choice%==y (
-    set /a keycloak=1
-) else (
-    set /a keycloak=0
-)
 
 call:find-my-ip
 call:main %analytics% %keycloak%
@@ -63,13 +57,7 @@ EXIT /B %ERRORLEVEL%
         if exist %~1\.env (
         del %~1\.env
         )
-	if %~2==1 (
-        set /p KEYCLOAK_URL="What is your Keycloak url?"
-        set /p KEYCLOAK_URL_REALM="What is your keycloak url realm name?"
-		set /p KEYCLOAK_ADMIN_USERNAME="what is your keycloak admin user name?"
-		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
-	) else (
-	    docker-compose -f %~1\docker-compose-local.yml up --build -d keycloak
+	    docker-compose -f %~1\docker-compose.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
 		set KEYCLOAK_URL_REALM=forms-flow-ai
@@ -92,7 +80,7 @@ EXIT /B %ERRORLEVEL%
     echo FORMIO_ROOT_PASSWORD=%FORMIO_ROOT_PASSWORD%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
 
-    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-forms
+    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
     timeout 5
     EXIT /B 0
 	
@@ -113,7 +101,7 @@ EXIT /B %ERRORLEVEL%
    set REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai",
    set REACT_APP_KEYCLOAK_URL="http://%ip-add%:8080",
    set REACT_APP_WEB_BASE_URL="http://%ip-add%:5000",
-   set REACT_APP_CAMUNDA_API_URI="http://%ip-add%:8000/camunda",
+   set REACT_APP_BPM_URL="http://%ip-add%:8000/camunda",
    set REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55",
    set REACT_APP_APPLICATION_NAME="formsflow.ai",
    set REACT_APP_WEB_BASE_CUSTOM_URL="",
@@ -128,7 +116,7 @@ EXIT /B %ERRORLEVEL%
    echo REACT_APP_KEYCLOAK_URL_REALM:%REACT_APP_KEYCLOAK_URL_REALM%>>%~1\config.js
    echo REACT_APP_KEYCLOAK_URL:%REACT_APP_KEYCLOAK_URL%>>%~1\config.js
    echo REACT_APP_WEB_BASE_URL:%REACT_APP_WEB_BASE_URL%>>%~1\config.js
-   echo REACT_APP_CAMUNDA_API_URI:%REACT_APP_CAMUNDA_API_URI%>>%~1\config.js
+   echo REACT_APP_BPM_URL:%REACT_APP_BPM_URL%>>%~1\config.js
    echo REACT_APP_WEBSOCKET_ENCRYPT_KEY:%REACT_APP_WEBSOCKET_ENCRYPT_KEY%>>%~1\config.js
    echo REACT_APP_APPLICATION_NAME:%REACT_APP_APPLICATION_NAME%>>%~1\config.js
    echo REACT_APP_WEB_BASE_CUSTOM_URL:%REACT_APP_WEB_BASE_CUSTOM_URL%>>%~1\config.js
@@ -144,7 +132,7 @@ EXIT /B %ERRORLEVEL%
 
 :forms-flow-web
 
-    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-web
+    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-web
     EXIT /B 0
 
 :: #############################################################
@@ -166,7 +154,7 @@ EXIT /B %ERRORLEVEL%
     echo WEBSOCKET_ENCRYPT_KEY=%WEBSOCKET_ENCRYPT_KEY%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
     ENDLOCAL
-    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-bpm
+    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
     EXIT /B 0  
 
@@ -238,6 +226,6 @@ EXIT /B %ERRORLEVEL%
     echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     
     ENDLOCAL
-    docker-compose -f %~1\docker-compose-local.yml up --build -d forms-flow-webapi
+    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-webapi
 
 

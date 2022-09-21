@@ -23,21 +23,14 @@ jobs:
         shell: bash
         run: |
           oc project ffp-dev
-          oc rollout latest dc/forms-flow-web
-          oc rollout status dc/forms-flow-web
+          oc patch deployment forms-flow-web  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-admin  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-forms  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-bpm  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-api  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-data-analysis  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-analytics-server  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
           
-          oc scale deployment/forms-flow-admin --replicas=0
-          oc scale deployment/forms-flow-admin --replicas=1
-          oc scale deployment/forms-flow-forms --replicas=0
-          oc scale deployment/forms-flow-forms --replicas=1
-          oc scale deployment/forms-flow-bpm --replicas=0
-          oc scale deployment/forms-flow-bpm --replicas=1
-          oc scale deployment/forms-flow-api --replicas=0
-          oc scale deployment/forms-flow-api --replicas=1
-          oc scale deployment/forms-flow-data-analysis --replicas=0
-          oc scale deployment/forms-flow-data-analysis --replicas=1
-          oc scale deployment/forms-flow-analytics-server --replicas=0
-          oc scale deployment/forms-flow-analytics-server --replicas=1
           
   deploy-to-oc-dev:
     needs: deploy-to-oc-multi-tenancy-dev
@@ -54,16 +47,11 @@ jobs:
         shell: bash
         run: |
           oc project ff-dev
-          oc rollout latest dc/forms-flow-web
-          oc rollout status dc/forms-flow-web
           
-          oc scale deployment/forms-flow-forms --replicas=0
-          oc scale deployment/forms-flow-forms --replicas=1
-          oc scale deployment/forms-flow-bpm --replicas=0
-          oc scale deployment/forms-flow-bpm --replicas=1
-          oc scale deployment/forms-flow-api --replicas=0
-          oc scale deployment/forms-flow-api --replicas=1
-          oc scale deployment/forms-flow-data-analysis --replicas=0
-          oc scale deployment/forms-flow-data-analysis --replicas=1
-          oc scale deployment/forms-flow-analytics-server --replicas=0
-          oc scale deployment/forms-flow-analytics-server --replicas=1
+          oc patch deployment forms-flow-web  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-forms  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-bpm  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-api  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-data-analysis  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          oc patch deployment forms-flow-analytics-server  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+          

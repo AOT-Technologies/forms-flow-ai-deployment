@@ -127,7 +127,7 @@ function forms-flow-bpm
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN >> .env
     echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY >> .env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL >> .env
-    docker-compose -f docker-compose-local.yml up --build -d forms-flow-bpm
+    docker-compose -f docker-compose.yml up --build -d forms-flow-bpm
 }
 
 #############################################################
@@ -158,7 +158,7 @@ function forms-flow-api
     )
     fi
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
-    docker-compose -f docker-compose-local.yml up --build -d forms-flow-webapi
+    docker-compose -f docker-compose.yml up --build -d forms-flow-webapi
 }
 
 #############################################################
@@ -176,13 +176,13 @@ function forms-flow-forms
     echo FORMIO_ROOT_PASSWORD=$FORMIO_ROOT_PASSWORD>>.env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
 
-    docker-compose -f docker-compose-local.yml up --build -d forms-flow-forms
+    docker-compose -f docker-compose.yml up --build -d forms-flow-forms
 
 }
 function forms-flow-web
 {
 cd ../docker-compose/
-docker-compose -f docker-compose-local.yml up --build -d forms-flow-web
+docker-compose -f docker-compose.yml up --build -d forms-flow-web
 echo "********************** formsflow.ai is successfully installed ****************************"
 }
 
@@ -196,35 +196,15 @@ function keycloak
     if [[ -f .env ]]; then
      rm .env
     fi
-    echo "Do you have an exsisting keycloak? [y/n]" 
-    read value1
     function defaultinstallation
     {
         echo WE ARE SETING UP OUR DEFAULT KEYCLOCK FOR YOU
         printf "%s " "Press enter to continue"
         read that
         echo Please wait, keycloak is setting up!
-        docker-compose -f docker-compose-local.yml up -d
-	echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
+        docker-compose -f docker-compose.yml up -d
+	      echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
     }
-    
-    function INSTALL_WITH_EXISTING_KEYCLOAK
-    {
-      echo What is your Keycloak url?
-      read KEYCLOAK_URL
-      echo What is your keycloak url realm name?
-      read KEYCLOAK_URL_REALM
-	  echo what is your keycloak admin user name?
-      read KEYCLOAK_ADMIN_USERNAME
-	  echo what is your keycloak admin password?
-      read KEYCLOAK_ADMIN_PASSWORD
-    }
-    
-     if [[ "$value1" == "y" ]]; then  
-        INSTALL_WITH_EXISTING_KEYCLOAK
-     elif [[ "$value1" == "n" ]]; then  
-         defaultinstallation
-     fi  
 }
 function orderwithanalytics
 {
