@@ -6,12 +6,6 @@ if %choice%==y (
 ) else (
     set /a analytics=0
 )
-set /p choice=Do you have an existing keycloak?[y/n]?
-if %choice%==y (
-    set /a keycloak=1
-) else (
-    set /a keycloak=0
-)
 
 call:find-my-ip
 call:main %analytics% %keycloak%
@@ -63,12 +57,6 @@ EXIT /B %ERRORLEVEL%
         if exist %~1\.env (
         del %~1\.env
         )
-	if %~2==1 (
-        set /p KEYCLOAK_URL="What is your Keycloak url?"
-        set /p KEYCLOAK_URL_REALM="What is your keycloak url realm name?"
-		set /p KEYCLOAK_ADMIN_USERNAME="what is your keycloak admin user name?"
-		set /p KEYCLOAK_ADMIN_PASSWORD="what is your keycloak admin password?"
-	) else (
 	    docker-compose -f %~1\docker-compose.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
