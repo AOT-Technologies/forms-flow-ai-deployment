@@ -105,8 +105,8 @@ function forms-flow-analytics
     echo REDASH_REFERRER_POLICY=$REDASH_REFERRER_POLICY>>.env
     echo REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=$REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS>>.env
 
-    docker-compose -f analytics-docker-compose.yml run --rm server create_db
-    docker-compose -f analytics-docker-compose.yml up --build -d
+    docker compose -f analytics-docker-compose.yml run --rm server create_db
+    docker compose -f analytics-docker-compose.yml up --build -d
 }
 
 #############################################################
@@ -127,7 +127,7 @@ function forms-flow-bpm
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN >> .env
     echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY >> .env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL >> .env
-    docker-compose -f docker-compose.yml up --build -d forms-flow-bpm
+    docker compose -f docker-compose.yml up --build -d forms-flow-bpm
 }
 
 #############################################################
@@ -158,7 +158,7 @@ function forms-flow-api
     )
     fi
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
-    docker-compose -f docker-compose.yml up --build -d forms-flow-webapi
+    docker compose -f docker-compose.yml up --build -d forms-flow-webapi
 }
 
 #############################################################
@@ -176,13 +176,13 @@ function forms-flow-forms
     echo FORMIO_ROOT_PASSWORD=$FORMIO_ROOT_PASSWORD>>.env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
 
-    docker-compose -f docker-compose.yml up --build -d forms-flow-forms
+    docker compose -f docker-compose.yml up --build -d forms-flow-forms
 
 }
 function forms-flow-web
 {
 cd ../docker-compose/
-docker-compose -f docker-compose.yml up --build -d forms-flow-web
+docker compose -f docker-compose.yml up --build -d forms-flow-web
 echo "********************** formsflow.ai is successfully installed ****************************"
 }
 
@@ -202,7 +202,7 @@ function keycloak
         printf "%s " "Press enter to continue"
         read that
         echo Please wait, keycloak is setting up!
-        docker-compose -f docker-compose.yml up -d
+        docker compose -f docker-compose.yml up -d
 	      echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
     }
 }
