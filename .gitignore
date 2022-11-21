@@ -1,0 +1,7 @@
+# exclude custome secrets file
+/docker-compose/.env
+
+# exclude build artifacts
+/configuration/*
+/docker-compose/mongodb/*
+/docker-compose/postgres/*
