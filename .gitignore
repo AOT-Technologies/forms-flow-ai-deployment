@@ -1,4 +1,4 @@
-# exclude custome secrets file
+# exclude custom secrets file
 /docker-compose/.env
 
 # exclude build artifacts
