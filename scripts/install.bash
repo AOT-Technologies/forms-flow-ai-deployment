@@ -90,7 +90,7 @@ function forms-flow-analytics
     REDASH_DATABASE_URL=postgresql://postgres:changeme@postgres/postgres
     REDASH_CORS_ACCESS_CONTROL_ALLOW_ORIGIN=*
     REDASH_REFERRER_POLICY=no-referrer-when-downgrade
-    REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=Content-Type, Authorization
+    REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=Content-Type,Authorization
     echo REDASH_HOST=$REDASH_HOST>>.env
     echo PYTHONUNBUFFERED=$PYTHONUNBUFFERED>>.env
     echo REDASH_LOG_LEVEL=$REDASH_LOG_LEVEL>>.env
