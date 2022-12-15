@@ -20,7 +20,7 @@ services:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
       - DB_DATABASE=${KEYCLOAK_JDBC_DB:-keycloak}
-      - DB_USER=${KEYCLOAK_JDBC_USER-admin}
+      - DB_USER=${KEYCLOAK_JDBC_USER:-admin}
       - DB_PASSWORD=${KEYCLOAK_JDBC_PASSWORD:-changeme}
       - KEYCLOAK_USER=${KEYCLOAK_ADMIN_USERNAME:-admin}
       - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-changeme}
