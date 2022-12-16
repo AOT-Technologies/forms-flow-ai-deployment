@@ -46,7 +46,7 @@ services:
       - "27018:27017"
       
   forms-flow-web:
-    image: formsflow/forms-flow-web:v5.0.1
+    image: formsflow/forms-flow-web:v5.0.2
     volumes:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     links:
@@ -55,7 +55,7 @@ services:
       - "3000:8080"
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v5.0.1
+    image: formsflow/forms-flow-forms:v5.0.2
     restart: always
     environment:
       DEBUG: formio:*
@@ -70,7 +70,7 @@ services:
       - forms-flow-forms-db
       
   forms-flow-bpm-db:
-    image: postgres:latest
+    image: postgres:14
     environment:
       POSTGRES_USER: ${CAMUNDA_JDBC_USER:-admin}
       POSTGRES_PASSWORD: ${CAMUNDA_JDBC_PASSWORD:-changeme}
@@ -81,7 +81,7 @@ services:
       - "5432:5432"
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.0.1
+    image: formsflow/forms-flow-bpm:v5.0.2
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -125,7 +125,7 @@ services:
       - "6432:5432"
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v5.0.1
+    image: formsflow/forms-flow-webapi:v5.0.2
     restart: always
     links:
       - forms-flow-webapi-db
@@ -174,8 +174,3 @@ services:
       - forms-flow-forms
     ports:
       - "8081:8081"
-
-
-volumes:
-  mdb-data:
-  postgres:
