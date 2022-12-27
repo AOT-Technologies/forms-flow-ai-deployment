@@ -114,8 +114,8 @@ function forms-flow-analytics
     echo REDASH_REFERRER_POLICY=$REDASH_REFERRER_POLICY>>.env
     echo REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=$REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS>>.env
 
-    docker-compose run --rm server create_db
-    docker-compose up --build -d
+    docker-compose -f analytics-docker-compose.yml run --rm server create_db
+    docker-compose -f analytics-docker-compose.yml up --build -d
 }
 
 #############################################################
