@@ -72,3 +72,5 @@ EXIT /B %ERRORLEVEL%
 
 :prune-docker
     docker volume prune -f
+    docker system prune
+    docker container prune

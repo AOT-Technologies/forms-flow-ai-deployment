@@ -10,6 +10,15 @@ if [[ $choice == "y" ]]; then
 elif [[ $choice == "n" ]]; then
     ANALYTICS=0
 fi
+echo "Confirm that your IPv4 address is $ipadd [y/n]"
+read choice
+if [[ $choice == "y" ]]; then
+    ipadd=$ipadd
+    echo "$ipadd"
+elif [[ $choice == "n" ]]; then
+    read -p "Enter your IP Adress: " ipadd
+    echo "$ipadd"
+fi
 #############################################################
 ######################### main function #####################
 #############################################################
@@ -117,16 +126,11 @@ function forms-flow-bpm
 {
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
-    FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
-    WEBSOCKET_ENCRYPT_KEY=giert989jkwrgb@DR55
 
     echo KEYCLOAK_URL=$KEYCLOAK_URL >> .env
     echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >>.env
-    echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM >>.env
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL >>.env
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN >> .env
-    echo WEBSOCKET_ENCRYPT_KEY=$WEBSOCKET_ENCRYPT_KEY >> .env
-    echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL >> .env
     docker-compose -f docker-compose.yml up --build -d forms-flow-bpm
 }
 
@@ -136,28 +140,19 @@ function forms-flow-bpm
 
 function forms-flow-api
 {
-    FORMSFLOW_API_URL=http://$ipadd:5000
     BPM_API_URL=http://$ipadd:8000/camunda
-    FORMSFLOW_API_CORS_ORIGINS=*
     if [[ $ANALYTICS == 1 ]]; then (
         echo What is your Redash API key?
         read INSIGHT_API_KEY
         INSIGHT_API_URL=http://$ipadd:7000
     )
     fi
-    echo KEYCLOAK_URL=$KEYCLOAK_URL >>.env
-    echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
-    echo KEYCLOAK_URL_REALM=$KEYCLOAK_URL_REALM >> .env
-    echo KEYCLOAK_ADMIN_USERNAME=$KEYCLOAK_ADMIN_USERNAME >> .env
-    echo KEYCLOAK_ADMIN_PASSWORD=$KEYCLOAK_ADMIN_PASSWORD >> .env
     echo BPM_API_URL=$BPM_API_URL >> .env
-    echo FORMSFLOW_API_CORS_ORIGINS=$FORMSFLOW_API_CORS_ORIGINS >> .env
     if [[ $ANALYTICS == 1 ]]; then ( 
         echo INSIGHT_API_URL=$INSIGHT_API_URL >> .env
         echo INSIGHT_API_KEY=$INSIGHT_API_KEY >> .env
     )
     fi
-    echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL>>.env
     docker-compose -f docker-compose.yml up --build -d forms-flow-webapi
 }
 
@@ -168,12 +163,8 @@ function forms-flow-api
 function forms-flow-forms
 {
     cd ../docker-compose
-    FORMIO_ROOT_EMAIL=admin@example.com
-    FORMIO_ROOT_PASSWORD=changeme
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
 
-    echo FORMIO_ROOT_EMAIL=$FORMIO_ROOT_EMAIL>>.env
-    echo FORMIO_ROOT_PASSWORD=$FORMIO_ROOT_PASSWORD>>.env
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
 
     docker-compose -f docker-compose.yml up --build -d forms-flow-forms
@@ -203,7 +194,6 @@ function keycloak
         read that
         echo Please wait, keycloak is setting up!
         docker-compose -f docker-compose.yml up -d
-	      echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >> .env
     }
 }
 function orderwithanalytics

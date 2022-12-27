@@ -70,7 +70,7 @@ services:
       - forms-flow-forms-db
       
   forms-flow-bpm-db:
-    image: postgres:latest
+    image: postgres:14
     environment:
       POSTGRES_USER: ${CAMUNDA_JDBC_USER:-admin}
       POSTGRES_PASSWORD: ${CAMUNDA_JDBC_PASSWORD:-changeme}
@@ -177,5 +177,4 @@ services:
 
 
 volumes:
-  mdb-data:
   postgres:
