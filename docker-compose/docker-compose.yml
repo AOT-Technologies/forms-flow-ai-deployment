@@ -113,7 +113,7 @@ services:
       - keycloak
       
   forms-flow-webapi-db:
-    image: postgres:11
+    image: postgres:14
     restart: always
     environment:
       POSTGRES_USER: ${FORMSFLOW_API_DB_USER:-postgres}
