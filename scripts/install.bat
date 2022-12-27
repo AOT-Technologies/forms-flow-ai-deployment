@@ -41,11 +41,11 @@ EXIT /B %ERRORLEVEL%
 
 :find-my-ip
     FOR /F "tokens=4 delims= " %%i in ('route print ^| find " 0.0.0.0"') do set ip-add=%%i
-    set /p ip-addr=Confirm that your IPv4 address is %ip-add%? [y/n]
-    if %ip-addr%==y (
+    set /p choice=Confirm that your IPv4 address is %ip-add%? [y/n]
+    if %choice%==y (
            EXIT /B 0
      ) else (
-       set /p ip-addr="What is your IPv4 address?"
+       set /p ip-add="What is your IPv4 address?"
      )
     EXIT /B 0
   
