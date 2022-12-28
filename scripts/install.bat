@@ -41,6 +41,12 @@ EXIT /B %ERRORLEVEL%
 
 :find-my-ip
     FOR /F "tokens=4 delims= " %%i in ('route print ^| find " 0.0.0.0"') do set ip-add=%%i
+    set /p choice=Confirm that your IPv4 address is %ip-add%? [y/n]
+    if %choice%==y (
+           EXIT /B 0
+     ) else (
+       set /p ip-add="What is your IPv4 address?"
+     )
     EXIT /B 0
   
 :set-common-properties
@@ -60,9 +66,6 @@ EXIT /B %ERRORLEVEL%
 	    docker-compose -f %~1\docker-compose.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
-		set KEYCLOAK_URL_REALM=forms-flow-ai
-		set KEYCLOAK_ADMIN_USERNAME=admin
-		set KEYCLOAK_ADMIN_PASSWORD=changeme
 	)
  	EXIT /B 0
    
@@ -72,14 +75,8 @@ EXIT /B %ERRORLEVEL%
 
 :forms-flow-forms
 
-    set FORMIO_ROOT_EMAIL=admin@example.com
-    set FORMIO_ROOT_PASSWORD=changeme
     set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
-
-    echo FORMIO_ROOT_EMAIL=%FORMIO_ROOT_EMAIL%>>%~1\.env
-    echo FORMIO_ROOT_PASSWORD=%FORMIO_ROOT_PASSWORD%>>%~1\.env
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
-
     docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
     timeout 5
     EXIT /B 0
@@ -144,15 +141,11 @@ EXIT /B %ERRORLEVEL%
     SETLOCAL
     set FORMSFLOW_API_URL=http://%ip-add%:5000
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
-    set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
-    echo KEYCLOAK_URL_REALM=%KEYCLOAK_URL_REALM%>>%~1\.env
     echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     echo WEBSOCKET_SECURITY_ORIGIN=%WEBSOCKET_SECURITY_ORIGIN%>>%~1\.env
-    echo WEBSOCKET_ENCRYPT_KEY=%WEBSOCKET_ENCRYPT_KEY%>>%~1\.env
-    echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
     ENDLOCAL
     docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
@@ -205,25 +198,16 @@ EXIT /B %ERRORLEVEL%
 
     SETLOCAL
 
-    set FORMSFLOW_API_URL=http://%ip-add%:5000
     set BPM_API_URL=http://%ip-add%:8000/camunda
-    set FORMSFLOW_API_CORS_ORIGINS=*
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"
         set INSIGHT_API_URL=http://%ip-add%:7000
     )
-    echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
-    echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
-    echo KEYCLOAK_URL_REALM=%KEYCLOAK_URL_REALM%>>%~1\.env
-    echo KEYCLOAK_ADMIN_USERNAME=%KEYCLOAK_ADMIN_USERNAME%>>%~1\.env
-    echo KEYCLOAK_ADMIN_PASSWORD=%KEYCLOAK_ADMIN_PASSWORD%>>%~1\.env
     echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
-    echo FORMSFLOW_API_CORS_ORIGINS=%FORMSFLOW_API_CORS_ORIGINS%>>%~1\.env
     if %~2==1 (
         echo INSIGHT_API_URL=%INSIGHT_API_URL%>>%~1\.env
         echo INSIGHT_API_KEY=%INSIGHT_API_KEY%>>%~1\.env
     )
-    echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     
     ENDLOCAL
     docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-webapi
