@@ -139,11 +139,13 @@ EXIT /B %ERRORLEVEL%
     SETLOCAL
     set FORMSFLOW_API_URL=http://%ip-add%:5000
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
+    set SESSION_COOKIE_SECURE=false
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
     echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     echo WEBSOCKET_SECURITY_ORIGIN=%WEBSOCKET_SECURITY_ORIGIN%>>%~1\.env
+    echo SESSION_COOKIE_SECURE=%SESSION_COOKIE_SECURE%>>%~1\.env
     ENDLOCAL
     docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
