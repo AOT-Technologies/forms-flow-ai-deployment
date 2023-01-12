@@ -102,7 +102,6 @@ EXIT /B %ERRORLEVEL%
    set REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55",
    set REACT_APP_APPLICATION_NAME="formsflow.ai",
    set REACT_APP_WEB_BASE_CUSTOM_URL="",
-   set REACT_APP_FORMIO_JWT_SECRET="--- change me now ---",
    set REACT_APP_USER_ACCESS_PERMISSIONS={accessAllowApplications:false, accessAllowSubmissions:false}
    
    echo window["_env_"] = {>>%~1\config.js
@@ -117,7 +116,6 @@ EXIT /B %ERRORLEVEL%
    echo REACT_APP_WEBSOCKET_ENCRYPT_KEY:%REACT_APP_WEBSOCKET_ENCRYPT_KEY%>>%~1\config.js
    echo REACT_APP_APPLICATION_NAME:%REACT_APP_APPLICATION_NAME%>>%~1\config.js
    echo REACT_APP_WEB_BASE_CUSTOM_URL:%REACT_APP_WEB_BASE_CUSTOM_URL%>>%~1\config.js
-   echo REACT_APP_FORMIO_JWT_SECRET:%REACT_APP_FORMIO_JWT_SECRET%>>%~1\config.js
    echo REACT_APP_USER_ACCESS_PERMISSIONS:%REACT_APP_USER_ACCESS_PERMISSIONS%>>%~1\config.js
    echo };>>%~1\config.js
    EXIT /B 0
