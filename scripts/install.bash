@@ -124,11 +124,13 @@ function forms-flow-bpm
 {
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
+    SESSION_COOKIE_SECURE=false
 
     echo KEYCLOAK_URL=$KEYCLOAK_URL >> .env
     echo KEYCLOAK_BPM_CLIENT_SECRET=$KEYCLOAK_BPM_CLIENT_SECRET >>.env
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL >>.env
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN >> .env
+    echo SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE} >> .env
     docker-compose up --build -d forms-flow-bpm
 }
 
