@@ -61,7 +61,6 @@ function installconfig
    REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
    REACT_APP_APPLICATION_NAME="formsflow.ai"
    REACT_APP_WEB_BASE_CUSTOM_URL=""
-   REACT_APP_FORMIO_JWT_SECRET="--- change me now ---"
    REACT_APP_USER_ACCESS_PERMISSIONS="{accessAllowApplications:false,accessAllowSubmissions:false}"
 	
    echo window["_env_"] = "{">>config.js
@@ -76,7 +75,6 @@ function installconfig
    echo REACT_APP_WEBSOCKET_ENCRYPT_KEY:$REACT_APP_WEBSOCKET_ENCRYPT_KEY>>config.js
    echo REACT_APP_APPLICATION_NAME:$REACT_APP_APPLICATION_NAME>>config.js
    echo REACT_APP_WEB_BASE_CUSTOM_URL:$REACT_APP_WEB_BASE_CUSTOM_URL>>config.js
-   echo REACT_APP_FORMIO_JWT_SECRET:$REACT_APP_FORMIO_JWT_SECRET>>config.js
    echo REACT_APP_USER_ACCESS_PERMISSIONS:$REACT_APP_USER_ACCESS_PERMISSIONS>>config.js
    echo "}";>>config.js
 }
