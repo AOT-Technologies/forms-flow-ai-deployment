@@ -1,0 +1,3 @@
+
+docker-compose/mongodb/data/*
+docker-compose/.DS_Store

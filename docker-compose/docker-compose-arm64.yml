@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: ${KEYCLOAK_JDBC_PASSWORD:-changeme}
       
   keycloak:
-    image: quay.io/keycloak/keycloak:14.0.0
+    image: formsflow/forms-flow-keycloak-arm64:14.0.0
     volumes:
       - ./configuration/imports:/opt/jboss/keycloak/imports
     command: 
@@ -51,6 +51,7 @@ services:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     links:
       - forms-flow-webapi
+      - keycloak
     ports:
       - "3000:8080"
 
@@ -82,7 +83,7 @@ services:
       - "5432:5432"
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.1.0
+    image: formsflow/forms-flow-bpm:v5.1.0-arm64
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -138,7 +139,9 @@ services:
     links:
       - forms-flow-webapi-db
       - forms-flow-forms
+      - keycloak
     entrypoint: "/wait-for-service.sh forms-flow-webapi-db:5432 -s -- /wait-for-service.sh keycloak:8080 -s -- ./entrypoint.sh "
+
     volumes:
       - ./:/app:rw
     environment:
