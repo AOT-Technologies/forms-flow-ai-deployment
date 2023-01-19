@@ -138,7 +138,7 @@ services:
     links:
       - forms-flow-webapi-db
       - forms-flow-forms
-    entrypoint: "/wait-for-service.sh forms-flow-webapi-db:5432 -s -- /wait-for-service.sh keycloak:8080 -s -- ./entrypoint.sh "
+    entrypoint: "/wait-for-service.sh forms-flow-webapi-db:5432 -s -- /wait-for-service.sh keycloak:8080 -s -- /wait-for-service.sh forms-flow-forms:3001 -s -- ./entrypoint.sh "
     volumes:
       - ./:/app:rw
     environment:
