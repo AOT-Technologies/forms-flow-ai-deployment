@@ -1,5 +1,14 @@
 #!/bin/bash
 ipadd=$(hostname -I | awk '{print $1}')
+if [ "$(uname)" == "Darwin" ]; then
+    ipadd=$(ipconfig getifaddr en0)
+fi
+
+docker_compose_file='docker-compose.yml'
+if [ "$(uname -m)" == "arm64" ]; then
+    docker_compose_file='docker-compose-arm64.yml'
+fi
+
 KEYCLOAK_BPM_CLIENT_SECRET="e4bdbd25-1467-4f7f-b993-bc4b1944c943"
 KEYCLOAK_URL="http://$ipadd:8080"
 KEYCLOAK_URL_REALM="forms-flow-ai"
@@ -28,6 +37,7 @@ function main
   keycloak
   if [[ $ANALYTICS == 1 ]]; then
     forms-flow-analytics
+    forms-flow-forms
   elif [[ $ANALYTICS == 0 ]]; then
     forms-flow-forms
   fi
@@ -37,19 +47,32 @@ function main
   forms-flow-web
 }
 
+function is_up
+{
+    # Check if the web api is up
+    api_status="$(curl -LI http://$ipadd:5000 -o /dev/null -w '%{http_code}\n' -s)"
+    if [[ $api_status == 200 ]]; then
+        echo "********************** formsflow.ai is successfully installed ****************************"
+    else
+        echo "Finishing setup"
+        sleep 5
+        is_up
+    fi
+
+}
+
 #############################################################
 ######################## creating config.js #################
 #############################################################
 
 function installconfig
 {
-   mkdir ../configuration	
-   cd ../configuration/
+   cd configuration/
    pwd
    if [[ -f config.js ]]; then
      rm config.js
    fi
-   window["_env_"]="{"
+
    NODE_ENV="production"
    REACT_APP_API_SERVER_URL="http://$ipadd:3001"
    REACT_APP_API_PROJECT_URL="http://$ipadd:3001"
@@ -57,26 +80,27 @@ function installconfig
    REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai"
    REACT_APP_KEYCLOAK_URL="http://$ipadd:8080"
    REACT_APP_WEB_BASE_URL="http://$ipadd:5000"
-   REACT_APP_CAMUNDA_API_URI="http://$ipadd:8000/camunda"
+   REACT_APP_BPM_URL="http://$ipadd:8000/camunda"
    REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
    REACT_APP_APPLICATION_NAME="formsflow.ai"
    REACT_APP_WEB_BASE_CUSTOM_URL=""
    REACT_APP_USER_ACCESS_PERMISSIONS="{accessAllowApplications:false,accessAllowSubmissions:false}"
-	
-   echo window["_env_"] = "{">>config.js
-   echo NODE_ENV:%NODE_ENV%>>config.js
-   echo REACT_APP_API_SERVER_URL:$REACT_APP_API_SERVER_URL>>config.js
-   echo REACT_APP_API_PROJECT_URL:$REACT_APP_API_PROJECT_URL>>config.js
-   echo REACT_APP_KEYCLOAK_CLIENT:$REACT_APP_KEYCLOAK_CLIENT>>config.js
-   echo REACT_APP_KEYCLOAK_URL_REALM:$REACT_APP_KEYCLOAK_URL_REALM>>config.js
-   echo REACT_APP_KEYCLOAK_URL:$REACT_APP_KEYCLOAK_URL>>config.js
-   echo REACT_APP_WEB_BASE_URL:$REACT_APP_WEB_BASE_URL>>config.js
-   echo REACT_APP_CAMUNDA_API_URI:$REACT_APP_CAMUNDA_API_URI>>config.js
-   echo REACT_APP_WEBSOCKET_ENCRYPT_KEY:$REACT_APP_WEBSOCKET_ENCRYPT_KEY>>config.js
-   echo REACT_APP_APPLICATION_NAME:$REACT_APP_APPLICATION_NAME>>config.js
-   echo REACT_APP_WEB_BASE_CUSTOM_URL:$REACT_APP_WEB_BASE_CUSTOM_URL>>config.js
-   echo REACT_APP_USER_ACCESS_PERMISSIONS:$REACT_APP_USER_ACCESS_PERMISSIONS>>config.js
-   echo "}";>>config.js
+
+   echo window['"_env_"'] = "{">>config.js
+   echo '"NODE_ENV"':"\""$NODE_ENV"\"",>>config.js
+   echo '"REACT_APP_API_SERVER_URL"':"\""$REACT_APP_API_SERVER_URL"\"",>>config.js
+   echo '"REACT_APP_API_PROJECT_URL"':"\""$REACT_APP_API_PROJECT_URL"\"",>>config.js
+   echo '"REACT_APP_KEYCLOAK_CLIENT"':"\""$REACT_APP_KEYCLOAK_CLIENT"\"",>>config.js
+   echo '"REACT_APP_KEYCLOAK_URL_REALM"':"\""$REACT_APP_KEYCLOAK_URL_REALM"\"",>>config.js
+   echo '"REACT_APP_KEYCLOAK_URL"':"\""$REACT_APP_KEYCLOAK_URL"\"",>>config.js
+   echo '"REACT_APP_WEB_BASE_URL"':"\""$REACT_APP_WEB_BASE_URL"\"",>>config.js
+   echo '"REACT_APP_BPM_URL"':"\""$REACT_APP_BPM_URL"\"",>>config.js
+   echo '"REACT_APP_WEBSOCKET_ENCRYPT_KEY"':"\""$REACT_APP_WEBSOCKET_ENCRYPT_KEY"\"",>>config.js
+   echo '"REACT_APP_APPLICATION_NAME"':"\""$REACT_APP_APPLICATION_NAME"\"",>>config.js
+   echo '"REACT_APP_WEB_BASE_CUSTOM_URL"':"\""$REACT_APP_WEB_BASE_CUSTOM_URL"\"",>>config.js
+   echo '"REACT_APP_USER_ACCESS_PERMISSIONS"':"$REACT_APP_USER_ACCESS_PERMISSIONS"}>>config.js
+
+   cd ../
 }
 
 #############################################################
@@ -97,7 +121,7 @@ function forms-flow-analytics
     REDASH_DATABASE_URL=postgresql://postgres:changeme@postgres/postgres
     REDASH_CORS_ACCESS_CONTROL_ALLOW_ORIGIN=*
     REDASH_REFERRER_POLICY=no-referrer-when-downgrade
-    REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=Content-Type, Authorization
+    REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=Content-Type,Authorization
     echo REDASH_HOST=$REDASH_HOST>>.env
     echo PYTHONUNBUFFERED=$PYTHONUNBUFFERED>>.env
     echo REDASH_LOG_LEVEL=$REDASH_LOG_LEVEL>>.env
@@ -131,7 +155,7 @@ function forms-flow-bpm
     echo FORMSFLOW_API_URL=$FORMSFLOW_API_URL >>.env
     echo WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN >> .env
     echo SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE} >> .env
-    docker-compose up --build -d forms-flow-bpm
+    docker-compose -f $docker_compose_file up --build -d forms-flow-bpm
 }
 
 #############################################################
@@ -153,7 +177,7 @@ function forms-flow-api
         echo INSIGHT_API_KEY=$INSIGHT_API_KEY >> .env
     )
     fi
-    docker-compose up --build -d forms-flow-webapi
+    docker-compose -f $docker_compose_file up --build -d forms-flow-webapi
 }
 
 #############################################################
@@ -167,14 +191,14 @@ function forms-flow-forms
 
     echo FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL>>.env
 
-    docker-compose up --build -d forms-flow-forms
+    docker-compose -f $docker_compose_file up --build -d forms-flow-forms
 
 }
 function forms-flow-web
 {
 cd ../docker-compose/
-docker-compose up --build -d forms-flow-web
-echo "********************** formsflow.ai is successfully installed ****************************"
+docker-compose -f $docker_compose_file up --build -d forms-flow-web
+is_up
 }
 
 #############################################################
@@ -193,7 +217,7 @@ function keycloak
         printf "%s " "Press enter to continue"
         read that
         echo Please wait, keycloak is setting up!
-        docker-compose up --build -d keycloak
+        docker-compose -f $docker_compose_file up --build -d keycloak
     }
 }
 function orderwithanalytics
