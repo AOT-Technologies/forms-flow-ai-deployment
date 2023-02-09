@@ -11,7 +11,7 @@ services:
     container_name: keycloak_db
     restart: always
     volumes:
-      - ../../forms-flow-idm/keycloak/postgres/keyclaok:/data/postgres
+      - ./postgres/keyclaok:/data/postgres
     environment:
       POSTGRES_DB: ${KEYCLOAK_JDBC_DB:-keycloak}
       POSTGRES_USER: ${KEYCLOAK_JDBC_USER:-admin}
@@ -29,10 +29,10 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${FORMIO_DB_PASSWORD:-changeme}
       MONGO_INITDB_DATABASE: ${FORMIO_DB_NAME:-formio}
     volumes:
-      - ../../formsflow-forms/mongo_entrypoint/001_user.js:/docker-entrypoint-initdb.d/001_user.js:ro
-      - ../../formsflow-forms/mongodb/data/db/:/data/db/
-      - ../../formsflow-forms/mongodb/data/log/:/var/log/mongodb/
-      - ../../formsflow-forms/mongodb/mongod.conf:/etc/mongod.conf
+      - ./../../formsflow-forms/mongo_entrypoint/001_user.js:/docker-entrypoint-initdb.d/001_user.js:ro
+      - ./mongodb/data/db/:/data/db/
+      - ./mongodb/data/log/:/var/log/mongodb/
+      - ./mongodb/mongod.conf:/etc/mongod.conf
     ports:
       - "27018:27017"
     networks:
@@ -46,7 +46,7 @@ services:
       POSTGRES_PASSWORD: ${CAMUNDA_JDBC_PASSWORD:-changeme}
       POSTGRES_DB: ${CAMUNDA_JDBC_DB_NAME:-formsflow-bpm}
     volumes:
-      - ../../forms-flow-bpm/postgres/camunda:/var/lib/postgresql/data 777
+      - ./postgres/camunda:/var/lib/postgresql/data 777
     ports:
       - "5432:5432"
     networks:
@@ -60,7 +60,7 @@ services:
       POSTGRES_PASSWORD: ${FORMSFLOW_API_DB_PASSWORD:-changeme}
       POSTGRES_DB: ${FORMSFLOW_API_DB_NAME:-webapi}
     volumes:
-      - ../../forms-flow-api/postgres/webapi:/var/lib/postgresql/data 777
+      - ./postgres/webapi:/var/lib/postgresql/data 777
     ports:
       - "6432:5432"
     networks:
@@ -70,7 +70,7 @@ services:
     container_name: keycloak
     restart: always
     volumes:
-      - ../../forms-flow-idm/keycloak/imports:/opt/jboss/keycloak/imports
+      - ./configuration/imports:/opt/jboss/keycloak/imports
     command:
       - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/formsflow-ai-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
     environment:
@@ -200,12 +200,11 @@ services:
       - forms-flow-forms-db
       - forms-flow-bpm-db
       - forms-flow-webapi-db
-
     entrypoint: "/wait-for-service.sh forms-flow-webapi-db:5432 -s -- /wait-for-service.sh keycloak:8080 -s -- /wait-for-service.sh forms-flow-forms:3001 -s -- ./entrypoint.sh "
     ports:
       - '5000:5000'
     volumes:
-      - ../../forms-flow-api:/app:rw
+      - ./:/app:rw
     environment:
       INSIGHT_API_KEY: ${INSIGHT_API_KEY}
       INSIGHT_API_URL: ${INSIGHT_API_URL}
