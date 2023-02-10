@@ -36,18 +36,19 @@ function main
 {
   keycloak
   if [[ $ANALYTICS == 1 ]]; then
-    forms-flow-analytics
-    forms-flow-forms
+    formsFlowAnalytics
+    formsFlowForms
   elif [[ $ANALYTICS == 0 ]]; then
-    forms-flow-forms
+    formsFlowForms
   fi
-  forms-flow-bpm
+
+  formsFlowBpm
   installconfig
-  forms-flow-api
-  forms-flow-web
+  formsFlowApi
+  formsFlowWeb
 }
 
-function is_up
+function isUp
 {
     # Check if the web api is up
     api_status="$(curl -LI http://$ipadd:5000 -o /dev/null -w '%{http_code}\n' -s)"
@@ -56,7 +57,7 @@ function is_up
     else
         echo "Finishing setup"
         sleep 5
-        is_up
+        isUp
     fi
 
 }
@@ -87,18 +88,18 @@ function installconfig
    REACT_APP_USER_ACCESS_PERMISSIONS="{accessAllowApplications:false,accessAllowSubmissions:false}"
 
    echo window['"_env_"'] = "{">>config.js
-   echo '"NODE_ENV"':"\""$NODE_ENV"\"",>>config.js
-   echo '"REACT_APP_API_SERVER_URL"':"\""$REACT_APP_API_SERVER_URL"\"",>>config.js
-   echo '"REACT_APP_API_PROJECT_URL"':"\""$REACT_APP_API_PROJECT_URL"\"",>>config.js
-   echo '"REACT_APP_KEYCLOAK_CLIENT"':"\""$REACT_APP_KEYCLOAK_CLIENT"\"",>>config.js
-   echo '"REACT_APP_KEYCLOAK_URL_REALM"':"\""$REACT_APP_KEYCLOAK_URL_REALM"\"",>>config.js
-   echo '"REACT_APP_KEYCLOAK_URL"':"\""$REACT_APP_KEYCLOAK_URL"\"",>>config.js
-   echo '"REACT_APP_WEB_BASE_URL"':"\""$REACT_APP_WEB_BASE_URL"\"",>>config.js
-   echo '"REACT_APP_BPM_URL"':"\""$REACT_APP_BPM_URL"\"",>>config.js
-   echo '"REACT_APP_WEBSOCKET_ENCRYPT_KEY"':"\""$REACT_APP_WEBSOCKET_ENCRYPT_KEY"\"",>>config.js
-   echo '"REACT_APP_APPLICATION_NAME"':"\""$REACT_APP_APPLICATION_NAME"\"",>>config.js
-   echo '"REACT_APP_WEB_BASE_CUSTOM_URL"':"\""$REACT_APP_WEB_BASE_CUSTOM_URL"\"",>>config.js
-   echo '"REACT_APP_USER_ACCESS_PERMISSIONS"':"$REACT_APP_USER_ACCESS_PERMISSIONS"}>>config.js
+   echo "NODE_ENV":"\""$NODE_ENV"\"",>>config.js
+   echo "REACT_APP_API_SERVER_URL":"\""$REACT_APP_API_SERVER_URL"\"",>>config.js
+   echo "REACT_APP_API_PROJECT_URL":"\""$REACT_APP_API_PROJECT_URL"\"",>>config.js
+   echo "REACT_APP_KEYCLOAK_CLIENT":"\""$REACT_APP_KEYCLOAK_CLIENT"\"",>>config.js
+   echo "REACT_APP_KEYCLOAK_URL_REALM":"\""$REACT_APP_KEYCLOAK_URL_REALM"\"",>>config.js
+   echo "REACT_APP_KEYCLOAK_URL":"\""$REACT_APP_KEYCLOAK_URL"\"",>>config.js
+   echo "REACT_APP_WEB_BASE_URL":"\""$REACT_APP_WEB_BASE_URL"\"",>>config.js
+   echo "REACT_APP_BPM_URL":"\""$REACT_APP_BPM_URL"\"",>>config.js
+   echo "REACT_APP_WEBSOCKET_ENCRYPT_KEY":"\""$REACT_APP_WEBSOCKET_ENCRYPT_KEY"\"",>>config.js
+   echo "REACT_APP_APPLICATION_NAME":"\""$REACT_APP_APPLICATION_NAME"\"",>>config.js
+   echo "REACT_APP_WEB_BASE_CUSTOM_URL":"\""$REACT_APP_WEB_BASE_CUSTOM_URL"\"",>>config.js
+   echo "REACT_APP_USER_ACCESS_PERMISSIONS":"$REACT_APP_USER_ACCESS_PERMISSIONS"}>>config.js
 
    cd ../
 }
@@ -107,7 +108,7 @@ function installconfig
 ###################### forms-flow-Analytics #################
 #############################################################
 
-function forms-flow-analytics
+function formsFlowAnalytics
 {
     REDASH_HOST=http://$ipadd:7000
     PYTHONUNBUFFERED=0
@@ -144,7 +145,7 @@ function forms-flow-analytics
 ######################## forms-flow-bpm #####################
 #############################################################
 
-function forms-flow-bpm
+function formsFlowBpm
 {
     FORMSFLOW_API_URL=http://$ipadd:5000
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
@@ -162,21 +163,19 @@ function forms-flow-bpm
 ######################## forms-flow-webapi ##################
 #############################################################
 
-function forms-flow-api
+function formsFlowApi
 {
     BPM_API_URL=http://$ipadd:8000/camunda
+    echo BPM_API_URL=$BPM_API_URL >> .env
     if [[ $ANALYTICS == 1 ]]; then (
         echo What is your Redash API key?
         read INSIGHT_API_KEY
         INSIGHT_API_URL=http://$ipadd:7000
-    )
-    fi
-    echo BPM_API_URL=$BPM_API_URL >> .env
-    if [[ $ANALYTICS == 1 ]]; then ( 
         echo INSIGHT_API_URL=$INSIGHT_API_URL >> .env
         echo INSIGHT_API_KEY=$INSIGHT_API_KEY >> .env
     )
     fi
+    
     docker-compose -f $docker_compose_file up --build -d forms-flow-webapi
 }
 
@@ -184,7 +183,7 @@ function forms-flow-api
 ######################## forms-flow-forms ###################
 #############################################################
 
-function forms-flow-forms
+function formsFlowForms
 {
     cd ../docker-compose
     FORMIO_DEFAULT_PROJECT_URL=http://$ipadd:3001
@@ -194,11 +193,11 @@ function forms-flow-forms
     docker-compose -f $docker_compose_file up --build -d forms-flow-forms
 
 }
-function forms-flow-web
+function formsFlowWeb
 {
 cd ../docker-compose/
 docker-compose -f $docker_compose_file up --build -d forms-flow-web
-is_up
+isUp
 }
 
 #############################################################
