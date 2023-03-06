@@ -1,7 +1,9 @@
 #!/bin/bash
 ipadd=$(hostname -I | awk '{print $1}')
+webapi_port=5000
 if [ "$(uname)" == "Darwin" ]; then
     ipadd=$(ipconfig getifaddr en0)
+    webapi_port=5001
 fi
 
 docker_compose_file='docker-compose.yml'
@@ -51,7 +53,7 @@ function main
 function isUp
 {
     # Check if the web api is up
-    api_status="$(curl -LI http://$ipadd:5000 -o /dev/null -w '%{http_code}\n' -s)"
+    api_status="$(curl -LI http://$ipadd:$webapi_port -o /dev/null -w '%{http_code}\n' -s)"
     if [[ $api_status == 200 ]]; then
         echo "********************** formsflow.ai is successfully installed ****************************"
     else
@@ -80,7 +82,7 @@ function installconfig
    REACT_APP_KEYCLOAK_CLIENT="forms-flow-web"
    REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai"
    REACT_APP_KEYCLOAK_URL="http://$ipadd:8080"
-   REACT_APP_WEB_BASE_URL="http://$ipadd:5000"
+   REACT_APP_WEB_BASE_URL="http://$ipadd:$webapi_port"
    REACT_APP_BPM_URL="http://$ipadd:8000/camunda"
    REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
    REACT_APP_APPLICATION_NAME="formsflow.ai"
@@ -147,7 +149,7 @@ function formsFlowAnalytics
 
 function formsFlowBpm
 {
-    FORMSFLOW_API_URL=http://$ipadd:5000
+    FORMSFLOW_API_URL=http://$ipadd:$webapi_port
     WEBSOCKET_SECURITY_ORIGIN=http://$ipadd:3000
     SESSION_COOKIE_SECURE=false
 

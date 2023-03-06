@@ -171,7 +171,7 @@ services:
       CUSTOM_SUBMISSION_ENABLED: ${CUSTOM_SUBMISSION_ENABLED}
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
     ports:
-      - "5000:5000"
+      - "5001:5000"
       
   proxy:
     image: nginx:stable-alpine

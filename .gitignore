@@ -1,3 +1,4 @@
 
 docker-compose/mongodb/data/*
 docker-compose/.DS_Store
+docker-compose/postgres/*
