@@ -72,7 +72,4 @@ EXIT /B %ERRORLEVEL%
 
 :prune-docker
     docker volume prune -f
-    set images="31557345b2e8" "68141167a247" "8a7391477d59" "59baa6e3d1a8" "176399451347" "a12419875629" "360e5a526f8d"
-    (for %%a in (%images%) do ( 
-         docker rmi %%a -f
-    ))
+    docker image prune --all -f --filter label=Name="formsflow"

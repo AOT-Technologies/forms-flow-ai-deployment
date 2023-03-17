@@ -46,7 +46,7 @@ services:
       - "27018:27017"
       
   forms-flow-web:
-    image: formsflow/forms-flow-web:v5.1.0
+    image: formsflow/forms-flow-web:v5.2.0-test
     volumes:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     links:
@@ -55,7 +55,7 @@ services:
       - "3000:8080"
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v5.1.0
+    image: formsflow/forms-flow-forms:v5.2.0-test
     restart: always
     environment:
       DEBUG: formio:*
@@ -82,7 +82,7 @@ services:
       - "5432:5432"
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.1.0
+    image: formsflow/forms-flow-bpm:v5.2.0-test
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -133,7 +133,7 @@ services:
       - "6432:5432"
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v5.1.0
+    image: formsflow/forms-flow-webapi:v5.2.0-test
     restart: always
     links:
       - forms-flow-webapi-db
