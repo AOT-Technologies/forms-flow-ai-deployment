@@ -66,6 +66,7 @@ services:
       FORMIO_DOMAIN: ${FORMIO_DEFAULT_PROJECT_URL}
       FORMIO_CLIENT_UI: ${FORMIO_CLIENT_UI:-false}
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET}
+      NO_INSTALL: ${NO_INSTALL:-1}
     ports:
       - "3001:3001"
     links:
