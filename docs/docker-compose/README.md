@@ -44,7 +44,7 @@ In this document, you will see the basic details to install and run the applicat
 * Now just run install.bat/bash according to your operating system.
   
 ### Health Check
-* Analytics should be up and available for use at port defaulted to 7000 i.e. http://localhost:7000/
+* Analytics should be up and available for use at port defaulted to 7001 i.e. http://localhost:7001/
 * Business Process Engine should be up and available for use at port defaulted to 8000 i.e. http://localhost:8000/camunda/
 * FormIO should be up and available for use at port defaulted to 3001 i.e. http://localhost:3001/
 * formsflow.ai Rest API should be up and available for use at port defaulted to 5000 i.e. http://localhost:5000/checkpoint

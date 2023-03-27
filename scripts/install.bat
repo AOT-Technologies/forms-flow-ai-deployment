@@ -158,7 +158,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-analytics
 
     SETLOCAL
-    set REDASH_HOST=http://%ip-add%:7000
+    set REDASH_HOST=http://%ip-add%:7001
     set PYTHONUNBUFFERED=0
     set REDASH_LOG_LEVEL=INFO
     set REDASH_REDIS_URL=redis://redis:6379/0
@@ -201,7 +201,7 @@ EXIT /B %ERRORLEVEL%
     set BPM_API_URL=http://%ip-add%:8000/camunda
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"
-        set INSIGHT_API_URL=http://%ip-add%:7000
+        set INSIGHT_API_URL=http://%ip-add%:7001
     )
     echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
     if %~2==1 (

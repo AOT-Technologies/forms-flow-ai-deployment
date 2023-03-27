@@ -11,9 +11,7 @@ if [ "$(uname -m)" == "arm64" ]; then
     docker_compose_file='docker-compose-arm64.yml'
 fi
 
-KEYCLOAK_BPM_CLIENT_SECRET="e4bdbd25-1467-4f7f-b993-bc4b1944c943"
-KEYCLOAK_URL="http://$ipadd:8080"
-KEYCLOAK_URL_REALM="forms-flow-ai"
+
 echo "Do you wish to continue installation that include ANALYTICS? [y/n]" 
 read choice
 if [[ $choice == "y" ]]; then
@@ -30,6 +28,11 @@ elif [[ $choice == "n" ]]; then
     read -p "Enter your IP Adress: " ipadd
     echo "$ipadd"
 fi
+
+KEYCLOAK_BPM_CLIENT_SECRET="e4bdbd25-1467-4f7f-b993-bc4b1944c943"
+KEYCLOAK_URL="http://$ipadd:8080"
+KEYCLOAK_URL_REALM="forms-flow-ai"
+
 #############################################################
 ######################### main function #####################
 #############################################################
@@ -112,7 +115,7 @@ function installconfig
 
 function formsFlowAnalytics
 {
-    REDASH_HOST=http://$ipadd:7000
+    REDASH_HOST=http://$ipadd:7001
     PYTHONUNBUFFERED=0
     REDASH_LOG_LEVEL=INFO
     REDASH_REDIS_URL=redis://redis:6379/0
@@ -172,7 +175,7 @@ function formsFlowApi
     if [[ $ANALYTICS == 1 ]]; then (
         echo What is your Redash API key?
         read INSIGHT_API_KEY
-        INSIGHT_API_URL=http://$ipadd:7000
+        INSIGHT_API_URL=http://$ipadd:7001
         echo INSIGHT_API_URL=$INSIGHT_API_URL >> .env
         echo INSIGHT_API_KEY=$INSIGHT_API_KEY >> .env
     )
