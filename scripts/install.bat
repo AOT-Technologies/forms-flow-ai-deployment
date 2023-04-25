@@ -63,7 +63,7 @@ EXIT /B %ERRORLEVEL%
         if exist %~1\.env (
         del %~1\.env
         )
-	    docker-compose -f %~1\docker-compose.yml up --build -d keycloak
+	    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
 	)
@@ -77,7 +77,7 @@ EXIT /B %ERRORLEVEL%
 
     set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-forms
+    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-forms
     timeout 5
     EXIT /B 0
 	
@@ -127,7 +127,7 @@ EXIT /B %ERRORLEVEL%
 
 :forms-flow-web
 
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-web
+    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-web
     EXIT /B 0
 
 :: #############################################################
@@ -147,7 +147,7 @@ EXIT /B %ERRORLEVEL%
     echo WEBSOCKET_SECURITY_ORIGIN=%WEBSOCKET_SECURITY_ORIGIN%>>%~1\.env
     echo SESSION_COOKIE_SECURE=%SESSION_COOKIE_SECURE%>>%~1\.env
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-bpm
+    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
     EXIT /B 0  
 
@@ -185,8 +185,8 @@ EXIT /B %ERRORLEVEL%
     echo REDASH_REFERRER_POLICY=%REDASH_REFERRER_POLICY%>>%~1\.env
     echo REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=%REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS%>>%~1\.env
     ENDLOCAL
-    docker-compose -f %~1\analytics-docker-compose.yml run --rm server create_db
-    docker-compose -f %~1\analytics-docker-compose.yml up --build -d
+    docker-compose -p formsflow-ai -f %~1\analytics-docker-compose.yml run --rm server create_db
+    docker-compose -p formsflow-ai -f %~1\analytics-docker-compose.yml up --build -d
 	timeout 5
     EXIT /B 0
 
@@ -210,6 +210,6 @@ EXIT /B %ERRORLEVEL%
     )
     
     ENDLOCAL
-    docker-compose -f %~1\docker-compose.yml up --build -d forms-flow-webapi
+    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-webapi
 
 
