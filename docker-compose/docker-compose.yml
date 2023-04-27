@@ -4,21 +4,25 @@ services:
   keycloak-db:
     image: postgres:14
     volumes:
-      - ./postgres/keycloak:/var/lib/postgresql/data
+      - ./postgres/keycloak:/var/lib/postgresql/data 777
     environment:
       POSTGRES_DB: ${KEYCLOAK_JDBC_DB:-keycloak}
       POSTGRES_USER: ${KEYCLOAK_JDBC_USER:-admin}
       POSTGRES_PASSWORD: ${KEYCLOAK_JDBC_PASSWORD:-changeme}
-      
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - formsflow
+
   keycloak:
     image: quay.io/keycloak/keycloak:14.0.0
     volumes:
       - ./configuration/imports:/opt/jboss/keycloak/imports
-    command: 
+    command:
       - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/formsflow-ai-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
+      - DB_PORT=5432
       - DB_DATABASE=${KEYCLOAK_JDBC_DB:-keycloak}
       - DB_USER=${KEYCLOAK_JDBC_USER-admin}
       - DB_PASSWORD=${KEYCLOAK_JDBC_PASSWORD:-changeme}
@@ -28,8 +32,9 @@ services:
       - "8080:8080"
     links:
       - keycloak-db
-      
-      
+    networks:
+      - formsflow
+
   forms-flow-forms-db:
     image: mongo:5.0
     restart: always
@@ -44,7 +49,9 @@ services:
       - ./mongodb/mongod.conf:/etc/mongod.conf
     ports:
       - "27018:27017"
-      
+    networks:
+      - formsflow
+
   forms-flow-web:
     image: formsflow/forms-flow-web:v5.1.0
     volumes:
@@ -53,6 +60,8 @@ services:
       - forms-flow-webapi
     ports:
       - "3000:8080"
+    networks:
+      - formsflow
 
   forms-flow-forms:
     image: formsflow/forms-flow-forms:v5.1.0
@@ -69,7 +78,9 @@ services:
       - "3001:3001"
     links:
       - forms-flow-forms-db
-      
+    networks:
+      - formsflow
+
   forms-flow-bpm-db:
     image: postgres:14
     environment:
@@ -80,6 +91,8 @@ services:
       - ./postgres/camunda:/var/lib/postgresql/data 777
     ports:
       - "5432:5432"
+    networks:
+      - formsflow
 
   forms-flow-bpm:
     image: formsflow/forms-flow-bpm:v5.1.0
@@ -119,7 +132,9 @@ services:
     links:
       - forms-flow-bpm-db
       - keycloak
-      
+    networks:
+      - formsflow
+
   forms-flow-webapi-db:
     image: postgres:14
     restart: always
@@ -131,6 +146,8 @@ services:
       - ./postgres/webapi:/var/lib/postgresql/data 777
     ports:
       - "6432:5432"
+    networks:
+      - formsflow
 
   forms-flow-webapi:
     image: formsflow/forms-flow-webapi:v5.1.0
@@ -169,7 +186,9 @@ services:
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
     ports:
       - "5000:5000"
-      
+    networks:
+      - formsflow
+
   proxy:
     image: nginx:stable-alpine
     volumes:
@@ -182,7 +201,12 @@ services:
       - forms-flow-forms
     ports:
       - "8081:8081"
-
+    networks:
+      - formsflow
 
 volumes:
   postgres:
+  mongodb:
+networks:
+  formsflow:
+    driver: bridge
