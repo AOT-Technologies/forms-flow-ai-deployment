@@ -53,7 +53,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:v5.1.0
+    image: formsflow/forms-flow-web:v5.1.1
     volumes:
       - ./configuration/config.js:/usr/share/nginx/html/config/config.js
     links:
@@ -65,7 +65,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v5.1.0
+    image: formsflow/forms-flow-forms:v5.1.1
     restart: always
     environment:
       DEBUG: formio:*
@@ -73,8 +73,8 @@ services:
       ROOT_EMAIL: ${FORMIO_ROOT_EMAIL:-admin@example.com}
       ROOT_PASSWORD: ${FORMIO_ROOT_PASSWORD:-changeme}
       FORMIO_DOMAIN: ${FORMIO_DEFAULT_PROJECT_URL}
-      FORMIO_CLIENT_UI: ${FORMIO_CLIENT_UI:-false}
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET}
+      NO_INSTALL: ${NO_INSTALL:-1}
     ports:
       - "3001:3001"
     links:
@@ -96,7 +96,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.1.0-arm64
+    image: formsflow/forms-flow-bpm:v5.1.1-arm64
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -151,7 +151,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v5.1.0
+    image: formsflow/forms-flow-webapi:v5.1.1
     restart: always
     links:
       - forms-flow-webapi-db

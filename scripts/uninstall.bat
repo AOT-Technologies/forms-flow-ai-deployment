@@ -72,5 +72,4 @@ EXIT /B %ERRORLEVEL%
 
 :prune-docker
     docker volume prune -f
-    docker system prune
-    docker container prune
+    docker image prune --all -f --filter label=Name="formsflow"
