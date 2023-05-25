@@ -33,8 +33,26 @@ EXIT /B %ERRORLEVEL%
     call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
+    call:isUp
     EXIT /B 0
 	
+
+:: #############################################################
+:: ##################### Check working ########################
+:: #############################################################    
+
+:isUp
+   :Check if the web API is up
+     for /f %%a in ('curl -LI "http://%ip-add%:5000" -o nul -w "%%{http_code}" -s') do set "HTTP=%%a"
+     if "%HTTP%" == "200" (
+       echo formsflow.ai is successfully installed.
+       EXIT /B 0
+     ) else (
+       echo Finishing setup.
+       ping 127.0.0.1 -n 6 >nul
+       goto isUp
+     )
+
 :: #############################################################
 :: ################### Finding IP Address ######################
 :: #############################################################
