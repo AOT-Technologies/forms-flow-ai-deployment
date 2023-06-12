@@ -115,7 +115,7 @@ EXIT /B %ERRORLEVEL%
    set REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
    set REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai",
    set REACT_APP_KEYCLOAK_URL="http://%ip-add%:8080",
-   set REACT_APP_WEB_BASE_URL="http://%ip-add%:5000",
+   set REACT_APP_WEB_BASE_URL="http://%ip-add%:5001",
    set REACT_APP_BPM_URL="http://%ip-add%:8000/camunda",
    set REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55",
    set REACT_APP_APPLICATION_NAME="formsflow.ai",
@@ -155,7 +155,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-bpm
 
     SETLOCAL
-    set FORMSFLOW_API_URL=http://%ip-add%:5000
+    set FORMSFLOW_API_URL=http://%ip-add%:5001
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
     set SESSION_COOKIE_SECURE=false
 
