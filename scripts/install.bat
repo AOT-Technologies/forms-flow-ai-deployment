@@ -30,7 +30,7 @@ EXIT /B %ERRORLEVEL%
     )
     call:forms-flow-forms ..\docker-compose
     call:forms-flow-bpm ..\docker-compose
-    call:config ..\docker-compose\configuration
+    :: call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:isUp
@@ -115,7 +115,7 @@ EXIT /B %ERRORLEVEL%
    set REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
    set REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai",
    set REACT_APP_KEYCLOAK_URL="http://%ip-add%:8080",
-   set REACT_APP_WEB_BASE_URL="http://%ip-add%:5000",
+   set REACT_APP_WEB_BASE_URL="http://%ip-add%:5001",
    set REACT_APP_BPM_URL="http://%ip-add%:8000/camunda",
    set REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55",
    set REACT_APP_APPLICATION_NAME="formsflow.ai",
@@ -145,6 +145,21 @@ EXIT /B %ERRORLEVEL%
 
 :forms-flow-web
 
+    SETLOCAL
+    set MF_FORMSFLOW_WEB_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-web@v5.2.0-alpha/single-spa-build.gz.js
+    set MF_FORMSFLOW_NAV_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-nav@v5.2.0-alpha/forms-flow-nav.gz.js
+    set MF_FORMSFLOW_SERVICE_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-service@v5.2.0-alpha/forms-flow-service.gz.js
+    set MF_FORMSFLOW_ADMIN_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-admin@v5.2.0-alpha/forms-flow-admin.gz.js
+    set MF_FORMSFLOW_THEME_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-theme@v5.2.0-alpha/forms-flow-theme.gz.js
+    set NODE_ENV=production
+
+    echo MF_FORMSFLOW_WEB_URL=%MF_FORMSFLOW_WEB_URL%>>%~1\.env
+    echo MF_FORMSFLOW_NAV_URL=%MF_FORMSFLOW_NAV_URL%>>%~1\.env
+    echo MF_FORMSFLOW_SERVICE_URL=%MF_FORMSFLOW_SERVICE_URL%>>%~1\.env
+    echo MF_FORMSFLOW_ADMIN_URL=%MF_FORMSFLOW_ADMIN_URL%>>%~1\.env
+    echo MF_FORMSFLOW_THEME_URL=%MF_FORMSFLOW_THEME_URL%>>%~1\.env
+    echo NODE_ENV=%NODE_ENV%>>%~1\.env
+
     docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-web
     EXIT /B 0
 
@@ -155,7 +170,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-bpm
 
     SETLOCAL
-    set FORMSFLOW_API_URL=http://%ip-add%:5000
+    set FORMSFLOW_API_URL=http://%ip-add%:5001
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
     set SESSION_COOKIE_SECURE=false
 
