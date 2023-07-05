@@ -49,6 +49,7 @@ function main
   formsFlowBpm
   installconfig
   formsFlowApi
+  formsFlowDocuments
   formsFlowWeb
 }
 
@@ -79,24 +80,14 @@ function installconfig
 #    fi
 
    NODE_ENV="development"
-   REACT_APP_API_SERVER_URL="http://$ipadd:3001"
-   REACT_APP_API_PROJECT_URL="http://$ipadd:3001"
-   REACT_APP_KEYCLOAK_URL="http://$ipadd:8080"
-   REACT_APP_WEB_BASE_URL="http://$ipadd:$webapi_port"
-   REACT_APP_BPM_URL="http://$ipadd:8000/camunda"
-   REACT_APP_DRAFT_ENABLED=true
    DRAFT_ENABLED=true
-   # EXPORT_PDF_ENABLED=true
-   REACT_APP_EXPORT_PDF_ENABLED=true
+   EXPORT_PDF_ENABLED=true
+   DOCUMENT_SERVICE_URL="http://$ipadd:5006"
 
 
    echo NODE_ENV=$NODE_ENV>>.env
-   echo REACT_APP_API_SERVER_URL=$REACT_APP_API_SERVER_URL>>.env
-   echo REACT_APP_API_PROJECT_URL=$REACT_APP_API_PROJECT_URL>>.env
-   echo REACT_APP_KEYCLOAK_URL=$REACT_APP_KEYCLOAK_URL>>.env
-   echo REACT_APP_WEB_BASE_URL=$REACT_APP_WEB_BASE_URL>>.env
-   echo REACT_APP_BPM_URL=$REACT_APP_BPM_URL>>.env
    echo DRAFT_ENABLED=$DRAFT_ENABLED>>.env
+   echo DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL>>.env
    echo EXPORT_PDF_ENABLED=$EXPORT_PDF_ENABLED>>.env
 
 }
@@ -175,6 +166,19 @@ function formsFlowApi
     fi
     
     docker-compose -p formsflow-ai -f $docker_compose_file up --build -d forms-flow-webapi 
+}
+
+#############################################################
+######################## forms-flow-documents ##################
+#############################################################
+
+function formsFlowDocuments
+{
+    FORMSFLOW_DOC_API_URL=http://$ipadd:5006
+
+    echo DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL >>.env
+
+    docker-compose -p formsflow-ai -f $docker_compose_file up --build -d forms-flow-documents 
 }
 
 #############################################################
