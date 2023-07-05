@@ -3,7 +3,6 @@ ipadd=$(hostname -I | awk '{print $1}')
 webapi_port=5001
 if [ "$(uname)" == "Darwin" ]; then
     ipadd=$(ipconfig getifaddr en0)
-    #webapi_port=5001
 fi
 
 docker_compose_file='docker-compose.yml'
