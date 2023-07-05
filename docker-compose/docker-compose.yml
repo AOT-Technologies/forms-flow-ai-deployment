@@ -56,6 +56,7 @@ services:
     image: formsflow/forms-flow-web:v5.2.0-alpha
     links:
       - forms-flow-webapi
+    entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - REACT_APP_API_SERVER_URL=${FORMIO_DEFAULT_PROJECT_URL}

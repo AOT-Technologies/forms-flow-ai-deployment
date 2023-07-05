@@ -57,6 +57,7 @@ services:
     platform: linux/arm64/v8
     links:
       - forms-flow-webapi
+    entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
       # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v5.2.0-alpha/single-spa-build.gz.js}
       # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v5.2.0-alpha/forms-flow-nav.gz.js}
@@ -221,6 +222,35 @@ services:
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
     ports:
       - "5001:5000"
+    networks:
+      - formsflow
+
+  forms-flow-documents:
+    image: formsflow/forms-flow-documents-api:v5.2.0-alpha-arm64
+    restart: always
+    volumes:
+      - ./:/app:rw
+    environment:
+      FORMSFLOW_API_CORS_ORIGINS: ${FORMSFLOW_API_CORS_ORIGINS:-*}
+      JWT_OIDC_WELL_KNOWN_CONFIG: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/.well-known/openid-configuration
+      JWT_OIDC_JWKS_URI: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/protocol/openid-connect/certs
+      JWT_OIDC_ISSUER: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}
+      JWT_OIDC_AUDIENCE: ${KEYCLOAK_WEB_CLIENT_ID:-forms-flow-web}
+      JWT_OIDC_CACHING_ENABLED: 'True'
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_URL_REALM: ${KEYCLOAK_URL_REALM:-forms-flow-ai}
+      FORMSFLOW_API_URL: ${FORMSFLOW_API_URL}
+      FORMSFLOW_DOC_API_URL: ${DOCUMENT_SERVICE_URL}
+      FORMIO_URL: ${FORMIO_DEFAULT_PROJECT_URL}
+      FORMIO_ROOT_EMAIL: ${FORMIO_ROOT_EMAIL:-admin@example.com}
+      FORMIO_ROOT_PASSWORD: ${FORMIO_ROOT_PASSWORD:-changeme}
+      CHROME_DRIVER_PATH: ${CHROME_DRIVER_PATH:-/usr/local/bin/chromedriver}
+      FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
+      MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED:-false}
+      KEYCLOAK_ENABLE_CLIENT_AUTH: ${KEYCLOAK_ENABLE_CLIENT_AUTH:-false}
+
+    ports:
+      - "5006:5006"
     networks:
       - formsflow
 
