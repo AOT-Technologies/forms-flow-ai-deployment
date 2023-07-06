@@ -56,6 +56,7 @@ services:
     image: formsflow/forms-flow-web:v5.2.0-alpha
     links:
       - forms-flow-webapi
+    entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
       - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v5.2.0-alpha/single-spa-build.gz.js}
       - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v5.2.0-alpha/forms-flow-nav.gz.js}
@@ -98,7 +99,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v5.2.0-alpha
+    image: formsflow/forms-flow-forms:v5.2.0
     restart: always
     environment:
       DEBUG: formio:*
