@@ -30,7 +30,6 @@ EXIT /B %ERRORLEVEL%
     )
     call:forms-flow-forms ..\docker-compose
     call:forms-flow-bpm ..\docker-compose
-    call:config ..\docker-compose\configuration
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:isUp
@@ -100,50 +99,27 @@ EXIT /B %ERRORLEVEL%
     EXIT /B 0
 	
 :: #########################################################################
-:: #########################   config.js    ################################
-:: #########################################################################
-
-:config
-
-   if exist %~1\config.js (
-        del %~1\config.js
-    )
-   set window["_env_"] = {
-   set NODE_ENV= "production",
-   set REACT_APP_API_SERVER_URL="http://%ip-add%:3001",
-   set REACT_APP_API_PROJECT_URL="http://%ip-add%:3001",
-   set REACT_APP_KEYCLOAK_CLIENT="forms-flow-web",
-   set REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai",
-   set REACT_APP_KEYCLOAK_URL="http://%ip-add%:8080",
-   set REACT_APP_WEB_BASE_URL="http://%ip-add%:5001",
-   set REACT_APP_BPM_URL="http://%ip-add%:8000/camunda",
-   set REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55",
-   set REACT_APP_APPLICATION_NAME="formsflow.ai",
-   set REACT_APP_WEB_BASE_CUSTOM_URL="",
-   set REACT_APP_USER_ACCESS_PERMISSIONS={accessAllowApplications:false, accessAllowSubmissions:false}
-   
-   echo window["_env_"] = {>>%~1\config.js
-   echo NODE_ENV:%NODE_ENV%>>%~1\config.js
-   echo REACT_APP_API_SERVER_URL:%REACT_APP_API_SERVER_URL%>>%~1\config.js
-   echo REACT_APP_API_PROJECT_URL:%REACT_APP_API_PROJECT_URL%>>%~1\config.js
-   echo REACT_APP_KEYCLOAK_CLIENT:%REACT_APP_KEYCLOAK_CLIENT%>>%~1\config.js
-   echo REACT_APP_KEYCLOAK_URL_REALM:%REACT_APP_KEYCLOAK_URL_REALM%>>%~1\config.js
-   echo REACT_APP_KEYCLOAK_URL:%REACT_APP_KEYCLOAK_URL%>>%~1\config.js
-   echo REACT_APP_WEB_BASE_URL:%REACT_APP_WEB_BASE_URL%>>%~1\config.js
-   echo REACT_APP_BPM_URL:%REACT_APP_BPM_URL%>>%~1\config.js
-   echo REACT_APP_WEBSOCKET_ENCRYPT_KEY:%REACT_APP_WEBSOCKET_ENCRYPT_KEY%>>%~1\config.js
-   echo REACT_APP_APPLICATION_NAME:%REACT_APP_APPLICATION_NAME%>>%~1\config.js
-   echo REACT_APP_WEB_BASE_CUSTOM_URL:%REACT_APP_WEB_BASE_CUSTOM_URL%>>%~1\config.js
-   echo REACT_APP_USER_ACCESS_PERMISSIONS:%REACT_APP_USER_ACCESS_PERMISSIONS%>>%~1\config.js
-   echo };>>%~1\config.js
-   EXIT /B 0
-   
-
-:: #########################################################################
 :: ######################### forms-flow-web ################################
 :: #########################################################################
 
 :forms-flow-web
+
+    SETLOCAL
+    set BPM_API_URL=http://%ip-add%:8000/camunda
+    set MF_FORMSFLOW_WEB_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-web@v5.2.0-alpha/single-spa-build.gz.js
+    set MF_FORMSFLOW_NAV_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-nav@v5.2.0-alpha/forms-flow-nav.gz.js
+    set MF_FORMSFLOW_SERVICE_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-service@v5.2.0-alpha/forms-flow-service.gz.js
+    set MF_FORMSFLOW_ADMIN_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-admin@v5.2.0-alpha/forms-flow-admin.gz.js
+    set MF_FORMSFLOW_THEME_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-theme@v5.2.0-alpha/forms-flow-theme.gz.js
+    set NODE_ENV=production
+
+    echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
+    echo MF_FORMSFLOW_WEB_URL=%MF_FORMSFLOW_WEB_URL%>>%~1\.env
+    echo MF_FORMSFLOW_NAV_URL=%MF_FORMSFLOW_NAV_URL%>>%~1\.env
+    echo MF_FORMSFLOW_SERVICE_URL=%MF_FORMSFLOW_SERVICE_URL%>>%~1\.env
+    echo MF_FORMSFLOW_ADMIN_URL=%MF_FORMSFLOW_ADMIN_URL%>>%~1\.env
+    echo MF_FORMSFLOW_THEME_URL=%MF_FORMSFLOW_THEME_URL%>>%~1\.env
+    echo NODE_ENV=%NODE_ENV%>>%~1\.env
 
     docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-web
     EXIT /B 0

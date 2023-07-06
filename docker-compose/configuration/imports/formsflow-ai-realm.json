@@ -262,6 +262,14 @@
           "attributes": {}
         },
         {
+          "name": "formsflow-admin",
+          "description": "Provides admin access to use the formsflow.ai solution. Required to manage users and permissions.",
+          "composite": false,
+          "clientRole": true,
+          
+          "attributes": {}
+        },
+        {
           "name": "formsflow-designer",
           "description": "Provides access to use the formsflow.ai solution. Access to wok on form designer studio.",
           "composite": false,
@@ -383,6 +391,18 @@
           "clientRoles": {
             "forms-flow-web": [
               "formsflow-client"
+            ]
+          },
+          "subGroups": []
+        },
+        {
+          "name": "formsflow-admin",
+          "path": "/formsflow/formsflow-admin",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {
+            "forms-flow-web": [
+              "formsflow-admin"
             ]
           },
           "subGroups": []
@@ -525,6 +545,30 @@
     },
     "notBefore" : 0,
     "groups" : [ "/camunda-admin", "/formsflow/formsflow-client" ]
+  },
+  {
+    "createdTimestamp" : 1621862607660,
+    "username" : "formsflow-admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "Admin",
+    "lastName" : "FFA",
+    "email" : "formsflow-admin@example.com",
+    "credentials" : [ {
+      "type" : "password",
+      "createdDate" : 1621863987325,
+      "secretData" : "{\"value\":\"9R9a8Onha7JcZt59SIq8ngfqwDJwPKiKb8mJ2WO6p2eI3S9qhzR1GPDFtKjOWq8qpm8vsGfp/a/DyHWQuIvmlA==\",\"salt\":\"R/OTBeSXHzsKtJOV/bufEA==\"}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ "UPDATE_PASSWORD" ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ "/camunda-admin", "/formsflow/formsflow-admin" ]
   }, {
     "createdTimestamp" : 1621862546931,
     "username" : "formsflow-designer",
@@ -547,7 +591,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ "/camunda-admin", "/formsflow/formsflow-designer" ]
+    "groups" : [ "/camunda-admin", "/formsflow/formsflow-designer", "/formsflow/formsflow-admin" ]
   }, {
     "createdTimestamp" : 1625009614956,
     "username" : "formsflow-approver",

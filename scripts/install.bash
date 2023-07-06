@@ -3,7 +3,6 @@ ipadd=$(hostname -I | awk '{print $1}')
 webapi_port=5001
 if [ "$(uname)" == "Darwin" ]; then
     ipadd=$(ipconfig getifaddr en0)
-    # webapi_port=5001
 fi
 
 docker_compose_file='docker-compose.yml'
@@ -50,6 +49,7 @@ function main
   formsFlowBpm
   installconfig
   formsFlowApi
+  formsFlowDocuments
   formsFlowWeb
 }
 
@@ -73,40 +73,23 @@ function isUp
 
 function installconfig
 {
-   cd configuration/
-   pwd
-   if [[ -f config.js ]]; then
-     rm config.js
-   fi
+#    cd configuration/
+#    pwd
+#    if [[ -f config.js ]]; then
+#      rm config.js
+#    fi
 
-   NODE_ENV="production"
-   REACT_APP_API_SERVER_URL="http://$ipadd:3001"
-   REACT_APP_API_PROJECT_URL="http://$ipadd:3001"
-   REACT_APP_KEYCLOAK_CLIENT="forms-flow-web"
-   REACT_APP_KEYCLOAK_URL_REALM="forms-flow-ai"
-   REACT_APP_KEYCLOAK_URL="http://$ipadd:8080"
-   REACT_APP_WEB_BASE_URL="http://$ipadd:$webapi_port"
-   REACT_APP_BPM_URL="http://$ipadd:8000/camunda"
-   REACT_APP_WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
-   REACT_APP_APPLICATION_NAME="formsflow.ai"
-   REACT_APP_WEB_BASE_CUSTOM_URL=""
-   REACT_APP_USER_ACCESS_PERMISSIONS="{accessAllowApplications:false,accessAllowSubmissions:false}"
+   NODE_ENV="development"
+   DRAFT_ENABLED=true
+   EXPORT_PDF_ENABLED=true
+   DOCUMENT_SERVICE_URL="http://$ipadd:5006"
 
-   echo window['"_env_"'] = "{">>config.js
-   echo "NODE_ENV":"\""$NODE_ENV"\"",>>config.js
-   echo "REACT_APP_API_SERVER_URL":"\""$REACT_APP_API_SERVER_URL"\"",>>config.js
-   echo "REACT_APP_API_PROJECT_URL":"\""$REACT_APP_API_PROJECT_URL"\"",>>config.js
-   echo "REACT_APP_KEYCLOAK_CLIENT":"\""$REACT_APP_KEYCLOAK_CLIENT"\"",>>config.js
-   echo "REACT_APP_KEYCLOAK_URL_REALM":"\""$REACT_APP_KEYCLOAK_URL_REALM"\"",>>config.js
-   echo "REACT_APP_KEYCLOAK_URL":"\""$REACT_APP_KEYCLOAK_URL"\"",>>config.js
-   echo "REACT_APP_WEB_BASE_URL":"\""$REACT_APP_WEB_BASE_URL"\"",>>config.js
-   echo "REACT_APP_BPM_URL":"\""$REACT_APP_BPM_URL"\"",>>config.js
-   echo "REACT_APP_WEBSOCKET_ENCRYPT_KEY":"\""$REACT_APP_WEBSOCKET_ENCRYPT_KEY"\"",>>config.js
-   echo "REACT_APP_APPLICATION_NAME":"\""$REACT_APP_APPLICATION_NAME"\"",>>config.js
-   echo "REACT_APP_WEB_BASE_CUSTOM_URL":"\""$REACT_APP_WEB_BASE_CUSTOM_URL"\"",>>config.js
-   echo "REACT_APP_USER_ACCESS_PERMISSIONS":"$REACT_APP_USER_ACCESS_PERMISSIONS"}>>config.js
 
-   cd ../
+   echo NODE_ENV=$NODE_ENV>>.env
+   echo DRAFT_ENABLED=$DRAFT_ENABLED>>.env
+   echo DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL>>.env
+   echo EXPORT_PDF_ENABLED=$EXPORT_PDF_ENABLED>>.env
+
 }
 
 #############################################################
@@ -128,6 +111,7 @@ function formsFlowAnalytics
     REDASH_CORS_ACCESS_CONTROL_ALLOW_ORIGIN=*
     REDASH_REFERRER_POLICY=no-referrer-when-downgrade
     REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=Content-Type,Authorization
+
     echo REDASH_HOST=$REDASH_HOST>>.env
     echo PYTHONUNBUFFERED=$PYTHONUNBUFFERED>>.env
     echo REDASH_LOG_LEVEL=$REDASH_LOG_LEVEL>>.env
@@ -182,6 +166,19 @@ function formsFlowApi
     fi
     
     docker-compose -p formsflow-ai -f $docker_compose_file up --build -d forms-flow-webapi 
+}
+
+#############################################################
+######################## forms-flow-documents ##################
+#############################################################
+
+function formsFlowDocuments
+{
+    FORMSFLOW_DOC_API_URL=http://$ipadd:5006
+
+    echo DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL >>.env
+
+    docker-compose -p formsflow-ai -f $docker_compose_file up --build -d forms-flow-documents 
 }
 
 #############################################################
