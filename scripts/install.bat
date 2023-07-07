@@ -43,7 +43,7 @@ EXIT /B %ERRORLEVEL%
 
 :isUp
    :Check if the web API is up
-     for /f %%a in ('curl -LI "http://%ip-add%:5000" -o nul -w "%%{http_code}" -s') do set "HTTP=%%a"
+     for /f %%a in ('curl -LI "http://%ip-add%:5001" -o nul -w "%%{http_code}" -s') do set "HTTP=%%a"
      if "%HTTP%" == "200" (
        echo formsflow.ai is successfully installed.
        EXIT /B 0
