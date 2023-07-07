@@ -32,6 +32,7 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-bpm ..\docker-compose
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
+    call:forms-flow-documents ..\docker-compose
     call:isUp
     EXIT /B 0
 	
@@ -106,20 +107,7 @@ EXIT /B %ERRORLEVEL%
 
     SETLOCAL
     set BPM_API_URL=http://%ip-add%:8000/camunda
-    set MF_FORMSFLOW_WEB_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-web@v5.2.0-alpha/single-spa-build.gz.js
-    set MF_FORMSFLOW_NAV_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-nav@v5.2.0-alpha/forms-flow-nav.gz.js
-    set MF_FORMSFLOW_SERVICE_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-service@v5.2.0-alpha/forms-flow-service.gz.js
-    set MF_FORMSFLOW_ADMIN_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-admin@v5.2.0-alpha/forms-flow-admin.gz.js
-    set MF_FORMSFLOW_THEME_URL=https://s3.ap-northeast-1.amazonaws.com/formsflow.ai-micro-front-ends/forms-flow-theme@v5.2.0-alpha/forms-flow-theme.gz.js
-    set NODE_ENV=production
-
     echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
-    echo MF_FORMSFLOW_WEB_URL=%MF_FORMSFLOW_WEB_URL%>>%~1\.env
-    echo MF_FORMSFLOW_NAV_URL=%MF_FORMSFLOW_NAV_URL%>>%~1\.env
-    echo MF_FORMSFLOW_SERVICE_URL=%MF_FORMSFLOW_SERVICE_URL%>>%~1\.env
-    echo MF_FORMSFLOW_ADMIN_URL=%MF_FORMSFLOW_ADMIN_URL%>>%~1\.env
-    echo MF_FORMSFLOW_THEME_URL=%MF_FORMSFLOW_THEME_URL%>>%~1\.env
-    echo NODE_ENV=%NODE_ENV%>>%~1\.env
 
     docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-web
     EXIT /B 0
@@ -206,4 +194,17 @@ EXIT /B %ERRORLEVEL%
     ENDLOCAL
     docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-webapi
 
+:: #############################################################
+:: ############### forms-flow-documents-api ####################
+:: #############################################################
+
+:forms-flow-documents
+
+  SETLOCAL
+  set DOCUMENT_SERVICE_URL=http://%ip-add%:5006
+  echo DOCUMENT_SERVICE_URL=%DOCUMENT_SERVICE_URL%>>%~1\.env
+
+  docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-documents-api
+    timeout 5
+    EXIT /B 0
 
