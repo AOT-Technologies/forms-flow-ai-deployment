@@ -53,7 +53,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:v5.2.0-alpha
+    image: formsflow/forms-flow-web:v5.2.0
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
@@ -125,7 +125,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.2.0-alpha
+    image: formsflow/forms-flow-bpm:v5.2.0
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -180,7 +180,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v5.2.0-alpha
+    image: formsflow/forms-flow-webapi:v5.2.0
     restart: always
     links:
       - forms-flow-webapi-db
@@ -220,7 +220,7 @@ services:
       - formsflow
 
   forms-flow-documents-api:
-    image: formsflow/forms-flow-documents-api:v5.2.0-alpha
+    image: formsflow/forms-flow-documents-api:v5.2.0
     restart: always
     links:
       - forms-flow-forms
