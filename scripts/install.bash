@@ -50,6 +50,7 @@ function main
   installconfig
   formsFlowApi
   formsFlowDocuments
+  formsflowDataanlysis
   formsFlowWeb
 }
 
@@ -169,7 +170,7 @@ function formsFlowApi
 }
 
 #############################################################
-######################## forms-flow-documents ##################
+####################### forms-flow-documents ################
 #############################################################
 
 function formsFlowDocuments
@@ -179,6 +180,19 @@ function formsFlowDocuments
     echo DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL >>.env
 
     docker-compose -p formsflow-ai -f $docker_compose_file up --build -d forms-flow-documents 
+}
+
+#############################################################
+################## forms-flow-data-analysis-api #############
+#############################################################
+
+function formsflowDataanlysis
+{
+    DATA_ANALYSIS_API_BASE_URL=http://$ipadd:6000/analysis
+
+    echo DATA_ANALYSIS_API_BASE_URL=$DATA_ANALYSIS_API_BASE_URL >>.env
+
+    docker-compose -p formsflow-ai -f $docker_compose_file up --build -d forms-flow-data-analysis-api
 }
 
 #############################################################
