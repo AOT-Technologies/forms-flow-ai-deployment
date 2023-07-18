@@ -264,7 +264,7 @@ services:
       - '5430:5432'
 
   forms-flow-data-analysis-api:
-    image: formsflow/forms-flow-data-analysis-api:v5.2.0
+    image: formsflow/forms-flow-data-analysis-api:v5.2.1-alpha
     restart: always
     links:
       - forms-flow-data-analysis-db
@@ -285,7 +285,7 @@ services:
       MODEL_ID: ${MODEL_ID:-Seethal/sentiment_analysis_generic_dataset}
       DATABASE_SUPPORT: ${DATABASE_SUPPORT:-DISABLED}
     ports:
-      - '6001:5001'
+      - '6001:5000'
     networks:
       - formsflow
 
