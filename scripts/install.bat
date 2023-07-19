@@ -1,5 +1,35 @@
 @echo off
 
+setlocal EnableDelayedExpansion
+
+:: Define the array of valid Docker versions
+set "validVersions=4.20.1 4.20.0 4.19.0 4.18.0 4.17.0 4.16.0 4.15.0 4.14.0 4.13.0 4.12.0 4.11.0 4.10.0 4.1.1 4.0.0"
+
+:: Ask the user for their Docker version
+set /p userVersion="Please enter your Docker version (e.g., 4.10.0): "
+
+:: Check if the user's version is in the list
+set "versionFound="
+for %%v in (%validVersions%) do (
+    if "!userVersion!" equ "%%v" (
+        set "versionFound=true"
+        goto :VersionFound
+    )
+)
+
+:: If the user's version is not found, display a warning
+echo This Docker version is not tested! 
+echo Please use one of the following versions %validVersions% or else continue with your version!
+goto :start
+
+:VersionFound
+:: Display a success message if the version is found
+echo Your Docker version (%userVersion%) is tested and working!
+
+goto :start
+
+:start
+
 set /p choice=Do you want analytics to include in the installation? [y/n]
 if %choice%==y (
     set /a analytics=1
@@ -181,12 +211,10 @@ EXIT /B %ERRORLEVEL%
 
     SETLOCAL
 
-    set BPM_API_URL=http://%ip-add%:8000/camunda
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"
         set INSIGHT_API_URL=http://%ip-add%:7001
     )
-    echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
     if %~2==1 (
         echo INSIGHT_API_URL=%INSIGHT_API_URL%>>%~1\.env
         echo INSIGHT_API_KEY=%INSIGHT_API_KEY%>>%~1\.env
@@ -214,6 +242,7 @@ EXIT /B %ERRORLEVEL%
   SETLOCAL
   set DATA_ANALYSIS_API_BASE_URL=http://%ip-add%:6001
   set DATA_ANALYSIS_DB_URL=postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis
+
   echo DATA_ANALYSIS_API_BASE_URL=%DATA_ANALYSIS_API_BASE_URL%>>%~1\.env
   echo DATA_ANALYSIS_DB_URL=%DATA_ANALYSIS_DB_URL%>>%~1\.env
 
