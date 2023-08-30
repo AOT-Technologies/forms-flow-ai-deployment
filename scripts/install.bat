@@ -3,10 +3,10 @@
 setlocal EnableDelayedExpansion
 
 :: Define the array of valid Docker versions
-set "validVersions=4.20.1 4.20.0 4.19.0 4.18.0 4.17.0 4.16.0 4.15.0 4.14.0 4.13.0 4.12.0 4.11.0 4.10.0 4.1.1 4.0.0"
+set "validVersions=v4.21.1 v4.21.0 v4.20.1 v4.20.0 v4.19.0 v4.18.0 v4.17.0 v4.16.0 v4.15.0 v4.14.0 v4.13.0 v4.12.0 v4.11.0 v4.10.0 v4.1.1 v4.0.0"
 
 :: Ask the user for their Docker version
-set /p userVersion="Please enter your Docker version (e.g., 4.10.0): "
+set /p userVersion="Please enter your Docker version (e.g., v4.10.0): "
 
 :: Check if the user's version is in the list
 set "versionFound="
@@ -20,7 +20,12 @@ for %%v in (%validVersions%) do (
 :: If the user's version is not found, display a warning
 echo This Docker version is not tested! 
 echo Please use one of the following versions %validVersions% or else continue with your version!
-goto :start
+set /p continue=Do you want to continue? [y/n]
+if %continue%== y (
+   goto :start 
+) else (
+   exit
+)
 
 :VersionFound
 :: Display a success message if the version is found

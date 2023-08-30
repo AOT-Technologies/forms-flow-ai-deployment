@@ -10,8 +10,21 @@ if [ "$(uname -m)" == "arm64" ]; then
     docker_compose_file='docker-compose-arm64.yml'
 fi
 
+# Array of Docker versions
+docker_versions=("v4.21.1" "v4.21.0" "v4.20.1" "v4.20.0" "v4.19.0" "v4.18.0" "v4.17.0" "v4.16.0" "v4.15.0" "v4.14.0" "v4.13.0" "v4.12.0" "v4.11.0" "v4.10.0")
 
-echo "Do you wish to continue installation that include ANALYTICS? [y/n]" 
+# Ask the user for their Docker version
+read -p "What version of Docker are you using? " user_version
+
+# Check if the user version is in the array
+if [[ " ${docker_versions[@]} " =~ " ${user_version} " ]]; then
+    echo "Congratulations! The Docker version $user_version is tested and working."
+else
+    echo "Warning: The Docker version $user_version is not recommended. Please consider using one of the following tested versions: ${docker_versions[@]}"
+    exit 1  # Exit the script with a non-zero status code
+fi
+
+echo "Do you wish to continue installation that include ANALYTICS? [y/n]"
 read choice
 if [[ $choice == "y" ]]; then
     ANALYTICS=1
