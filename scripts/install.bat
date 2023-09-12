@@ -3,15 +3,25 @@
 setlocal EnableDelayedExpansion
 
 :: Define the array of valid Docker versions
-set "validVersions=v4.21.1 v4.21.0 v4.20.1 v4.20.0 v4.19.0 v4.18.0 v4.17.0 v4.16.0 v4.15.0 v4.14.0 v4.13.0 v4.12.0 v4.11.0 v4.10.0 v4.1.1 v4.0.0"
+set "validVersions=24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
 
-:: Ask the user for their Docker version
-set /p userVersion="Please enter your Docker version (e.g., v4.10.0): "
+:: Run the docker -v command and capture its output
+for /f "tokens=*" %%A in ('docker -v 2^>^&1') do (
+    set "docker_info=%%A"
+)
+
+:: Extract the Docker version using string manipulation
+for /f "tokens=3" %%B in ("!docker_info!") do (
+    set "docker_version=%%B"
+    set "docker_version=!docker_version:,=!"
+)
+:: Display the extracted Docker version
+echo Docker version: %docker_version%
 
 :: Check if the user's version is in the list
 set "versionFound="
-for %%v in (%validVersions%) do (
-    if "!userVersion!" equ "%%v" (
+for %%B in (%validVersions%) do (
+    if "!docker_version!" equ "%%B" (
         set "versionFound=true"
         goto :VersionFound
     )
@@ -19,7 +29,6 @@ for %%v in (%validVersions%) do (
 
 :: If the user's version is not found, display a warning
 echo This Docker version is not tested! 
-echo Please use one of the following versions %validVersions% or else continue with your version!
 set /p continue=Do you want to continue? [y/n]
 if %continue%== y (
    goto :start 
@@ -29,7 +38,7 @@ if %continue%== y (
 
 :VersionFound
 :: Display a success message if the version is found
-echo Your Docker version (%userVersion%) is tested and working!
+echo Your Docker version (%docker_version%) is tested and working!
 
 goto :start
 

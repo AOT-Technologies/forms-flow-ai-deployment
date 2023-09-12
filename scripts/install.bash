@@ -10,19 +10,44 @@ if [ "$(uname -m)" == "arm64" ]; then
     docker_compose_file='docker-compose-arm64.yml'
 fi
 
-# Array of Docker versions
-docker_versions=("v4.21.1" "v4.21.0" "v4.20.1" "v4.20.0" "v4.19.0" "v4.18.0" "v4.17.0" "v4.16.0" "v4.15.0" "v4.14.0" "v4.13.0" "v4.12.0" "v4.11.0" "v4.10.0")
+# Run the docker -v command and capture its output
+docker_info=$(docker -v 2>&1)
 
-# Ask the user for their Docker version
-read -p "What version of Docker are you using? " user_version
+# Extract the Docker version using string manipulation
+docker_version=$(echo "$docker_info" | awk '{print $3}' | tr -d ',')
 
-# Check if the user version is in the array
-if [[ " ${docker_versions[@]} " =~ " ${user_version} " ]]; then
-    echo "Congratulations! The Docker version $user_version is tested and working."
+# Display the extracted Docker version
+echo "Docker version: $docker_version"
+
+# Define a list of valid Docker versions
+validVersions="24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
+
+# Check if the user's version is in the list
+versionFound=false
+
+for version in $validVersions; do
+    if [ "$docker_version" == "$version" ]; then
+        versionFound=true
+        break
+    fi
+done
+
+if [ "$versionFound" == true ]; then
+    echo "Docker version is valid. Continuing with installation..."
+    # Add your installation steps here
 else
-    echo "Warning: The Docker version $user_version is not recommended. Please consider using one of the following tested versions: ${docker_versions[@]}"
-    exit 1  # Exit the script with a non-zero status code
-fi
+    echo "Docker version is not valid."
+
+    # Ask the user whether to continue or exit the installation
+    read -p "Do you want to continue with the installation? (yes/no): " continueInstallation
+
+    if [ "$continueInstallation" == "yes" ]; then
+        echo "Continuing with installation..."
+        # Add your installation steps here
+    else
+        echo "Installation aborted."
+        exit 1
+    fi
 
 echo "Do you wish to continue installation that include ANALYTICS? [y/n]"
 read choice
