@@ -2,7 +2,7 @@
 
 # Function to determine the IP address
 get_ip_address() {
-    ipadd=$(hostname -I | awk '{print $1}')
+    ipadd=ipadd=$(hostname -I | awk '{print $1}')
     if [ "$(uname)" == "Darwin" ]; then
         ipadd=$(ipconfig getifaddr en0)
     fi
@@ -17,7 +17,7 @@ set_docker_compose_file() {
 }
 
 # Define the array of valid Docker versions
-validVersions=("24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
+validVersions=("24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
 
 # Run the docker -v command and capture its output
 docker_info=$(docker -v 2>&1)
@@ -62,7 +62,7 @@ isUp() {
 
 # Function to find the IPv4 address
 find_my_ip() {
-    ip_add=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
+    ip_add=$ip_add
     read -p "Confirm that your IPv4 address is $ip_add? [y/n]: " choice
     if [ "$choice" != "y" ]; then
         read -p "What is your IPv4 address? " ip_add
