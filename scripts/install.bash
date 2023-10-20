@@ -2,7 +2,7 @@
 
 # Function to determine the IP address
 get_ip_address() {
-    ipadd=ipadd=$(hostname -I | awk '{print $1}')
+    ipadd=$(hostname -I | awk '{print $1}')
     if [ "$(uname)" == "Darwin" ]; then
         ipadd=$(ipconfig getifaddr en0)
     fi
@@ -79,6 +79,7 @@ set_common_properties() {
 
 # Function to start Keycloak
 keycloak() {
+    cd ../docker-compose/
     if [ -f "$1/.env" ]; then
         rm "$1/.env"
     fi
