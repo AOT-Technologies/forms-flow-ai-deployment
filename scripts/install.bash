@@ -62,7 +62,8 @@ isUp() {
 
 # Function to find the IPv4 address
 find_my_ip() {
-    ip_add=$ip_add
+    ipadd=$(hostname -I | awk '{print $1}')
+    ip_add=$ipadd
     read -p "Confirm that your IPv4 address is $ip_add? [y/n]: " choice
     if [ "$choice" != "y" ]; then
         read -p "What is your IPv4 address? " ip_add
