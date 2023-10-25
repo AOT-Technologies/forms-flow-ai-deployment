@@ -53,7 +53,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:v5.2.0
+    image: formsflow/forms-flow-web:v5.2.1
     platform: linux/arm64/v8
     links:
       - forms-flow-webapi
@@ -131,7 +131,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.2.0-arm64
+    image: formsflow/forms-flow-bpm:v5.2.1-arm64
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -186,7 +186,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v5.2.0
+    image: formsflow/forms-flow-webapi:v5.2.1
     restart: always
     links:
       - forms-flow-webapi-db
@@ -226,7 +226,7 @@ services:
       - formsflow
 
   forms-flow-documents:
-    image: formsflow/forms-flow-documents-api:v5.2.0-arm64
+    image: formsflow/forms-flow-documents-api:v5.2.1-arm64
     restart: always
     volumes:
       - ./:/app:rw
