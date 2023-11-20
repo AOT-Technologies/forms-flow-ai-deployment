@@ -3,7 +3,7 @@
 setlocal EnableDelayedExpansion
 
 :: Define the array of valid Docker versions
-set "validVersions=24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
+set "validVersions=24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
 
 :: Run the docker -v command and capture its output
 for /f "tokens=*" %%A in ('docker -v 2^>^&1') do (
