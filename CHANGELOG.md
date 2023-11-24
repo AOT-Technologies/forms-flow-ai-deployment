@@ -6,7 +6,7 @@ Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upc
 
 `Added`
 
-*  Data-analysis-api service into docker-compose file.
+*  Added `Data-analysis-api` service into docker-compose file.
 *  Added IP confirmation check to confirm the user IP.
 *  Added `Docker engine` versions that are tested and working fine.
 *  Added `docker-compose` file for Enterprise edition.
