@@ -2,6 +2,26 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 5.3.0 - 2023-12-24
+
+`Added`
+
+*  Data-analysis-api service into docker-compose file.
+*  Added IP confirmation check to confirm the user IP.
+*  Added `Docker engine` versions that are tested and working fine.
+*  Added `docker-compose` file for Enterprise edition.
+
+`Modified`
+
+*  Updated batch script by adding tested docker-versions
+*  Updated shell script for better understanding.
+*  Modified the environment variables.
+
+`Upcoming Features`
+
+* An update will be introduced to provide users with the option to run the data analysis API, making it an optional feature.
+* An update in the script to enable a quick installation process specifically tailored for enterprise edition users.
+
 ## 5.2.0 - 2023-07-07
 
 `Added`
