@@ -94,7 +94,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms-ee:v5.2.0
+    image: formsflow/forms-flow-forms-ee:v5.3.0
     restart: always
     environment:
       DEBUG: formio:*
