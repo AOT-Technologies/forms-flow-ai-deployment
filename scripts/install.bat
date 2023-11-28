@@ -1,5 +1,49 @@
 @echo off
 
+setlocal EnableDelayedExpansion
+
+:: Define the array of valid Docker versions
+set "validVersions=24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
+
+:: Run the docker -v command and capture its output
+for /f "tokens=*" %%A in ('docker -v 2^>^&1') do (
+    set "docker_info=%%A"
+)
+
+:: Extract the Docker version using string manipulation
+for /f "tokens=3" %%B in ("!docker_info!") do (
+    set "docker_version=%%B"
+    set "docker_version=!docker_version:,=!"
+)
+:: Display the extracted Docker version
+echo Docker version: %docker_version%
+
+:: Check if the user's version is in the list
+set "versionFound="
+for %%B in (%validVersions%) do (
+    if "!docker_version!" equ "%%B" (
+        set "versionFound=true"
+        goto :VersionFound
+    )
+)
+
+:: If the user's version is not found, display a warning
+echo This Docker version is not tested! 
+set /p continue=Do you want to continue? [y/n]
+if %continue%== y (
+   goto :start 
+) else (
+   exit
+)
+
+:VersionFound
+:: Display a success message if the version is found
+echo Your Docker version (%docker_version%) is tested and working!
+
+goto :start
+
+:start
+
 set /p choice=Do you want analytics to include in the installation? [y/n]
 if %choice%==y (
     set /a analytics=1
@@ -33,6 +77,7 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-documents ..\docker-compose
+    call:forms-flow-data-analysis-api ..\docker-compose
     call:isUp
     EXIT /B 0
 	
@@ -180,12 +225,10 @@ EXIT /B %ERRORLEVEL%
 
     SETLOCAL
 
-    set BPM_API_URL=http://%ip-add%:8000/camunda
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"
         set INSIGHT_API_URL=http://%ip-add%:7001
     )
-    echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
     if %~2==1 (
         echo INSIGHT_API_URL=%INSIGHT_API_URL%>>%~1\.env
         echo INSIGHT_API_KEY=%INSIGHT_API_KEY%>>%~1\.env
@@ -205,6 +248,19 @@ EXIT /B %ERRORLEVEL%
   echo DOCUMENT_SERVICE_URL=%DOCUMENT_SERVICE_URL%>>%~1\.env
 
   docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-documents-api
+    timeout 5
+    EXIT /B 0
+
+:forms-flow-data-analysis-api
+
+  SETLOCAL
+  set DATA_ANALYSIS_API_BASE_URL=http://%ip-add%:6001
+  set DATA_ANALYSIS_DB_URL=postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis
+
+  echo DATA_ANALYSIS_API_BASE_URL=%DATA_ANALYSIS_API_BASE_URL%>>%~1\.env
+  echo DATA_ANALYSIS_DB_URL=%DATA_ANALYSIS_DB_URL%>>%~1\.env
+
+  docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api
     timeout 5
     EXIT /B 0
 
