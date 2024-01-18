@@ -3,12 +3,13 @@
 In this document, you will see the basic details to install and run the application manually and automatically.
 
 ## Table of Contents
-1. [Manual Installation](#Manual-Installation)
-   * [Health Check](#health-check)
-   * [Running the application](#Running-the-application)
-   * [Stop the application](#To-stop-the-application)
-2. [Quick Installation](#Quick-Installtion)
-3. [Health Check](#health-check)
+- [Forms-flow-ai Installation](#forms-flow-ai-installation)
+- [Table of Contents](#table-of-contents)
+- [Manual Installation](#manual-installation)
+  - [Running the application- "Analytics"](#running-the-application--analytics)
+    - [To stop the application](#to-stop-the-application)
+- [Quick Installation](#quick-installation)
+  - [Health Check](#health-check)
 
    
 ## Manual Installation
@@ -20,7 +21,7 @@ In this document, you will see the basic details to install and run the applicat
 * **NOTE : `{your-ip-address}` given inside the `.env` file should be changed to your host system IP address. Please take special care to identify the correct IP address if your system has multiple network cards**
 
 * Run `docker-compose up -d keycloak` to start keycloak  
-* Run `docker-compose up -d` to start.   
+* Run `docker-compose up -d` to start. (PS: Use docker-compose-arm64.yml file for ARM processors. e.g, Apple M1) 
                    
 *NOTE: Use --build command with the start command to reflect any future **.env** / code changes eg : `docker-compose up --build -d`*
 
@@ -43,10 +44,10 @@ In this document, you will see the basic details to install and run the applicat
 * Now just run install.bat/bash according to your operating system.
   
 ### Health Check
-* Analytics should be up and available for use at port defaulted to 7000 i.e. http://localhost:7000/
+* Analytics should be up and available for use at port defaulted to 7001 i.e. http://localhost:7001/
 * Business Process Engine should be up and available for use at port defaulted to 8000 i.e. http://localhost:8000/camunda/
 * FormIO should be up and available for use at port defaulted to 3001 i.e. http://localhost:3001/
-* formsflow.ai Rest API should be up and available for use at port defaulted to 5000 i.e. http://localhost:5000/checkpoint
+* formsflow.ai Rest API should be up and available for use at port defaulted to 5001 i.e. http://localhost:5001/checkpoint
 * formsflow.ai web application should be up and available for use at port defaulted to 3000 i.e. http://localhost:3000/
 
 

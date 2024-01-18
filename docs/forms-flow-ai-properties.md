@@ -17,7 +17,7 @@ Variable name (Docker-compose) | Variable name (Docker) | Descreption | Default 
 `CAMUNDA_POSTGRES_USER`| |Postgres Database Username used on installation to create the database|`admin`
 `CAMUNDA_POSTGRES_PASSWORD`| |Postgres Database Password used on installation to create the database|`changeme`
 `CAMUNDA_JDBC_DB_NAME`| |Postgres Database Name used on installation to create the database|`formsflow-bpm`
-`FORMSFLOW_API_URL`:triangular_flag_on_post:|`REACT_APP_WEB_BASE_URL`|formsflow.ai Rest API URI|`http://{your-ip-address}:5000`
+`FORMSFLOW_API_URL`:triangular_flag_on_post:|`REACT_APP_WEB_BASE_URL`|formsflow.ai Rest API URI|`http://{your-ip-address}:5001`
 `FORMIO_DEFAULT_PROJECT_URL`:triangular_flag_on_post:|` FORMIO_URL`|The URL of the forms-flow-forms server|`http://{your-ip-address}:3001`
 `FORMIO_ROOT_EMAIL`|`ROOT_EMAIL `|forms-flow-forms admin login|`admin@example.com`
 `FORMIO_ROOT_PASSWORD`|`ROOT_PASSWORD `|forms-flow-forms admin password|`changeme`
@@ -32,7 +32,7 @@ Variable name (Docker-compose) | Variable name (Docker) | Descreption | Default 
 `DATA_BUFFER_SIZE`|` maxInMemorySize`|Configure a limit on the number of bytes that can be buffered for webclient|`2  (In MB)`
 `IDENTITY_PROVIDER_MAX_RESULT_SIZE`|` maxResultSize`|Maximum result size for Keycloak user queries|`250`
 `BPM_CLIENT_CONN_TIMEOUT`|`connectionTimeout `|Webclient Connection timeout in milli seconds|`5000`
-`INSIGHT_API_URL`:triangular_flag_on_post: | | The forms-flow-analytics Api base end-point| <http://{your-ip-address}:7000>
+`INSIGHT_API_URL`:triangular_flag_on_post: | | The forms-flow-analytics Api base end-point| <http://{your-ip-address}:7001>
 `INSIGHT_API_KEY` :triangular_flag_on_post: | | The forms-flow-analytics admin API key| `Get the api key from forms-flow-analytics (REDASH) by following the 'Get the Redash API Key' steps from [here](../forms-flow-analytics/README.md#get-the-redash-api-key)`
 `FORMSFLOW_API_DB_USER`|` POSTGRES_USER`|formsflow database postgres user used on installation to create the database|`postgres`
 `FORMSFLOW_API_DB_PASSWORD`|`POSTGRES_PASSWORD `|formsflow database postgres password used on installation to create the database|`changeme`

@@ -38,7 +38,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-all
 
     if exist %~1 (
-        docker-compose -f %~1\docker-compose.yml down
+        docker-compose -p formsflow-ai -f %~1\docker-compose.yml down
 	)
     EXIT /B 0
 
@@ -49,7 +49,7 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-analytics
 
     if exist %~1 (
-        docker-compose -f %~1\analytics-docker-compose.yml down
+        docker-compose -p formsflow-ai -f %~1\analytics-docker-compose.yml down
 	)
     EXIT /B 0
 
@@ -72,3 +72,4 @@ EXIT /B %ERRORLEVEL%
 
 :prune-docker
     docker volume prune -f
+    docker image prune --all -f --filter label=Name="formsflow"

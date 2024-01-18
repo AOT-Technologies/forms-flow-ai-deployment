@@ -2,10 +2,10 @@
 version: "3.7"
 
 x-redash-service: &redash-service
-  image: redash/redash:10.1.0.b50633
+  image: formsflow/redash:10.1.5
   depends_on:
-      - postgres
-      - redis
+    - postgres
+    - redis
   env_file: .env
   restart: always
 
@@ -14,20 +14,33 @@ services:
     <<: *redash-service
     command: server
     ports:
-      - '7000:5000'
+      - '7001:5000'
     environment:
       REDASH_WEB_WORKERS: 4
+      REDASH_MULTI_ORG: ${REDASH_MULTI_ORG:-false}
+    networks:
+      - formsflow
+
   scheduler:
     <<: *redash-service
     command: scheduler
     depends_on:
       - server
+    networks:
+      - formsflow
+
   scheduled_worker:
     <<: *redash-service
     command: worker
+    networks:
+      - formsflow
+
   adhoc_worker:
     <<: *redash-service
     command: worker
+    networks:
+      - formsflow
+
   worker:
     <<: *redash-service
     command: worker
@@ -36,9 +49,15 @@ services:
       WORKERS_COUNT: 1
     depends_on:
       - server
+    networks:
+      - formsflow
+
   redis:
     image: redis:6-alpine
     restart: always
+    networks:
+      - formsflow
+
   postgres:
     image: postgres:9.6-alpine
     ports:
@@ -46,7 +65,9 @@ services:
     restart: always
     env_file: .env
     volumes:
-      - ./postgres/analytics:/var/lib/postgresql/data
+      - ./postgres/analytics:/var/lib/postgresql/data 777
+    networks:
+      - formsflow
   # Uncomment the following to enable redash mail server
   # email:
   #   image: djfarrelly/maildev
@@ -54,3 +75,8 @@ services:
   #     - "1080:80"
   #   restart: unless-stopped
 
+volumes:
+  postgres:
+networks:
+  formsflow:
+    driver: bridge
