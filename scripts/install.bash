@@ -212,6 +212,7 @@ function keycloak
     if [[ -f .env ]]; then
      rm .env
     fi
+    echo KEYCLOAK_START_MODE=start-dev >> .env
     function defaultinstallation
     {
         echo WE ARE SETING UP OUR DEFAULT KEYCLOCK FOR YOU
