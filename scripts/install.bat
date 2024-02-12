@@ -77,7 +77,10 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-documents ..\docker-compose
-    call:forms-flow-data-analysis-api ..\docker-compose
+    set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
+    if /i "%includeDataAnalysis%"=="y" (
+          call:forms-flow-data-analysis-api ..\docker-compose
+    )
     call:isUp
     EXIT /B 0
 	

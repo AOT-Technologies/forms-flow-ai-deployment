@@ -193,7 +193,21 @@ main() {
         forms_flow_api "$1" "$2"
     fi
     forms_flow_documents "$1"
-    forms_flow_data_analysis "$1"
+
+    # Ask the user if they want to install forms-flow-data-analysis-api
+    echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
+    read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: " install_data_analysis
+    if [ "$install_data_analysis" == "y" ]; then
+        forms_flow_data_analysis "$1"
+    else
+        echo "Skipping forms-flow-data-analysis-api installation."
+    fi
+
+    if [ "$1" == "1" ]; then
+        forms_flow_api "$1" "$2"
+    fi
+
+    forms_flow_documents "$1"
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
     exit 0
