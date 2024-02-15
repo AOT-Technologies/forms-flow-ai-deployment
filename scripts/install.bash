@@ -17,7 +17,7 @@ set_docker_compose_file() {
 }
 
 # Define the array of valid Docker versions
-validVersions=("24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
+validVersions=("25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
 
 # Run the docker -v command and capture its output
 docker_info=$(docker -v 2>&1)
@@ -193,7 +193,21 @@ main() {
         forms_flow_api "$1" "$2"
     fi
     forms_flow_documents "$1"
-    forms_flow_data_analysis "$1"
+
+    # Ask the user if they want to install forms-flow-data-analysis-api
+    echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
+    read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: " install_data_analysis
+    if [ "$install_data_analysis" == "y" ]; then
+        forms_flow_data_analysis "$1"
+    else
+        echo "Skipping forms-flow-data-analysis-api installation."
+    fi
+
+    if [ "$1" == "1" ]; then
+        forms_flow_api "$1" "$2"
+    fi
+
+    forms_flow_documents "$1"
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
     exit 0

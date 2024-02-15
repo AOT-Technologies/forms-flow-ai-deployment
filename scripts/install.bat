@@ -3,7 +3,7 @@
 setlocal EnableDelayedExpansion
 
 :: Define the array of valid Docker versions
-set "validVersions=24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
+set "validVersions=25.0.3 25.0.2 25.0.1 25.0.0 24.0.9 24.0.8 24.0.7 24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
 
 :: Run the docker -v command and capture its output
 for /f "tokens=*" %%A in ('docker -v 2^>^&1') do (
@@ -77,7 +77,10 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-documents ..\docker-compose
-    call:forms-flow-data-analysis-api ..\docker-compose
+    set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
+    if /i "%includeDataAnalysis%"=="y" (
+          call:forms-flow-data-analysis-api ..\docker-compose
+    )
     call:isUp
     EXIT /B 0
 	
