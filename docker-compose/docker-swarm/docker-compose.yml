@@ -8,10 +8,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${FORMIO_DB_USERNAME:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${FORMIO_DB_PASSWORD:-changeme}
       MONGO_INITDB_DATABASE: ${FORMIO_DB_NAME:-formio}
-    # deploy:
-    #   placement:
-    #     constraints:
-    #       - node.role == worker
     volumes:
       - forms-flow-forms-db-data:/docker-entrypoint-initdb.d/001_user.js:ro
       - forms-flow-forms-db-data:/data/db
@@ -20,7 +16,7 @@ services:
     ports:
       - "27018:27017"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-web:
     image: formsflow/forms-flow-web:v6.0.0-alpha
@@ -59,16 +55,11 @@ services:
     ports:
       - "3000:8080"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-forms:
     restart: always
     image: formsflow/forms-flow-forms:v6.0.0-alpha
-    # deploy:
-    #   replicas: 1
-    #   placement:
-    #     constraints:
-    #       - node.role == worker
     environment:
       DEBUG: formio:*
       NODE_CONFIG: "{\"mongo\":\"mongodb://${FORMIO_DB_USERNAME:-admin}:${FORMIO_DB_PASSWORD:-changeme}@forms-flow-forms-db:27017/${FORMIO_DB_NAME:-formio}?authMechanism=SCRAM-SHA-1&authSource=admin\"}"
@@ -80,7 +71,7 @@ services:
     ports:
       - "3001:3001"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-bpm-db:
     image: postgres:14
@@ -88,17 +79,12 @@ services:
       POSTGRES_USER: ${CAMUNDA_JDBC_USER:-admin}
       POSTGRES_PASSWORD: ${CAMUNDA_JDBC_PASSWORD:-changeme}
       POSTGRES_DB: ${CAMUNDA_JDBC_DB_NAME:-formsflow-bpm}
-    # deploy:
-    #   replicas: 1
-    #   placement:
-    #     constraints:
-    #       - node.role == worker
     volumes:
       - forms-flow-bpm-db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-bpm:
     image: formsflow/forms-flow-bpm:v5.3.0
@@ -137,7 +123,7 @@ services:
     ports:
       - "8000:8080"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-webapi-db:
     image: postgres:14
@@ -151,7 +137,7 @@ services:
     ports:
       - "6432:5432"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-webapi:
     image: formsflow/forms-flow-webapi:v5.3.0
@@ -189,7 +175,7 @@ services:
     ports:
       - "5001:5000"
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   forms-flow-documents-api:
     image: formsflow/forms-flow-documents-api:v5.3.0
@@ -217,7 +203,7 @@ services:
     ports:
       - '5006:5006'
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   proxy:
     image: nginx:stable-alpine
@@ -236,8 +222,6 @@ services:
 networks:
   formsflow:
     driver: overlay
-  formsflow_formsflow:
-    external: true
 
 volumes:
   forms-flow-forms-db-data:

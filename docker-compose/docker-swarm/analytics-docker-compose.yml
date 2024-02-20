@@ -18,7 +18,7 @@ services:
     ports:
       - '7001:5000'
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   scheduler:
     <<: *redash-service
@@ -30,7 +30,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   scheduled_worker:
     <<: *redash-service
@@ -40,7 +40,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   adhoc_worker:
     <<: *redash-service
@@ -50,7 +50,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   worker:
     <<: *redash-service
@@ -65,7 +65,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   redis:
     image: redis:6-alpine
@@ -73,7 +73,7 @@ services:
       restart_policy:
         condition: any
     networks:
-      - formsflow_formsflow
+      - formsflow
 
   postgres:
     image: postgres:9.6-alpine
@@ -87,7 +87,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - formsflow_formsflow
+      - formsflow
 
 volumes:
   postgres:
@@ -96,6 +96,4 @@ volumes:
 networks:
   formsflow:
     driver: overlay
-  formsflow_formsflow:
-    external: true
 
