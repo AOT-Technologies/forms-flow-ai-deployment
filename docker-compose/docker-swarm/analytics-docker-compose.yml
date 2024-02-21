@@ -12,6 +12,12 @@ x-redash-service: &redash-service
       condition: any
 
 services:
+  analytics_server:
+    <<: *redash-service
+    command: create_db
+    networks:
+      - formsflow
+
   server:
     <<: *redash-service
     command: server
