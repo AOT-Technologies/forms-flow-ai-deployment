@@ -1,0 +1,105 @@
+# Author: Gurumoorthy Mohan, Kurian Benoy
+version: "3.7"
+
+x-redash-service: &redash-service
+  image: formsflow/redash:10.1.5
+  environment:
+    REDASH_WEB_WORKERS: 4
+    REDASH_MULTI_ORG: ${REDASH_MULTI_ORG:-false}
+  env_file: .env
+  deploy:
+    restart_policy:
+      condition: any
+
+services:
+  analytics_server:
+    <<: *redash-service
+    command: create_db
+    networks:
+      - formsflow
+
+  server:
+    <<: *redash-service
+    command: server
+    ports:
+      - '7001:5000'
+    networks:
+      - formsflow
+
+  scheduler:
+    <<: *redash-service
+    command: scheduler
+    depends_on:
+      - server
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - formsflow
+
+  scheduled_worker:
+    <<: *redash-service
+    command: worker
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - formsflow
+
+  adhoc_worker:
+    <<: *redash-service
+    command: worker
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - formsflow
+
+  worker:
+    <<: *redash-service
+    command: worker
+    environment:
+      QUEUES: "periodic emails default"
+      WORKERS_COUNT: 1
+    depends_on:
+      - server
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - formsflow
+
+  redis:
+    image: redis:6-alpine
+    deploy:
+      restart_policy:
+        condition: any
+    networks:
+      - formsflow
+
+  postgres:
+    image: postgres:9.6-alpine
+    ports:
+      - '7432:5432'
+    env_file: .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - formsflow
+
+volumes:
+  postgres:
+    driver: local
+
+networks:
+  formsflow:
+    driver: overlay
+
