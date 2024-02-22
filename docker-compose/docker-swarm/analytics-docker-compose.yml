@@ -1,4 +1,4 @@
-# Author: Gurumoorthy Mohan, Kurian Benoy
+# Author: Sinto Sajeev
 version: "3.7"
 
 x-redash-service: &redash-service
