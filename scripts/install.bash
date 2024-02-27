@@ -183,7 +183,16 @@ forms_flow_data_analysis() {
 # Main function
 main() {
     set_common_properties
-    find_my_ip
+
+    # Check if the system is Linux or Mac
+    if [ "$(uname -s)" == "Linux" ]; then
+        find_my_ip
+    elif [ "$(uname -s)" == "Darwin" ]; then
+        get_ip_address
+    else
+        echo "Unsupported operating system."
+        exit 1
+    fi
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_web "$1"
@@ -201,10 +210,6 @@ main() {
         forms_flow_data_analysis "$1"
     else
         echo "Skipping forms-flow-data-analysis-api installation."
-    fi
-
-    if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
     fi
 
     forms_flow_documents "$1"
