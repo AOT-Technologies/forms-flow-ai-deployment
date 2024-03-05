@@ -63,6 +63,9 @@ isUp() {
 # Function to find the IPv4 address
 find_my_ip() {
     ipadd=$(hostname -I | awk '{print $1}')
+    if [ "$(uname)" == "Darwin" ]; then
+        ipadd=$(ipconfig getifaddr en0)
+    fi
     ip_add=$ipadd
     read -p "Confirm that your IPv4 address is $ip_add? [y/n]: " choice
     if [ "$choice" != "y" ]; then
@@ -85,7 +88,7 @@ keycloak() {
         rm "$1/.env"
     fi
 
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d keycloak
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d keycloak
     sleep 5
     KEYCLOAK_URL="http://$ip_add:8080"
     export KEYCLOAK_URL
@@ -95,7 +98,7 @@ keycloak() {
 forms_flow_forms() {
     FORMIO_DEFAULT_PROJECT_URL="http://$ip_add:3001"
     echo "FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d forms-flow-forms
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-forms
     sleep 5
 }
 
@@ -103,7 +106,7 @@ forms_flow_forms() {
 forms_flow_web() {
     BPM_API_URL="http://$ip_add:8000/camunda"
     echo "BPM_API_URL=$BPM_API_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d forms-flow-web
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-web
 }
 
 # Function to start forms-flow-bpm
@@ -114,7 +117,7 @@ forms_flow_bpm() {
     echo "FORMSFLOW_API_URL=$FORMSFLOW_API_URL" >> "$1/.env"
     echo "WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN" >> "$1/.env"
     echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d forms-flow-bpm
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
     sleep 6
 }
 
@@ -159,14 +162,14 @@ forms_flow_api() {
         echo "INSIGHT_API_URL=$INSIGHT_API_URL" >> "$1/.env"
         echo "INSIGHT_API_KEY=$INSIGHT_API_KEY" >> "$1/.env"
     fi
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d forms-flow-webapi
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-webapi
 }
 
 # Function to start forms-flow-documents-api
 forms_flow_documents() {
     DOCUMENT_SERVICE_URL="http://$ip_add:5006"
     echo "DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d forms-flow-documents-api
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-documents-api
     sleep 5
 }
 
@@ -176,17 +179,17 @@ forms_flow_data_analysis() {
     DATA_ANALYSIS_DB_URL="postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis"
     echo "DATA_ANALYSIS_API_BASE_URL=$DATA_ANALYSIS_API_BASE_URL" >> "$1/.env"
     echo "DATA_ANALYSIS_DB_URL=$DATA_ANALYSIS_DB_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/docker-compose.yml" up --build -d forms-flow-data-analysis-api
+    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-data-analysis-api
     sleep 5
 }
 
 # Main function
 main() {
     set_common_properties
+    set_docker_compose_file
     find_my_ip
     keycloak "$1"
     forms_flow_forms "$1"
-    forms_flow_web "$1"
     forms_flow_bpm "$1"
     forms_flow_analytics "$1"
     if [ "$1" == "1" ]; then
@@ -208,6 +211,7 @@ main() {
     fi
 
     forms_flow_documents "$1"
+    forms_flow_web "$1"
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
     exit 0
