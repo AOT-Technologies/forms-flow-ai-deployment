@@ -257,10 +257,8 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-data-analysis-api
 
   SETLOCAL
-  set DATA_ANALYSIS_API_BASE_URL=http://%ip-add%:6001
   set DATA_ANALYSIS_DB_URL=postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis
 
-  echo DATA_ANALYSIS_API_BASE_URL=%DATA_ANALYSIS_API_BASE_URL%>>%~1\.env
   echo DATA_ANALYSIS_DB_URL=%DATA_ANALYSIS_DB_URL%>>%~1\.env
 
   docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api

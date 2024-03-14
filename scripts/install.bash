@@ -87,7 +87,7 @@ keycloak() {
     if [ -f "$1/.env" ]; then
         rm "$1/.env"
     fi
-
+    echo KEYCLOAK_START_MODE=start-dev >> .env
     docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d keycloak
     sleep 5
     KEYCLOAK_URL="http://$ip_add:8080"
