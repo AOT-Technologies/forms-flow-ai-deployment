@@ -10,3 +10,4 @@ COMMAND="/opt/keycloak/bin/kc.sh $START_MODE --import-realm --http-relative-path
 # Execute the command
 echo "Executing command: $COMMAND"
 exec $COMMAND
+# End of the line
