@@ -114,9 +114,12 @@ forms_flow_bpm() {
     FORMSFLOW_API_URL="http://$ip_add:5001"
     WEBSOCKET_SECURITY_ORIGIN="http://$ip_add:3000"
     SESSION_COOKIE_SECURE="false"
+    KEYCLOAK_WEB_CLIENTID="forms-flow-web"
+
     echo "FORMSFLOW_API_URL=$FORMSFLOW_API_URL" >> "$1/.env"
     echo "WEBSOCKET_SECURITY_ORIGIN=$WEBSOCKET_SECURITY_ORIGIN" >> "$1/.env"
     echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> "$1/.env"
+    echo "KEYCLOAK_WEB_CLIENTID=$KEYCLOAK_WEB_CLIENTID" >> "$1/.env"
     docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
     sleep 6
 }
