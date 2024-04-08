@@ -2,10 +2,11 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 6.0.0-alpha - 2024-4-5
+## 6.0.0 - 2024-4-8
 
 `Added`
 
+*  Added a new variable `KEYCLOAK_WEB_CLIENTID` for `forms-flow-bpm` 
 *  Added `shell script` for starting keycloak.
 *  Added an option for the users to run `data-analysis-api` as an optional feature.
 
