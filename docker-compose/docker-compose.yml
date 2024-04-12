@@ -189,12 +189,20 @@ services:
     networks:
       - formsflow
 
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      - formsflow
+
   forms-flow-webapi:
     image: formsflow/forms-flow-webapi:v6.0.0
     restart: always
     links:
       - forms-flow-webapi-db
       - forms-flow-forms
+      - redis
     entrypoint: "/wait-for-service.sh forms-flow-webapi-db:5432 -s -- /wait-for-service.sh keycloak:8080 -s -- /wait-for-service.sh forms-flow-forms:3001 -s -- ./entrypoint.sh "
     volumes:
       - ./:/app:rw
@@ -224,6 +232,7 @@ services:
       CUSTOM_SUBMISSION_URL: ${CUSTOM_SUBMISSION_URL}
       CUSTOM_SUBMISSION_ENABLED: ${CUSTOM_SUBMISSION_ENABLED}
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     ports:
       - "5001:5000"
     networks:
@@ -234,6 +243,7 @@ services:
     restart: always
     links:
       - forms-flow-forms
+      - redis
     environment:
       FORMSFLOW_API_CORS_ORIGINS: ${FORMSFLOW_API_CORS_ORIGINS:-*}
       JWT_OIDC_WELL_KNOWN_CONFIG: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/.well-known/openid-configuration
@@ -254,6 +264,7 @@ services:
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
       MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED:-false}
       KEYCLOAK_ENABLE_CLIENT_AUTH: ${KEYCLOAK_ENABLE_CLIENT_AUTH:-false}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     ports:
       - '5006:5006'
     networks:
