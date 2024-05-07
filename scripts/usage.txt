@@ -2,7 +2,7 @@ formsflow.ai Single click installation
 
 /install
 
-for Windows:- Double click the file install.bat.
+for Windows:- Double click the file, install.bat.
 for Linux/Mac:- Open the terminal and set path to /scripts and run install.bash file.
 
 The following questionnaire will be asked during the formsflow.ai installation, it is mandatory to answer every question with the right data.
