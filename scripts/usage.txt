@@ -3,22 +3,25 @@ formsflow.ai Single click installation
 /install
 
 The following questionnaire will be asked during the formsflow.ai installation, it is mandatory to answer every question with the right data.
-Do you want analytics to include in the installation?-localhost:7000
+This Docker version is not tested
+Do you want to continue? [y/n]
+
+If "y" will continue the installation with the non-tested docker version, else will exit.
+             
+                    OR
+
+Your Docker version (xyz) is tested and working! ---> and continue working
+
 formsflow.ai leverages Redash to build interactive dashboards and gain insights. answer any of these options eg: y - Yes, n - No.
-Do you have an existing keycloak?
-The formsflow.ai framework is hooked up with Keycloak Identity Management Server. Answer any of these options eg: y - Yes, n - No.
+Do you want analytics to include in the installation? [y/n]
 
-What is your Keycloak URL?
-For existing keycloak users provide your keycloak URL, localhost is not supported please provide your IP / hostname
-What is your keycloak URL realm name?
-For existing keycloak users provide your keycloak realm.
-what is your keycloak admin user name?
-For existing keycloak users provide your keycloak admin username.
-what is your keycloak admin password?
-For existing keycloak users provide your keycloak admin password.
+Confirm that your IPv4 address is (xyz)? [y/n]
 
-In case of any failure please stop the install command and re-run it again.
 This file can be run multiple times, it will update the source if any new updates. 
+
+for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis
+Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
+
 
 /uninstall
 
