@@ -61,7 +61,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web-ee:v6.0.0
+    image: formsflow/forms-flow-web-ee:v6.0.1
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
@@ -102,7 +102,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms-ee:v5.3.0
+    image: formsflow/forms-flow-forms-ee:v6.0.0
     restart: always
     environment:
       DEBUG: formio:*
@@ -133,7 +133,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm-ee:v6.0.0
+    image: formsflow/forms-flow-bpm-ee:v6.0.1
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -196,7 +196,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi-ee:v6.0.0
+    image: formsflow/forms-flow-webapi-ee:v6.0.1
     restart: always
     links:
       - forms-flow-webapi-db
@@ -238,7 +238,7 @@ services:
       - formsflow
 
   forms-flow-documents-api:
-    image: formsflow/forms-flow-documents-api-ee:v6.0.0
+    image: formsflow/forms-flow-documents-api-ee:v6.0.1
     restart: always
     links:
       - forms-flow-forms
@@ -284,7 +284,7 @@ services:
       - '5430:5432'
 
   forms-flow-data-analysis-api:
-    image: formsflow/forms-flow-data-analysis-api:v6.0.0
+    image: formsflow/forms-flow-data-analysis-api:v6.0.1
     restart: always
     links:
       - forms-flow-data-analysis-db
