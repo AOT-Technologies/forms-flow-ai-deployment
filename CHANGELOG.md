@@ -2,6 +2,20 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 6.0.0 - 2024-4-8
+
+`Added`
+
+*  Added a new variable `KEYCLOAK_WEB_CLIENTID` for `forms-flow-bpm` 
+*  Added `shell script` for starting keycloak.
+*  Added an option for the users to run `data-analysis-api` as an optional feature.
+
+`Modified`
+
+*  Updated the keycloak image to 23.0.7.
+*  Updated the `docker-compose` file for the keycloak 23 changes.
+*  Modified the environment variables.
+
 ## 5.3.0 - 2023-11-24
 
 `Added`
