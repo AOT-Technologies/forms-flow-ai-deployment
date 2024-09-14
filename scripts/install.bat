@@ -3,7 +3,7 @@
 setlocal EnableDelayedExpansion
 
 :: Define the array of valid Docker versions
-set "validVersions=24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
+set "validVersions=25.0.3 25.0.2 25.0.1 25.0.0 24.0.9 24.0.8 24.0.7 24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
 
 :: Run the docker -v command and capture its output
 for /f "tokens=*" %%A in ('docker -v 2^>^&1') do (
@@ -77,7 +77,10 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-documents ..\docker-compose
-    call:forms-flow-data-analysis-api ..\docker-compose
+    set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
+    if /i "%includeDataAnalysis%"=="y" (
+          call:forms-flow-data-analysis-api ..\docker-compose
+    )
     call:isUp
     EXIT /B 0
 	
@@ -167,12 +170,16 @@ EXIT /B %ERRORLEVEL%
     set FORMSFLOW_API_URL=http://%ip-add%:5001
     set WEBSOCKET_SECURITY_ORIGIN=http://%ip-add%:3000
     set SESSION_COOKIE_SECURE=false
+    set KEYCLOAK_WEB_CLIENTID=forms-flow-web
+    set REDIS_URL=redis://%ip-add%:6379/0
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
     echo FORMSFLOW_API_URL=%FORMSFLOW_API_URL%>>%~1\.env
     echo WEBSOCKET_SECURITY_ORIGIN=%WEBSOCKET_SECURITY_ORIGIN%>>%~1\.env
     echo SESSION_COOKIE_SECURE=%SESSION_COOKIE_SECURE%>>%~1\.env
+    echo KEYCLOAK_WEB_CLIENTID=%KEYCLOAK_WEB_CLIENTID%>>%~1\.env
+    echo REDIS_URL=%REDIS_URL%>>%~1\.env
     ENDLOCAL
     docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
@@ -254,10 +261,8 @@ EXIT /B %ERRORLEVEL%
 :forms-flow-data-analysis-api
 
   SETLOCAL
-  set DATA_ANALYSIS_API_BASE_URL=http://%ip-add%:6001
   set DATA_ANALYSIS_DB_URL=postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis
 
-  echo DATA_ANALYSIS_API_BASE_URL=%DATA_ANALYSIS_API_BASE_URL%>>%~1\.env
   echo DATA_ANALYSIS_DB_URL=%DATA_ANALYSIS_DB_URL%>>%~1\.env
 
   docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api

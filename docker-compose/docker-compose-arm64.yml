@@ -2,23 +2,29 @@ version: '3.7'
 
 services:
   keycloak-db:
-    image: postgres:14
+    image: postgres:latest
+    restart: always
+    container_name: keycloak_db
     volumes:
       - ./postgres/keycloak:/var/lib/postgresql/data 777
     environment:
       POSTGRES_DB: ${KEYCLOAK_JDBC_DB:-keycloak}
       POSTGRES_USER: ${KEYCLOAK_JDBC_USER:-admin}
       POSTGRES_PASSWORD: ${KEYCLOAK_JDBC_PASSWORD:-changeme}
-      PGDATA: /var/lib/postgresql/data
+    ports:
+      - 5431:5431
     networks:
       - formsflow
 
   keycloak:
-    image: formsflow/forms-flow-keycloak-arm64:14.0.0
+    image: quay.io/keycloak/keycloak:23.0.7
+    restart: always
+    container_name: keycloak
     volumes:
-      - ./configuration/imports:/opt/jboss/keycloak/imports
-    command:
-      - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/formsflow-ai-realm.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+      - ./configuration/imports:/opt/keycloak/data/import
+      - ./configuration/themes/formsflow:/opt/keycloak/themes/formsflow
+      - ./configuration/start-keycloak.sh:/opt/keycloak/bin/start-keycloak.sh
+    entrypoint: ["/bin/bash", "/opt/keycloak/bin/start-keycloak.sh"]
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
@@ -26,8 +32,10 @@ services:
       - DB_DATABASE=${KEYCLOAK_JDBC_DB:-keycloak}
       - DB_USER=${KEYCLOAK_JDBC_USER-admin}
       - DB_PASSWORD=${KEYCLOAK_JDBC_PASSWORD:-changeme}
-      - KEYCLOAK_USER=${KEYCLOAK_ADMIN_USER:-admin}
-      - KEYCLOAK_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-changeme}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USER:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-changeme}
+      - KEYCLOAK_START_MODE=${KEYCLOAK_START_MODE:-start-dev}
+      - KEYCLOAK_HTTP_PATH=${KEYCLOAK_HTTP_PATH:-/auth}
     ports:
       - "8080:8080"
     links:
@@ -53,17 +61,17 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:v5.3.0
+    image: formsflow/forms-flow-web:v6.0.1
     platform: linux/arm64/v8
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
-      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v5.3.0/forms-flow-web.gz.js}
-      # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v5.3.0/forms-flow-nav.gz.js}
-      # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v5.3.0/forms-flow-service.gz.js}
-      # - MF_FORMSFLOW_ADMIN_URL=${MF_FORMSFLOW_ADMIN_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v5.3.0/forms-flow-admin.gz.js}
-      # - MF_FORMSFLOW_THEME_URL=${MF_FORMSFLOW_THEME_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-theme@v5.3.0/forms-flow-theme.gz.js}
+      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v6.0.1/forms-flow-web.gz.js}
+      # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v6.0.1/forms-flow-nav.gz.js}
+      # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v6.0.1/forms-flow-service.gz.js}
+      # - MF_FORMSFLOW_ADMIN_URL=${MF_FORMSFLOW_ADMIN_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v6.0.1/forms-flow-admin.gz.js}
+      # - MF_FORMSFLOW_THEME_URL=${MF_FORMSFLOW_THEME_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-theme@v6.0.1/forms-flow-theme.gz.js}
       - NODE_ENV=${NODE_ENV:-production}
       - REACT_APP_API_SERVER_URL=${FORMIO_DEFAULT_PROJECT_URL}
       - REACT_APP_API_PROJECT_URL=${FORMIO_DEFAULT_PROJECT_URL}
@@ -100,7 +108,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v5.3.0
+    image: formsflow/forms-flow-forms:v6.0.0
     restart: always
     environment:
       DEBUG: formio:*
@@ -131,7 +139,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v5.3.0-arm64
+    image: formsflow/forms-flow-bpm:v6.0.1-arm64
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -157,6 +165,7 @@ services:
       - CUSTOM_SUBMISSION_URL=${CUSTOM_SUBMISSION_URL}
       - CUSTOM_SUBMISSION_ENABLED=${CUSTOM_SUBMISSION_ENABLED:-false}
       - MULTI_TENANCY_ENABLED=${MULTI_TENANCY_ENABLED:-false}
+      - KEYCLOAK_WEB_CLIENTID=${KEYCLOAK_WEB_CLIENTID:-forms-flow-web}
       - FORMSFLOW_ADMIN_URL=${FORMSFLOW_ADMIN_URL:-}
       - REDIS_ENABLED=${REDIS_ENABLED:-false}
       - REDIS_HOST=${REDIS_HOST}
@@ -185,12 +194,20 @@ services:
     networks:
       - formsflow
 
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      - formsflow
+
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v5.3.0
+    image: formsflow/forms-flow-webapi:v6.0.1
     restart: always
     links:
       - forms-flow-webapi-db
       - forms-flow-forms
+      - redis
     entrypoint: "/wait-for-service.sh forms-flow-webapi-db:5432 -s -- /wait-for-service.sh keycloak:8080 -s -- /wait-for-service.sh forms-flow-forms:3001 -s -- ./entrypoint.sh "
     volumes:
       - ./:/app:rw
@@ -220,13 +237,14 @@ services:
       CUSTOM_SUBMISSION_URL: ${CUSTOM_SUBMISSION_URL}
       CUSTOM_SUBMISSION_ENABLED: ${CUSTOM_SUBMISSION_ENABLED}
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     ports:
       - "5001:5000"
     networks:
       - formsflow
 
   forms-flow-documents:
-    image: formsflow/forms-flow-documents-api:v5.3.0-arm64
+    image: formsflow/forms-flow-documents-api:v6.0.1-arm64
     restart: always
     volumes:
       - ./:/app:rw
@@ -248,6 +266,7 @@ services:
       FORMIO_JWT_SECRET: ${FORMIO_JWT_SECRET:---- change me now ---}
       MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED:-false}
       KEYCLOAK_ENABLE_CLIENT_AUTH: ${KEYCLOAK_ENABLE_CLIENT_AUTH:-false}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
 
     ports:
       - "5006:5006"
