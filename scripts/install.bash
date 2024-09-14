@@ -68,7 +68,7 @@ find_my_ip() {
     elif [ "$(uname)" = "Linux" ]; then
         ipadd=$(hostname -I | awk '{print $1}')
     fi
-    ip_add=ip_add=$ipadd
+    ip_add=$ipadd
     read -p "Confirm that your IPv4 address is $ip_add? [y/n]: " choice
     if [ "$choice" != "y" ]; then
         read -p "What is your IPv4 address? " ip_add
