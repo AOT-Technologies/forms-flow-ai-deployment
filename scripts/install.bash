@@ -116,8 +116,6 @@ forms_flow_bpm() {
     SESSION_COOKIE_SECURE="false"
     KEYCLOAK_WEB_CLIENTID="forms-flow-web"
     REDIS_URL="redis://$ip_add:6379/0"
-    KEYCLOAK_URL_HTTP_RELATIVE_PATH="/auth"
-
 
 
     echo "FORMSFLOW_API_URL=$FORMSFLOW_API_URL" >> "$1/.env"
@@ -125,7 +123,6 @@ forms_flow_bpm() {
     echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> "$1/.env"
     echo "KEYCLOAK_WEB_CLIENTID=$KEYCLOAK_WEB_CLIENTID" >> "$1/.env"
     echo "REDIS_URL=$REDIS_URL" >> "$1/.env"
-    echo "KEYCLOAK_URL_HTTP_RELATIVE_PATH=$KEYCLOAK_URL_HTTP_RELATIVE_PATH" >> "$1/.env"
     docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
     sleep 6
 }

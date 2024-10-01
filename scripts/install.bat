@@ -172,7 +172,6 @@ EXIT /B %ERRORLEVEL%
     set SESSION_COOKIE_SECURE=false
     set KEYCLOAK_WEB_CLIENTID=forms-flow-web
     set REDIS_URL=redis://%ip-add%:6379/0
-    set KEYCLOAK_URL_HTTP_RELATIVE_PATH=/auth
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
@@ -181,7 +180,6 @@ EXIT /B %ERRORLEVEL%
     echo SESSION_COOKIE_SECURE=%SESSION_COOKIE_SECURE%>>%~1\.env
     echo KEYCLOAK_WEB_CLIENTID=%KEYCLOAK_WEB_CLIENTID%>>%~1\.env
     echo REDIS_URL=%REDIS_URL%>>%~1\.env
-    echo KEYCLOAK_URL_HTTP_RELATIVE_PATH=%KEYCLOAK_URL_HTTP_RELATIVE_PATH%>>%~1\.env
     ENDLOCAL
     docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
