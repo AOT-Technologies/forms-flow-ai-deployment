@@ -318,7 +318,7 @@ services:
       MODEL_ID: ${MODEL_ID:-Seethal/sentiment_analysis_generic_dataset}
       DATABASE_SUPPORT: ${DATABASE_SUPPORT:-DISABLED}
     ports:
-      - '6000:5001'
+      - '6001:5000'
     networks:
       - formsflow
 
