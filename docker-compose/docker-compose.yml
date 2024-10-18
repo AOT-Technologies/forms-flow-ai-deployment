@@ -16,7 +16,7 @@ services:
     networks:
       - formsflow
 
-  keycloak:
+  keycloak:g
     image: quay.io/keycloak/keycloak:25.0.4
     restart: always
     container_name: keycloak
