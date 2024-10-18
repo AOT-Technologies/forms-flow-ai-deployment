@@ -62,9 +62,11 @@ isUp() {
 
 # Function to find the IPv4 address
 find_my_ip() {
-    ipadd=$(hostname -I | awk '{print $1}')
-    if [ "$(uname)" == "Darwin" ]; then
+   # ipadd=$(hostname -I | awk '{print $1}')
+    if [ "$(uname)" = "Darwin" ]; then
         ipadd=$(ipconfig getifaddr en0)
+    elif [ "$(uname)" = "Linux" ]; then
+        ipadd=$(hostname -I | awk '{print $1}')
     fi
     ip_add=$ipadd
     read -p "Confirm that your IPv4 address is $ip_add? [y/n]: " choice
