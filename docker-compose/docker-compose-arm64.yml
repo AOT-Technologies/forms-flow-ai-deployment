@@ -61,7 +61,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:6.0.2
+    image: formsflow/forms-flow-web:v6.0.2
     platform: linux/arm64/v8
     links:
       - forms-flow-webapi
