@@ -62,9 +62,11 @@ isUp() {
 
 # Function to find the IPv4 address
 find_my_ip() {
-    ipadd=$(hostname -I | awk '{print $1}')
-    if [ "$(uname)" == "Darwin" ]; then
+   # ipadd=$(hostname -I | awk '{print $1}')
+    if [ "$(uname)" = "Darwin" ]; then
         ipadd=$(ipconfig getifaddr en0)
+    elif [ "$(uname)" = "Linux" ]; then
+        ipadd=$(hostname -I | awk '{print $1}')
     fi
     ip_add=$ipadd
     read -p "Confirm that your IPv4 address is $ip_add? [y/n]: " choice
@@ -200,9 +202,9 @@ main() {
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
-    forms_flow_analytics "$1"
+    forms_flow_api "$1"
     if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
+        forms_flow_analytics "$1" "$2"
     fi
     forms_flow_documents "$1"
 
@@ -213,10 +215,6 @@ main() {
         forms_flow_data_analysis "$1"
     else
         echo "Skipping forms-flow-data-analysis-api installation."
-    fi
-
-    if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
     fi
 
     forms_flow_documents "$1"

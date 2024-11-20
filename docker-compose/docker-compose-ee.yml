@@ -17,7 +17,7 @@ services:
       - formsflow
 
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0.4
+    image: quay.io/keycloak/keycloak:23.0.7
     restart: always
     container_name: keycloak
     volumes:
@@ -61,7 +61,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web-ee:v7.0.0-alpha
+    image: formsflow/forms-flow-web-ee:v6.0.2
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
@@ -133,7 +133,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm-ee:v7.0.0-alpha
+    image: formsflow/forms-flow-bpm-ee:v6.0.2
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -197,7 +197,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi-ee:v7.0.0-alpha
+    image: formsflow/forms-flow-webapi-ee:v6.0.2
     restart: always
     links:
       - forms-flow-webapi-db
@@ -246,7 +246,7 @@ services:
       - formsflow
 
   forms-flow-documents-api:
-    image: formsflow/forms-flow-documents-api-ee:v7.0.0-alpha
+    image: formsflow/forms-flow-documents-api-ee:v6.0.2
     restart: always
     links:
       - forms-flow-forms
@@ -297,7 +297,7 @@ services:
       - '5430:5432'
 
   forms-flow-data-analysis-api:
-    image: formsflow/forms-flow-data-analysis-api:v7.0.0-alpha
+    image: formsflow/forms-flow-data-analysis-api:v6.0.2
     restart: always
     links:
       - forms-flow-data-analysis-db
