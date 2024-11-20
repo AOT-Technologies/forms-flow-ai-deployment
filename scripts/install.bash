@@ -17,7 +17,8 @@ set_docker_compose_file() {
 }
 
 # Define the array of valid Docker versions
-validVersions=("25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
+
+validVersions=("27.3.0" "27.2.0" "27.1.0" "27.0.3" "27.0.1" "26.1.3" "26.1.2" "26.1.1" "26.1.0" "26.0.2" "26.0.1" "26.0.0" "25.0.5" "25.0.3" "25.0.2" "25.0.0" "24.0.5" "24.0.4" "25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
 
 # Run the docker -v command and capture its output
 docker_info=$(docker -v 2>&1)
@@ -118,6 +119,9 @@ forms_flow_bpm() {
     SESSION_COOKIE_SECURE="false"
     KEYCLOAK_WEB_CLIENTID="forms-flow-web"
     REDIS_URL="redis://$ip_add:6379/0"
+    KEYCLOAK_URL_HTTP_RELATIVE_PATH="/auth"
+
+
 
 
     echo "FORMSFLOW_API_URL=$FORMSFLOW_API_URL" >> "$1/.env"
@@ -125,6 +129,7 @@ forms_flow_bpm() {
     echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> "$1/.env"
     echo "KEYCLOAK_WEB_CLIENTID=$KEYCLOAK_WEB_CLIENTID" >> "$1/.env"
     echo "REDIS_URL=$REDIS_URL" >> "$1/.env"
+    echo "KEYCLOAK_URL_HTTP_RELATIVE_PATH=$KEYCLOAK_URL_HTTP_RELATIVE_PATH" >> "$1/.env"
     docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
     sleep 6
 }
@@ -199,9 +204,9 @@ main() {
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
-    forms_flow_analytics "$1"
+    forms_flow_api "$1"
     if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
+        forms_flow_analytics "$1" "$2"
     fi
     forms_flow_documents "$1"
 
@@ -212,10 +217,6 @@ main() {
         forms_flow_data_analysis "$1"
     else
         echo "Skipping forms-flow-data-analysis-api installation."
-    fi
-
-    if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
     fi
 
     forms_flow_documents "$1"
