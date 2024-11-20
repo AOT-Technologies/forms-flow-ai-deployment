@@ -204,9 +204,9 @@ main() {
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
-    forms_flow_analytics "$1"
+    forms_flow_api "$1"
     if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
+        forms_flow_analytics "$1" "$2"
     fi
     forms_flow_documents "$1"
 
@@ -217,10 +217,6 @@ main() {
         forms_flow_data_analysis "$1"
     else
         echo "Skipping forms-flow-data-analysis-api installation."
-    fi
-
-    if [ "$1" == "1" ]; then
-        forms_flow_api "$1" "$2"
     fi
 
     forms_flow_documents "$1"
