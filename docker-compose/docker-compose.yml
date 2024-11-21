@@ -22,7 +22,7 @@ services:
     container_name: keycloak
     volumes:
       - ./configuration/imports:/opt/keycloak/data/import
-      - ./configuration/themes/formsflow:/opt/keycloak/themes/formsflow
+      - ./configuration/themes/formsflow/login:/opt/keycloak/themes/formsflow/login
       - ./configuration/start-keycloak.sh:/opt/keycloak/bin/start-keycloak.sh
     entrypoint: ["/bin/bash", "/opt/keycloak/bin/start-keycloak.sh"]
     environment:
@@ -41,6 +41,15 @@ services:
       - "8080:8080"
     links:
       - keycloak-db
+      - keycloak-customizations
+    networks:
+      - formsflow
+
+  keycloak-customizations:
+    image: formsflow/keycloak-customizations:v7.0.0-alpha
+    restart: always
+    tty: true
+    stdin_open: true    
     networks:
       - formsflow
 
