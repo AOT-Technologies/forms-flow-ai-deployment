@@ -93,6 +93,7 @@ keycloak() {
     echo KEYCLOAK_START_MODE=start-dev >> .env
     docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d keycloak
     sleep 5
+    docker run --rm -v keycloak_custom_data:/volume_mount --volumes-from keycloak-customizations busybox sh -c "cp -r /custom/* /volume_mount/"
     KEYCLOAK_URL="http://$ip_add:8080"
     export KEYCLOAK_URL
 }
