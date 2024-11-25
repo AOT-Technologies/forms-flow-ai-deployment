@@ -22,7 +22,7 @@ services:
     container_name: keycloak
     volumes:
       - keycloak_custom_data:/keycloak_custom_data
-    entrypoint: ["/bin/bash", "/opt/keycloak/bin/start-keycloak.sh"]
+    entrypoint: ["/bin/bash", "-c", "/keycloak_custom_data/start-keycloak.sh"]
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
@@ -43,6 +43,7 @@ services:
       - formsflow
 
   keycloak-customizations:
+    container_name: keycloak-customizations
     image: formsflow/keycloak-customizations:v7.0.0-alpha
     restart: always
     tty: true
@@ -349,6 +350,7 @@ services:
 volumes:
   postgres:
   mongodb:
+  keycloak_custom_data:
 networks:
   formsflow:
     driver: bridge
