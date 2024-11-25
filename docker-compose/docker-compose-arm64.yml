@@ -21,9 +21,7 @@ services:
     restart: always
     container_name: keycloak
     volumes:
-      - ./configuration/imports:/opt/keycloak/data/import
-      - ./configuration/themes/formsflow/login:/opt/keycloak/themes/formsflow/login
-      - ./configuration/start-keycloak.sh:/opt/keycloak/bin/start-keycloak.sh
+      - keycloak_custom_data:/keycloak_custom_data
     entrypoint: ["/bin/bash", "/opt/keycloak/bin/start-keycloak.sh"]
     environment:
       - DB_VENDOR=POSTGRES
@@ -49,6 +47,8 @@ services:
     restart: always
     tty: true
     stdin_open: true    
+    volumes:
+      - keycloak_custom_data:/custom
     networks:
       - formsflow
 
