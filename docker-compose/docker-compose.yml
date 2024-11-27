@@ -37,7 +37,7 @@ services:
 
     ports:
       - "8080:8080"
-    links:
+    depends_on:
       - keycloak-db
       - keycloak-customizations
     networks:
