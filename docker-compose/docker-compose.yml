@@ -17,14 +17,12 @@ services:
       - formsflow
 
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0.7
+    image: quay.io/keycloak/keycloak:25.0.4
     restart: always
     container_name: keycloak
     volumes:
-      - ./configuration/imports:/opt/keycloak/data/import
-      - ./configuration/themes/formsflow:/opt/keycloak/themes/formsflow
-      - ./configuration/start-keycloak.sh:/opt/keycloak/bin/start-keycloak.sh
-    entrypoint: ["/bin/bash", "/opt/keycloak/bin/start-keycloak.sh"]
+      - keycloak_custom_data:/keycloak_custom_data
+    entrypoint: ["/bin/bash", "-c", "/keycloak_custom_data/start-keycloak.sh"]
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
@@ -41,6 +39,18 @@ services:
       - "8080:8080"
     links:
       - keycloak-db
+      - keycloak-customizations
+    networks:
+      - formsflow
+
+  keycloak-customizations:
+    container_name: keycloak-customizations
+    image: formsflow/keycloak-customizations:v7.0.0-alpha
+    restart: always
+    tty: true
+    stdin_open: true  
+    volumes:
+      - keycloak_custom_data:/custom
     networks:
       - formsflow
 
@@ -62,7 +72,7 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:v6.0.2
+    image: formsflow/forms-flow-web:v7.0.0-alpha
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
@@ -103,7 +113,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v6.0.0
+    image: formsflow/forms-flow-forms:v7.0.0-alpha
     restart: always
     environment:
       DEBUG: formio:*
@@ -134,7 +144,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v6.0.2
+    image: formsflow/forms-flow-bpm:v7.0.0-alpha
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -198,7 +208,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v6.0.2
+    image: formsflow/forms-flow-webapi:v7.0.0-alpha
     restart: always
     links:
       - forms-flow-webapi-db
@@ -247,7 +257,7 @@ services:
       - formsflow
 
   forms-flow-documents-api:
-    image: formsflow/forms-flow-documents-api:v6.0.2
+    image: formsflow/forms-flow-documents-api:v7.0.0-alpha
     restart: always
     links:
       - forms-flow-forms
@@ -298,7 +308,7 @@ services:
       - '5430:5432'
 
   forms-flow-data-analysis-api:
-    image: formsflow/forms-flow-data-analysis-api:v6.0.2
+    image: formsflow/forms-flow-data-analysis-api:v7.0.0-alpha
     restart: always
     links:
       - forms-flow-data-analysis-db
@@ -341,6 +351,7 @@ services:
 volumes:
   postgres:
   mongodb:
+  keycloak_custom_data:
 networks:
   formsflow:
     driver: bridge
