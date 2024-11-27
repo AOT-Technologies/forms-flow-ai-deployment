@@ -36,7 +36,7 @@ services:
       - KEYCLOAK_HTTP_PATH=${KEYCLOAK_HTTP_PATH:-/auth}
     ports:
       - "8080:8080"
-    links:
+    depends_on:
       - keycloak-db
       - keycloak-customizations
     networks:
@@ -149,7 +149,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v7.0.0-alpha-arm64
+    image: formsflow/forms-flow-bpm:v7.0.0-alpha
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
