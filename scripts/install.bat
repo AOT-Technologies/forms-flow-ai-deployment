@@ -131,7 +131,6 @@ EXIT /B %ERRORLEVEL%
         )
 	    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d keycloak
 		timeout 5
-        docker run --rm -v keycloak_custom_data:/volume_mount --volumes-from keycloak-customizations busybox sh -c "cp -r /custom/* /volume_mount/"
 		set KEYCLOAK_URL=http://%ip-add%:8080
  	EXIT /B 0
    
