@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# Function to determine the IP address
-get_ip_address() {
-    ipadd=$(hostname -I | awk '{print $1}')
-    if [ "$(uname)" == "Darwin" ]; then
-        ipadd=$(ipconfig getifaddr en0)
-    fi
-}
-
 # Function to set the appropriate Docker Compose file based on the architecture
 set_docker_compose_file() {
     docker_compose_file='docker-compose.yml'
@@ -218,8 +210,6 @@ main() {
     else
         echo "Skipping forms-flow-data-analysis-api installation."
     fi
-
-    forms_flow_documents "$1"
     forms_flow_web "$1"
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
