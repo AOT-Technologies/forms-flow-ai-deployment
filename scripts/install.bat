@@ -2,6 +2,23 @@
 
 setlocal EnableDelayedExpansion
 
+:: Detect the appropriate Docker Compose command
+for /f "tokens=*" %%A in ('docker compose version 2^>nul') do (
+    set "COMPOSE_COMMAND=docker compose"
+)
+if not defined COMPOSE_COMMAND (
+    for /f "tokens=*" %%A in ('docker-compose version 2^>nul') do (
+        set "COMPOSE_COMMAND=docker-compose"
+    )
+)
+if not defined COMPOSE_COMMAND (
+    echo Neither docker compose nor docker-compose is installed. Please install one.
+    exit /b 1
+)
+
+:: Notify the user which command is being used
+echo Using %COMPOSE_COMMAND%
+
 :: Define the array of valid Docker versions
 set "validVersions= 27.3.1 27.3.0 27.2.1 27.2.0 27.1.0 27.0.3 27.0.2 27.0.1 27.0.0 26.1.4 26.1.3 26.1.2 26.1.1 26.1.0 26.0.2 26.0.1 26.0.0 25.0.5 25.0.4 25.0.3 25.0.2 25.0.1 25.0.0 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
 
@@ -74,8 +91,8 @@ EXIT /B %ERRORLEVEL%
     )
     call:forms-flow-forms ..\docker-compose
     call:forms-flow-bpm ..\docker-compose
-    call:forms-flow-web ..\docker-compose
     call:forms-flow-api ..\docker-compose %~1
+    call:forms-flow-web ..\docker-compose
     call:forms-flow-documents ..\docker-compose
     set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
     if /i "%includeDataAnalysis%"=="y" (
@@ -129,7 +146,7 @@ EXIT /B %ERRORLEVEL%
         if exist %~1\.env (
         del %~1\.env
         )
-	    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d keycloak
+	    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d keycloak
 		timeout 5
 		set KEYCLOAK_URL=http://%ip-add%:8080
  	EXIT /B 0
@@ -142,7 +159,7 @@ EXIT /B %ERRORLEVEL%
 
     set FORMIO_DEFAULT_PROJECT_URL=http://%ip-add%:3001
     echo FORMIO_DEFAULT_PROJECT_URL=%FORMIO_DEFAULT_PROJECT_URL%>>%~1\.env
-    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-forms
+    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-forms
     timeout 5
     EXIT /B 0
 	
@@ -156,7 +173,7 @@ EXIT /B %ERRORLEVEL%
     set BPM_API_URL=http://%ip-add%:8000/camunda
     echo BPM_API_URL=%BPM_API_URL%>>%~1\.env
 
-    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-web
+    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-web
     EXIT /B 0
 
 :: #############################################################
@@ -182,7 +199,7 @@ EXIT /B %ERRORLEVEL%
     echo REDIS_URL=%REDIS_URL%>>%~1\.env
     echo KEYCLOAK_URL_HTTP_RELATIVE_PATH=%KEYCLOAK_URL_HTTP_RELATIVE_PATH%>>%~1\.env
     ENDLOCAL
-    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-bpm
+    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
     EXIT /B 0  
 
@@ -220,8 +237,8 @@ EXIT /B %ERRORLEVEL%
     echo REDASH_REFERRER_POLICY=%REDASH_REFERRER_POLICY%>>%~1\.env
     echo REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=%REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS%>>%~1\.env
     ENDLOCAL
-    docker-compose -p formsflow-ai -f %~1\analytics-docker-compose.yml run --rm server create_db
-    docker-compose -p formsflow-ai -f %~1\analytics-docker-compose.yml up --build -d
+    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\analytics-docker-compose.yml run --rm server create_db
+    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\analytics-docker-compose.yml up --build -d
 	timeout 5
     EXIT /B 0
 
@@ -243,7 +260,7 @@ EXIT /B %ERRORLEVEL%
     )
     
     ENDLOCAL
-    docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-webapi
+    %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-webapi
 
 :: #############################################################
 :: ############### forms-flow-documents-api ####################
@@ -255,7 +272,7 @@ EXIT /B %ERRORLEVEL%
   set DOCUMENT_SERVICE_URL=http://%ip-add%:5006
   echo DOCUMENT_SERVICE_URL=%DOCUMENT_SERVICE_URL%>>%~1\.env
 
-  docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-documents-api
+  %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-documents-api
     timeout 5
     EXIT /B 0
 
@@ -266,7 +283,7 @@ EXIT /B %ERRORLEVEL%
 
   echo DATA_ANALYSIS_DB_URL=%DATA_ANALYSIS_DB_URL%>>%~1\.env
 
-  docker-compose -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api
+  %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api
     timeout 5
     EXIT /B 0
 

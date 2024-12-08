@@ -1,5 +1,4 @@
 # Author: Gurumoorthy Mohan, Kurian Benoy
-version: "3.7"
 
 x-redash-service: &redash-service
   image: formsflow/redash:10.1.5
