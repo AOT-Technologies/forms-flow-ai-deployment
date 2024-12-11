@@ -189,6 +189,8 @@ EXIT /B %ERRORLEVEL%
     set KEYCLOAK_WEB_CLIENTID=forms-flow-web
     set REDIS_URL=redis://%ip-add%:6379/0
     set KEYCLOAK_URL_HTTP_RELATIVE_PATH=/auth
+    set FORMSFLOW_DOC_API_URL=http://%ip-add%:5006
+    set DATA_ANALYSIS_URL=http://%ip-add%:6001
 
     echo KEYCLOAK_URL=%KEYCLOAK_URL%>>%~1\.env
     echo KEYCLOAK_BPM_CLIENT_SECRET=%KEYCLOAK_BPM_CLIENT_SECRET%>>%~1\.env
@@ -197,7 +199,10 @@ EXIT /B %ERRORLEVEL%
     echo SESSION_COOKIE_SECURE=%SESSION_COOKIE_SECURE%>>%~1\.env
     echo KEYCLOAK_WEB_CLIENTID=%KEYCLOAK_WEB_CLIENTID%>>%~1\.env
     echo REDIS_URL=%REDIS_URL%>>%~1\.env
+    echo FORMSFLOW_DOC_API_URL=%FORMSFLOW_DOC_API_URL%>>%~1\.env
     echo KEYCLOAK_URL_HTTP_RELATIVE_PATH=%KEYCLOAK_URL_HTTP_RELATIVE_PATH%>>%~1\.env
+    echo DATA_ANALYSIS_URL=%DATA_ANALYSIS_URL%>>%~1\.env
+    
     ENDLOCAL
     %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-bpm
     timeout 6
@@ -250,6 +255,8 @@ EXIT /B %ERRORLEVEL%
 
     SETLOCAL
 
+    set WEB_BASE_URL=http://%ip-add%:3000
+    set FORMSFLOW_ADMIN_URL=http://%ip-add%:5010/api/v1
     if %~2==1 (
         set /p INSIGHT_API_KEY="What is your Redash API key?"
         set INSIGHT_API_URL=http://%ip-add%:7001
@@ -258,6 +265,8 @@ EXIT /B %ERRORLEVEL%
         echo INSIGHT_API_URL=%INSIGHT_API_URL%>>%~1\.env
         echo INSIGHT_API_KEY=%INSIGHT_API_KEY%>>%~1\.env
     )
+    echo WEB_BASE_URL=%WEB_BASE_URL%>>%~1\.env
+    echo FORMSFLOW_ADMIN_URL=%FORMSFLOW_ADMIN_URL%>>%~1\.env
     
     ENDLOCAL
     %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-webapi

@@ -125,6 +125,8 @@ forms_flow_bpm() {
     KEYCLOAK_WEB_CLIENTID="forms-flow-web"
     REDIS_URL="redis://$ip_add:6379/0"
     KEYCLOAK_URL_HTTP_RELATIVE_PATH="/auth"
+    FORMSFLOW_DOC_API_URL="http://$ip_add:5006"
+    DATA_ANALYSIS_URL="http://$ip_add:6001"
 
 
 
@@ -134,7 +136,9 @@ forms_flow_bpm() {
     echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> "$1/.env"
     echo "KEYCLOAK_WEB_CLIENTID=$KEYCLOAK_WEB_CLIENTID" >> "$1/.env"
     echo "REDIS_URL=$REDIS_URL" >> "$1/.env"
+    echo "FORMSFLOW_DOC_API_URL=$FORMSFLOW_DOC_API_URL" >> "$1/.env"
     echo "KEYCLOAK_URL_HTTP_RELATIVE_PATH=$KEYCLOAK_URL_HTTP_RELATIVE_PATH" >> "$1/.env"
+    echo "DATA_ANALYSIS_URL=$DATA_ANALYSIS_URL" >> "$1/.env"
     $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
     sleep 6
 }
@@ -174,12 +178,16 @@ forms_flow_analytics() {
 
 # Function to start forms-flow-webapi
 forms_flow_api() {
+    WEB_BASE_URL="http://$ip_add:3000"
+    FORMSFLOW_ADMIN_URL="http://$ip_add:5010/api/v1"
     if [ "$2" == "1" ]; then
         read -p "What is your Redash API key? " INSIGHT_API_KEY
         INSIGHT_API_URL="http://$ip_add:7001"
         echo "INSIGHT_API_URL=$INSIGHT_API_URL" >> "$1/.env"
         echo "INSIGHT_API_KEY=$INSIGHT_API_KEY" >> "$1/.env"
     fi
+    echo "WEB_BASE_URL=$WEB_BASE_URL" >> "$1/.env"
+    echo "FORMSFLOW_ADMIN_URL=$FORMSFLOW_ADMIN_URL" >> "$1/.env"
     $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-webapi
 }
 
