@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   keycloak-db:
     image: postgres:latest
@@ -256,6 +254,7 @@ services:
       API_LOG_BACKUP_COUNT: ${API_LOG_BACKUP_COUNT:-7}
       CONFIGURE_LOGS: ${CONFIGURE_LOGS:-true}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      FORMSFLOW_ADMIN_URL: ${FORMSFLOW_ADMIN_URL}
     ports:
       - "5001:5000"
     networks:
@@ -267,6 +266,7 @@ services:
     volumes:
       - ./:/app:rw
     environment:
+      DATABASE_URL: ${FORMSFLOW_API_DB_URL:-postgresql://postgres:changeme@forms-flow-webapi-db:5432/webapi}
       FORMSFLOW_API_CORS_ORIGINS: ${FORMSFLOW_API_CORS_ORIGINS:-*}
       JWT_OIDC_WELL_KNOWN_CONFIG: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/.well-known/openid-configuration
       JWT_OIDC_JWKS_URI: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/protocol/openid-connect/certs
