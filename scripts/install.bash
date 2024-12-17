@@ -213,6 +213,7 @@ forms_flow_data_analysis() {
 main() {
     set_common_properties
     set_docker_compose_file
+    set_compose_command
     find_my_ip
     keycloak "$1"
     forms_flow_forms "$1"
