@@ -68,3 +68,5 @@ Follow the instructions on [docker installation guide](./docs/docker-compose/REA
 4|`forms-flow-web`|formsflow Landing web app|`http://localhost:3000`|[Default user credentials](./docs/forms-flow-ai-properties.md)
 5|`forms-flow-api`|API services|`http://localhost:5001`|`Authorization tocken from keycloak role based user credentials`
 6|`forms-flow-bpm`|Camunda integration|`http://localhost:8000/camunda`| [Default user credentials](./docs/forms-flow-ai-properties.md) 
+7|`forms-flow-documents-api`|generate pdf with form submission data|`http://localhost:5006`| [Default user credentials](./docs/forms-flow-ai-properties.md) 
+8|`forms-flow-data-analysis-api`|Sentiment Analysis|`http://localhost:6001`| [Default user credentials](./docs/forms-flow-ai-properties.md) 
