@@ -2,6 +2,28 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 7.0.0 - 'release-date'
+
+`Added` 
+
+* Redis container added for lightweight Redis service using the official Redis Alpine image
+* Added new IP fetching script for mac and windows users for smooth usage
+* Added Multi-arch image for BPM.
+* Updated the keycloak image to 25.0.4.
+* Added keycloak customization as a container to fetch Realm, themes and other customizations as image.
+
+`Modified`
+
+* Updated shell script for finding the correct docker compose file and install the application
+* Updated the scripts to check for the docker-compose file been used in the system("docker-compose"/"docker compose")
+* Updated the env's in the docker-compose file and env file.
+* Updated the Working docker versions 
+
+`Upcoming Features`
+
+* We will be adding the verfied and tested versions of docker into a json file or yml file and check the condition from it.
+* Service call concept insted of IP usage will be implemented.
+
 ## 6.0.0 - 2024-4-8
 
 `Added`
