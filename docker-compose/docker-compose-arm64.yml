@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   keycloak-db:
     image: postgres:latest
@@ -17,14 +15,12 @@ services:
       - formsflow
 
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0.7
+    image: quay.io/keycloak/keycloak:25.0.4
     restart: always
     container_name: keycloak
     volumes:
-      - ./configuration/imports:/opt/keycloak/data/import
-      - ./configuration/themes/formsflow:/opt/keycloak/themes/formsflow
-      - ./configuration/start-keycloak.sh:/opt/keycloak/bin/start-keycloak.sh
-    entrypoint: ["/bin/bash", "/opt/keycloak/bin/start-keycloak.sh"]
+      - keycloak_custom_data:/keycloak_custom_data
+    entrypoint: ["/bin/bash", "-c", "/keycloak_custom_data/start-keycloak.sh"]
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
@@ -38,8 +34,20 @@ services:
       - KEYCLOAK_HTTP_PATH=${KEYCLOAK_HTTP_PATH:-/auth}
     ports:
       - "8080:8080"
-    links:
+    depends_on:
       - keycloak-db
+      - keycloak-customizations
+    networks:
+      - formsflow
+
+  keycloak-customizations:
+    container_name: keycloak-customizations
+    image: formsflow/keycloak-customizations:latest
+    restart: always
+    tty: true
+    stdin_open: true    
+    volumes:
+      - keycloak_custom_data:/custom
     networks:
       - formsflow
 
@@ -61,17 +69,17 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:6.0.2
+    image: formsflow/forms-flow-web:latest
     platform: linux/arm64/v8
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
-      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v6.0.2/forms-flow-web.gz.js}
-      # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v6.0.2/forms-flow-nav.gz.js}
-      # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v6.0.2/forms-flow-service.gz.js}
-      # - MF_FORMSFLOW_ADMIN_URL=${MF_FORMSFLOW_ADMIN_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v6.0.2/forms-flow-admin.gz.js}
-      # - MF_FORMSFLOW_THEME_URL=${MF_FORMSFLOW_THEME_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-theme@v6.0.2/forms-flow-theme.gz.js}
+      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v7.0.0/forms-flow-web.gz.js}
+      # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v7.0.0/forms-flow-nav.gz.js}
+      # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v7.0.0/forms-flow-service.gz.js}
+      # - MF_FORMSFLOW_ADMIN_URL=${MF_FORMSFLOW_ADMIN_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v7.0.0/forms-flow-admin.gz.js}
+      # - MF_FORMSFLOW_THEME_URL=${MF_FORMSFLOW_THEME_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-theme@v7.0.0/forms-flow-theme.gz.js}
       - NODE_ENV=${NODE_ENV:-production}
       - REACT_APP_API_SERVER_URL=${FORMIO_DEFAULT_PROJECT_URL}
       - REACT_APP_API_PROJECT_URL=${FORMIO_DEFAULT_PROJECT_URL}
@@ -108,7 +116,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v6.0.0
+    image: formsflow/forms-flow-forms:latest
     restart: always
     environment:
       DEBUG: formio:*
@@ -139,7 +147,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v6.0.2-arm64
+    image: formsflow/forms-flow-bpm:latest
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -203,7 +211,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v6.0.2
+    image: formsflow/forms-flow-webapi:latest
     restart: always
     links:
       - forms-flow-webapi-db
@@ -246,13 +254,14 @@ services:
       API_LOG_BACKUP_COUNT: ${API_LOG_BACKUP_COUNT:-7}
       CONFIGURE_LOGS: ${CONFIGURE_LOGS:-true}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      FORMSFLOW_ADMIN_URL: ${FORMSFLOW_ADMIN_URL}
     ports:
       - "5001:5000"
     networks:
       - formsflow
 
   forms-flow-documents:
-    image: formsflow/forms-flow-documents-api:v6.0.2-arm64
+    image: formsflow/forms-flow-documents-api:v7.0.0-arm64
     restart: always
     volumes:
       - ./:/app:rw
@@ -305,6 +314,7 @@ services:
 volumes:
   postgres:
   mongodb:
+  keycloak_custom_data:
 networks:
   formsflow:
     driver: bridge

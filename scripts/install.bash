@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# Function to determine the IP address
-get_ip_address() {
-    ipadd=$(hostname -I | awk '{print $1}')
-    if [ "$(uname)" == "Darwin" ]; then
-        ipadd=$(ipconfig getifaddr en0)
-    fi
-}
-
 # Function to set the appropriate Docker Compose file based on the architecture
 set_docker_compose_file() {
     docker_compose_file='docker-compose.yml'
@@ -16,8 +8,22 @@ set_docker_compose_file() {
     fi
 }
 
+# Function to check for the appropriate Docker Compose command
+set_compose_command() {
+    if command -v docker compose &> /dev/null; then
+        compose_cmd="docker compose"
+    elif command -v docker-compose &> /dev/null; then
+        compose_cmd="docker-compose"
+    else
+        echo "Neither 'docker compose' nor 'docker-compose' is installed. Please install Docker Compose to continue."
+        exit 1
+    fi
+    echo "Using $compose_cmd for managing containers."
+}
+
 # Define the array of valid Docker versions
-validVersions=("27.3.0" "27.2.0" "27.1.0" "27.0.3" "27.0.1" "26.1.3" "26.1.2" "26.1.1" "26.1.0" "26.0.2" "26.0.1" "26.0.0" "25.0.5" "25.0.3" "25.0.2" "25.0.0" "24.0.5" "24.0.4" "25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
+
+validVersions=("27.4.1" "27.4.0" "27.3.1" "27.3.0" "27.2.0" "27.1.0" "27.0.3" "27.0.1" "26.1.3" "26.1.2" "26.1.1" "26.1.0" "26.0.2" "26.0.1" "26.0.0" "25.0.5" "25.0.3" "25.0.2" "25.0.0" "24.0.5" "24.0.4" "25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
 
 # Run the docker -v command and capture its output
 docker_info=$(docker -v 2>&1)
@@ -75,6 +81,28 @@ find_my_ip() {
     fi
 }
 
+# Fuction to ask prompt questions
+prompt_question(){
+# Start the installation process
+read -p "Do you want analytics to include in the installation? [y/n]: " choice
+if [ "$choice" == "y" ]; then
+    analytics=1
+else
+    analytics=0
+fi
+
+# Ask the user if they want to install forms-flow-data-analysis-api
+echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
+read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: "  Choice
+if [ "$Choice" == "y" ]; then
+    forms_flow_data_analysis=1
+else
+    forms_flow_data_analysis=0
+fi
+
+}
+
+
 # Function to set common properties
 set_common_properties() {
     WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
@@ -90,7 +118,7 @@ keycloak() {
         rm "$1/.env"
     fi
     echo KEYCLOAK_START_MODE=start-dev >> .env
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d keycloak
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d keycloak
     sleep 5
     KEYCLOAK_URL="http://$ip_add:8080"
     export KEYCLOAK_URL
@@ -100,7 +128,7 @@ keycloak() {
 forms_flow_forms() {
     FORMIO_DEFAULT_PROJECT_URL="http://$ip_add:3001"
     echo "FORMIO_DEFAULT_PROJECT_URL=$FORMIO_DEFAULT_PROJECT_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-forms
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-forms
     sleep 5
 }
 
@@ -108,7 +136,7 @@ forms_flow_forms() {
 forms_flow_web() {
     BPM_API_URL="http://$ip_add:8000/camunda"
     echo "BPM_API_URL=$BPM_API_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-web
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-web
 }
 
 # Function to start forms-flow-bpm
@@ -119,6 +147,8 @@ forms_flow_bpm() {
     KEYCLOAK_WEB_CLIENTID="forms-flow-web"
     REDIS_URL="redis://$ip_add:6379/0"
     KEYCLOAK_URL_HTTP_RELATIVE_PATH="/auth"
+    FORMSFLOW_DOC_API_URL="http://$ip_add:5006"
+    DATA_ANALYSIS_URL="http://$ip_add:6001"
 
 
 
@@ -127,8 +157,10 @@ forms_flow_bpm() {
     echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> "$1/.env"
     echo "KEYCLOAK_WEB_CLIENTID=$KEYCLOAK_WEB_CLIENTID" >> "$1/.env"
     echo "REDIS_URL=$REDIS_URL" >> "$1/.env"
+    echo "FORMSFLOW_DOC_API_URL=$FORMSFLOW_DOC_API_URL" >> "$1/.env"
     echo "KEYCLOAK_URL_HTTP_RELATIVE_PATH=$KEYCLOAK_URL_HTTP_RELATIVE_PATH" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
+    echo "DATA_ANALYSIS_URL=$DATA_ANALYSIS_URL" >> "$1/.env"
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-bpm
     sleep 6
 }
 
@@ -160,27 +192,31 @@ forms_flow_analytics() {
     echo "REDASH_CORS_ACCESS_CONTROL_ALLOW_ORIGIN=$REDASH_CORS_ACCESS_CONTROL_ALLOW_ORIGIN" >> "$1/.env"
     echo "REDASH_REFERRER_POLICY=$REDASH_REFERRER_POLICY" >> "$1/.env"
     echo "REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS=$REDASH_CORS_ACCESS_CONTROL_ALLOW_HEADERS" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/analytics-docker-compose.yml" run --rm server create_db
-    docker-compose -p formsflow-ai -f "$1/analytics-docker-compose.yml" up --build -d
+    $compose_cmd -p formsflow-ai -f "$1/analytics-docker-compose.yml" run --rm server create_db
+    $compose_cmd -p formsflow-ai -f "$1/analytics-docker-compose.yml" up --build -d
     sleep 5
 }
 
 # Function to start forms-flow-webapi
 forms_flow_api() {
+    WEB_BASE_URL="http://$ip_add:3000"
+    FORMSFLOW_ADMIN_URL="http://$ip_add:5010/api/v1"
     if [ "$2" == "1" ]; then
         read -p "What is your Redash API key? " INSIGHT_API_KEY
         INSIGHT_API_URL="http://$ip_add:7001"
         echo "INSIGHT_API_URL=$INSIGHT_API_URL" >> "$1/.env"
         echo "INSIGHT_API_KEY=$INSIGHT_API_KEY" >> "$1/.env"
     fi
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-webapi
+    echo "WEB_BASE_URL=$WEB_BASE_URL" >> "$1/.env"
+    echo "FORMSFLOW_ADMIN_URL=$FORMSFLOW_ADMIN_URL" >> "$1/.env"
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-webapi
 }
 
 # Function to start forms-flow-documents-api
 forms_flow_documents() {
     DOCUMENT_SERVICE_URL="http://$ip_add:5006"
     echo "DOCUMENT_SERVICE_URL=$DOCUMENT_SERVICE_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-documents-api
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-documents-api
     sleep 5
 }
 
@@ -190,7 +226,7 @@ forms_flow_data_analysis() {
     DATA_ANALYSIS_DB_URL="postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis"
     echo "DATA_ANALYSIS_API_BASE_URL=$DATA_ANALYSIS_API_BASE_URL" >> "$1/.env"
     echo "DATA_ANALYSIS_DB_URL=$DATA_ANALYSIS_DB_URL" >> "$1/.env"
-    docker-compose -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-data-analysis-api
+    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-data-analysis-api
     sleep 5
 }
 
@@ -198,7 +234,9 @@ forms_flow_data_analysis() {
 main() {
     set_common_properties
     set_docker_compose_file
+    set_compose_command
     find_my_ip
+    prompt_question
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
@@ -207,18 +245,10 @@ main() {
         forms_flow_analytics "$1" "$2"
     fi
     forms_flow_documents "$1"
-
-    # Ask the user if they want to install forms-flow-data-analysis-api
-    echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
-    read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: " install_data_analysis
-    if [ "$install_data_analysis" == "y" ]; then
-        forms_flow_data_analysis "$1"
-    else
-        echo "Skipping forms-flow-data-analysis-api installation."
-    fi
-
-    forms_flow_documents "$1"
     forms_flow_web "$1"
+    if [ "$1" == "1" ]; then
+        forms_flow_data_analysis "$1" "$2"
+    fi
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
     exit 0
@@ -228,20 +258,6 @@ main() {
 if ! command -v docker &> /dev/null; then
     echo "Docker is not installed or not running. Please install and start Docker before running this script."
     exit 1
-fi
-
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    echo "Docker Compose is not installed. Please install Docker Compose before running this script."
-    exit 1
-fi
-
-# Start the installation process
-read -p "Do you want analytics to include in the installation? [y/n]: " choice
-if [ "$choice" == "y" ]; then
-    analytics=1
-else
-    analytics=0
 fi
 
 main "." "$analytics"
