@@ -2,6 +2,8 @@
 
 setlocal EnableDelayedExpansion
 
+:start
+
 :: Detect the appropriate Docker Compose command
 for /f "tokens=*" %%A in ('docker compose version 2^>nul') do (
     set "COMPOSE_COMMAND=docker compose"
@@ -57,9 +59,7 @@ if %continue%== y (
 :: Display a success message if the version is found
 echo Your Docker version (%docker_version%) is tested and working!
 
-goto :start
-
-:start
+call:find-my-ip
 
 set /p choice=Do you want analytics to include in the installation? [y/n]
 if %choice%==y (
@@ -68,7 +68,14 @@ if %choice%==y (
     set /a analytics=0
 )
 
-call:find-my-ip
+echo For opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis
+set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
+if %choice%==y (
+    set /a dataanalysis =1
+) else (
+    set /a dataanalysis=0
+)
+
 call:main %analytics% %keycloak%
 
 echo ********************** formsflow.ai is successfully installed ****************************
@@ -94,17 +101,16 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-web ..\docker-compose
     call:forms-flow-documents ..\docker-compose
-    set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
-    if /i "%includeDataAnalysis%"=="y" (
+    if %~1==1 (
           call:forms-flow-data-analysis-api ..\docker-compose
     )
     call:isUp
     EXIT /B 0
 	
 
-:: #############################################################
+:: ############################################################
 :: ##################### Check working ########################
-:: #############################################################    
+:: ############################################################    
 
 :isUp
    :Check if the web API is up
