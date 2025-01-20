@@ -260,7 +260,7 @@ services:
     networks:
       - formsflow
 
-  forms-flow-documents:
+  forms-flow-documents-api:
     image: formsflow/forms-flow-documents-api:v7.0.0-arm64
     restart: always
     volumes:
