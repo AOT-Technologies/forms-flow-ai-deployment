@@ -21,9 +21,6 @@ if not defined COMPOSE_COMMAND (
 :: Notify the user which command is being used
 echo Using %COMPOSE_COMMAND%
 
-:: Define the array of valid Docker versions
-set "validVersions=27.4.1 27.4.0 27.3.1 27.3.0 27.2.0 27.1.0 27.0.3 27.0.1 26.1.3 26.1.2 26.1.1 26.1.0 26.0.2 26.0.1 26.0.0 25.0.5 25.0.3 25.0.2 25.0.0 24.0.5 24.0.4 25.0.3 25.0.2 25.0.1 25.0.0 24.0.9 24.0.8 24.0.7 24.0.6 24.0.5 24.0.4 24.0.3 24.0.2 24.0.1 24.0.0 23.0.6 23.0.5 23.0.4 23.0.3 23.0.2 23.0.1 23.0.0 20.10.24 20.10.23"
-
 :: Run the docker -v command and capture its output
 for /f "tokens=*" %%A in ('docker -v 2^>^&1') do (
     set "docker_info=%%A"
@@ -37,9 +34,9 @@ for /f "tokens=3" %%B in ("!docker_info!") do (
 :: Display the extracted Docker version
 echo Docker version: %docker_version%
 
-:: Check if the user's version is in the list
+:: Check if the user's version is in the list from tested_versions.txt
 set "versionFound="
-for %%B in (%validVersions%) do (
+for /f %%B in (tested_versions.txt) do (
     if "!docker_version!" equ "%%B" (
         set "versionFound=true"
         goto :VersionFound
@@ -49,10 +46,10 @@ for %%B in (%validVersions%) do (
 :: If the user's version is not found, display a warning
 echo This Docker version is not tested! 
 set /p continue=Do you want to continue? [y/n]
-if %continue%== y (
+if /i "%continue%" equ "y" (
    goto :start 
 ) else (
-   exit
+   exit /b 1
 )
 
 :VersionFound
@@ -301,3 +298,4 @@ EXIT /B %ERRORLEVEL%
   %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api
     timeout 5
     EXIT /B 0
+
