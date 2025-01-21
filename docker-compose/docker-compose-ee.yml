@@ -111,7 +111,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms-ee:latest
+    image: formsflow/forms-flow-forms:latest
     restart: always
     environment:
       DEBUG: formio:*
@@ -307,7 +307,7 @@ services:
       - '5430:5432'
 
   forms-flow-data-analysis-api:
-    image: formsflow/forms-flow-data-analysis-api:latest
+    image: formsflow/forms-flow-data-analysis-api-ee:v7.0.0-trim
     restart: always
     links:
       - forms-flow-data-analysis-db
