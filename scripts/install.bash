@@ -205,6 +205,7 @@ forms_flow_api() {
     WEB_BASE_URL="http://$ip_add:3000"
     FORMSFLOW_ADMIN_URL="http://$ip_add:5010/api/v1"
     if [ "$2" == "1" ]; then
+        echo "Analytics is included in the installation."
         read -p "What is your Redash API key? " INSIGHT_API_KEY
         INSIGHT_API_URL="http://$ip_add:7001"
         echo "INSIGHT_API_URL=$INSIGHT_API_URL" >> "$1/.env"
@@ -243,14 +244,12 @@ main() {
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
-    forms_flow_api "$1" "$analytics"
-    # Check if analytics should be installed
     if [ "$analytics" -eq 1 ]; then
         forms_flow_analytics "$1"
     fi
+    forms_flow_api "$1" "$analytics"
     forms_flow_documents "$1"
     forms_flow_web "$1"
-    # Check if data analysis should be installed
     if [ "$forms_flow_data_analysis" -eq 1 ]; then
         forms_flow_data_analysis "$1"
     fi
@@ -265,4 +264,4 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-main "." "$analytics"
+main "."
