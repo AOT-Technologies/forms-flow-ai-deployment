@@ -22,6 +22,7 @@ set_compose_command() {
 }
 
 # Define the array of valid Docker versions
+
 validVersions=("27.4.1" "27.4.0" "27.3.1" "27.3.0" "27.2.0" "27.1.0" "27.0.3" "27.0.1" "26.1.3" "26.1.2" "26.1.1" "26.1.0" "26.0.2" "26.0.1" "26.0.0" "25.0.5" "25.0.3" "25.0.2" "25.0.0" "24.0.5" "24.0.4" "25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
 
 # Run the docker -v command and capture its output
@@ -80,6 +81,28 @@ find_my_ip() {
     fi
 }
 
+# Fuction to ask prompt questions
+prompt_question(){
+# Start the installation process
+read -p "Do you want analytics to include in the installation? [y/n]: " choice
+if [ "$choice" == "y" ]; then
+    analytics=1
+else
+    analytics=0
+fi
+
+# Ask the user if they want to install forms-flow-data-analysis-api
+echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
+read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: "  Choice
+if [ "$Choice" == "y" ]; then
+    forms_flow_data_analysis=1
+else
+    forms_flow_data_analysis=0
+fi
+
+}
+
+
 # Function to set common properties
 set_common_properties() {
     WEBSOCKET_ENCRYPT_KEY="giert989jkwrgb@DR55"
@@ -126,7 +149,6 @@ forms_flow_bpm() {
     KEYCLOAK_URL_HTTP_RELATIVE_PATH="/auth"
     FORMSFLOW_DOC_API_URL="http://$ip_add:5006"
     DATA_ANALYSIS_URL="http://$ip_add:6001"
-
 
 
 
@@ -214,6 +236,7 @@ main() {
     set_docker_compose_file
     set_compose_command
     find_my_ip
+    prompt_question
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
@@ -222,16 +245,10 @@ main() {
         forms_flow_analytics "$1" "$2"
     fi
     forms_flow_documents "$1"
-
-    # Ask the user if they want to install forms-flow-data-analysis-api
-    echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
-    read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: " install_data_analysis
-    if [ "$install_data_analysis" == "y" ]; then
-        forms_flow_data_analysis "$1"
-    else
-        echo "Skipping forms-flow-data-analysis-api installation."
-    fi
     forms_flow_web "$1"
+    if [ "$1" == "1" ]; then
+        forms_flow_data_analysis "$1" "$2"
+    fi
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
     exit 0
@@ -241,14 +258,6 @@ main() {
 if ! command -v docker &> /dev/null; then
     echo "Docker is not installed or not running. Please install and start Docker before running this script."
     exit 1
-fi
-
-# Start the installation process
-read -p "Do you want analytics to include in the installation? [y/n]: " choice
-if [ "$choice" == "y" ]; then
-    analytics=1
-else
-    analytics=0
 fi
 
 main "." "$analytics"

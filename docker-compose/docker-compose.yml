@@ -43,7 +43,7 @@ services:
 
   keycloak-customizations:
     container_name: keycloak-customizations
-    image: formsflow/keycloak-customizations:v7.0.0-alpha
+    image: formsflow/keycloak-customizations:v7.1.0-alpha
     restart: always
     tty: true
     stdin_open: true  
@@ -70,14 +70,13 @@ services:
       - formsflow
 
   forms-flow-web:
-    image: formsflow/forms-flow-web:v7.0.0-alpha
+    image: formsflow/forms-flow-web:v7.1.0-alpha
     links:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - REACT_APP_API_SERVER_URL=${FORMIO_DEFAULT_PROJECT_URL}
-      - REACT_APP_LANGUAGE=${LANGUAGE:-en}
       - REACT_APP_LANGUAGE=${LANGUAGE:-en}
       - REACT_APP_API_PROJECT_URL=${FORMIO_DEFAULT_PROJECT_URL}
       - REACT_APP_KEYCLOAK_CLIENT=${KEYCLOAK_WEB_CLIENT_ID:-forms-flow-web}
@@ -113,7 +112,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: formsflow/forms-flow-forms:v7.0.0-alpha
+    image: formsflow/forms-flow-forms:v7.0.0
     restart: always
     environment:
       DEBUG: formio:*
@@ -144,7 +143,7 @@ services:
       - formsflow
 
   forms-flow-bpm:
-    image: formsflow/forms-flow-bpm:v7.0.0-alpha
+    image: formsflow/forms-flow-bpm:v7.1.0-alpha
     restart: always
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -171,7 +170,6 @@ services:
       - CUSTOM_SUBMISSION_URL=${CUSTOM_SUBMISSION_URL}
       - CUSTOM_SUBMISSION_ENABLED=${CUSTOM_SUBMISSION_ENABLED:-false}
       - MULTI_TENANCY_ENABLED=${MULTI_TENANCY_ENABLED:-false}
-      - KEYCLOAK_ENABLE_CLIENT_AUTH=${KEYCLOAK_ENABLE_CLIENT_AUTH:-false}
       - KEYCLOAK_ENABLE_CLIENT_AUTH=${KEYCLOAK_ENABLE_CLIENT_AUTH:-false}
       - KEYCLOAK_WEB_CLIENTID=${KEYCLOAK_WEB_CLIENTID:-forms-flow-web}
       - FORMSFLOW_ADMIN_URL=${FORMSFLOW_ADMIN_URL:-}
@@ -210,7 +208,7 @@ services:
       - formsflow
 
   forms-flow-webapi:
-    image: formsflow/forms-flow-webapi:v7.0.0-alpha
+    image: formsflow/forms-flow-webapi:v7.1.0-alpha
     restart: always
     links:
       - forms-flow-webapi-db
@@ -260,13 +258,12 @@ services:
       - formsflow
 
   forms-flow-documents-api:
-    image: formsflow/forms-flow-documents-api:v7.0.0-alpha
+    image: formsflow/forms-flow-documents-api:v7.1.0-alpha
     restart: always
     links:
       - forms-flow-forms
       - redis
     environment:
-      DATABASE_URL: ${FORMSFLOW_API_DB_URL:-postgresql://postgres:changeme@forms-flow-webapi-db:5432/webapi}
       FORMSFLOW_API_CORS_ORIGINS: ${FORMSFLOW_API_CORS_ORIGINS:-*}
       JWT_OIDC_WELL_KNOWN_CONFIG: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/.well-known/openid-configuration
       JWT_OIDC_JWKS_URI: ${KEYCLOAK_URL}/auth/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/protocol/openid-connect/certs
@@ -311,7 +308,7 @@ services:
       - '5430:5432'
 
   forms-flow-data-analysis-api:
-    image: formsflow/forms-flow-data-analysis-api:v7.0.0-alpha
+    image: formsflow/forms-flow-data-analysis-api:v7.1.0-alpha
     restart: always
     links:
       - forms-flow-data-analysis-db
