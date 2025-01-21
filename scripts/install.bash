@@ -82,24 +82,27 @@ find_my_ip() {
 }
 
 # Fuction to ask prompt questions
-prompt_question(){
-# Start the installation process
-read -p "Do you want analytics to include in the installation? [y/n]: " choice
-if [ "$choice" == "y" ]; then
-    analytics=1
-else
-    analytics=0
-fi
+prompt_question() {
+    # Ask about analytics installation
+    read -p "Do you want analytics to include in the installation? [y/n]: " choice
+    if [ "$choice" == "y" ]; then
+        analytics=1
+    else
+        analytics=0
+    fi
 
-# Ask the user if they want to install forms-flow-data-analysis-api
-echo "for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis"
-read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: "  Choice
-if [ "$Choice" == "y" ]; then
-    forms_flow_data_analysis=1
-else
-    forms_flow_data_analysis=0
-fi
+    # Ask about forms-flow-data-analysis-api installation
+    echo "For open-source: Sentiment analysis allows assessing sentiments within forms by considering specific topics specified by the designer."
+    read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: " Choice
+    if [ "$Choice" == "y" ]; then
+        forms_flow_data_analysis=1
+    else
+        forms_flow_data_analysis=0
+    fi
 
+    # Export variables to make them available in the main function
+    export analytics
+    export forms_flow_data_analysis
 }
 
 
@@ -240,14 +243,16 @@ main() {
     keycloak "$1"
     forms_flow_forms "$1"
     forms_flow_bpm "$1"
-    forms_flow_api "$1"
-    if [ "$1" == "1" ]; then
-        forms_flow_analytics "$1" "$2"
+    forms_flow_api "$1" "$analytics"
+    # Check if analytics should be installed
+    if [ "$analytics" -eq 1 ]; then
+        forms_flow_analytics "$1"
     fi
     forms_flow_documents "$1"
     forms_flow_web "$1"
-    if [ "$1" == "1" ]; then
-        forms_flow_data_analysis "$1" "$2"
+    # Check if data analysis should be installed
+    if [ "$forms_flow_data_analysis" -eq 1 ]; then
+        forms_flow_data_analysis "$1"
     fi
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
