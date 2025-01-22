@@ -70,7 +70,7 @@ isUp() {
 find_my_ip() {
    # ipadd=$(hostname -I | awk '{print $1}')
     if [ "$(uname)" = "Darwin" ]; then
-        ipadd=$(ipconfig getifaddr en0)
+        ipadd=$(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}' | head -n 1)
     elif [ "$(uname)" = "Linux" ]; then
         ipadd=$(hostname -I | awk '{print $1}')
     fi
