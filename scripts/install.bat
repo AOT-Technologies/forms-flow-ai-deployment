@@ -34,9 +34,19 @@ for /f "tokens=3" %%B in ("!docker_info!") do (
 :: Display the extracted Docker version
 echo Docker version: %docker_version%
 
-:: Check if the user's version is in the list from tested_versions.txt
+:: Set the URL where tested versions are uploaded
+set "url=https://tested-versions-docker-formsflow.aot-technologies.com/docker_versions.html"
+
+:: Fetch the tested versions using curl
+set "versionsFile=tested_versions.tmp"
+curl -s "%url%" > "%versionsFile%" || (
+    echo Failed to fetch tested versions. Please check your internet connection or the URL.
+    exit /b 1
+)
+
+:: Check if the user's version is in the fetched list
 set "versionFound="
-for /f %%B in (tested_versions.txt) do (
+for /f %%B in ('type "%versionsFile%"') do (
     if "!docker_version!" equ "%%B" (
         set "versionFound=true"
         goto :VersionFound
@@ -57,6 +67,8 @@ if /i "%continue%" equ "y" (
 echo Your Docker version (%docker_version%) is tested and working!
 
 call:find-my-ip
+:: Clean up temporary file
+del "%versionsFile%"
 
 set /p choice=Do you want analytics to include in the installation? [y/n]
 if %choice%==y (
@@ -298,4 +310,3 @@ EXIT /B %ERRORLEVEL%
   %COMPOSE_COMMAND% -p formsflow-ai -f %~1\docker-compose.yml up --build -d forms-flow-data-analysis-api
     timeout 5
     EXIT /B 0
-
