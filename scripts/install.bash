@@ -21,36 +21,36 @@ set_compose_command() {
     echo "Using $compose_cmd for managing containers."
 }
 
-# Define the array of valid Docker versions
-
-validVersions=("27.4.1" "27.4.0" "27.3.1" "27.3.0" "27.2.0" "27.1.0" "27.0.3" "27.0.1" "26.1.3" "26.1.2" "26.1.1" "26.1.0" "26.0.2" "26.0.1" "26.0.0" "25.0.5" "25.0.3" "25.0.2" "25.0.0" "24.0.5" "24.0.4" "25.0.3" "25.0.2" "25.0.1" "25.0.0" "24.0.9" "24.0.8" "24.0.7" "24.0.6" "24.0.5" "24.0.4" "24.0.3" "24.0.2" "24.0.1" "24.0.0" "23.0.6" "23.0.5" "23.0.4" "23.0.3" "23.0.2" "23.0.1" "23.0.0" "20.10.24" "20.10.23")
-
-# Run the docker -v command and capture its output
-docker_info=$(docker -v 2>&1)
-
-# Extract the Docker version using string manipulation
-docker_version=$(echo "$docker_info" | awk '{print $3}' | tr -d ,)
-
-# Display the extracted Docker version
-echo "Docker version: $docker_version"
-
-# Check if the user's version is in the list
-versionFound=false
-for version in "${validVersions[@]}"; do
-    if [ "$docker_version" == "$version" ]; then
-        versionFound=true
-        break
+fetch_valid_versions() {
+    valid_versions_url="https://tested-versions-docker-formsflow.aot-technologies.com/"
+    validVersions=$(curl -s "$valid_versions_url")
+    if [ -z "$validVersions" ]; then
+        echo "Failed to fetch the list of valid Docker versions from $valid_versions_url"
+        exit 1
     fi
-done
+    echo "Fetched valid Docker versions successfully."
 
-# If the user's version is not found, display a warning and prompt for continuation
-if [ "$versionFound" == false ]; then
-    echo "This Docker version is not tested!"
-    read -p "Do you want to continue? [y/n]: " continue
-    if [ "$continue" != "y" ]; then
+    # Run the docker -v command and capture its output
+    docker_info=$(docker -v 2>&1)
+
+    # Extract the Docker version using string manipulation
+    docker_version=$(echo "$docker_info" | awk '{print $3}' | tr -d ,)
+
+    # Display the extracted Docker version
+    echo "Docker version: $docker_version"
+}
+
+check_valid_version() {
+  if echo "$validVersions" | grep -q "\"$docker_version\""; then
+     echo "Your Docker version $docker_version is tested and working!"
+  else
+     echo "This Docker version is not tested!"
+     read -p "Do you want to continue? [y/n]: " continue
+     if [ "$continue" != "y" ]; then
         exit
-    fi
-fi
+     fi
+  fi
+}
 
 # Function to check if the web API is up
 isUp() {
@@ -70,7 +70,7 @@ isUp() {
 find_my_ip() {
    # ipadd=$(hostname -I | awk '{print $1}')
     if [ "$(uname)" = "Darwin" ]; then
-        ipadd=$(ipconfig getifaddr en0)
+        ipadd=$(ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print $2}' | head -n 1)
     elif [ "$(uname)" = "Linux" ]; then
         ipadd=$(hostname -I | awk '{print $1}')
     fi
@@ -239,6 +239,8 @@ main() {
     set_common_properties
     set_docker_compose_file
     set_compose_command
+    fetch_valid_versions
+    check_valid_version
     find_my_ip
     prompt_question
     keycloak "$1"
