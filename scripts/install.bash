@@ -30,25 +30,26 @@ fetch_valid_versions() {
     fi
     echo "Fetched valid Docker versions successfully."
 
-# Run the docker -v command and capture its output
-docker_info=$(docker -v 2>&1)
+    # Run the docker -v command and capture its output
+    docker_info=$(docker -v 2>&1)
 
-# Extract the Docker version using string manipulation
-docker_version=$(echo "$docker_info" | awk '{print $3}' | tr -d ,)
+    # Extract the Docker version using string manipulation
+    docker_version=$(echo "$docker_info" | awk '{print $3}' | tr -d ,)
 
-# Display the extracted Docker version
-echo "Docker version: $docker_version"
+    # Display the extracted Docker version
+    echo "Docker version: $docker_version"
 }
 
 check_valid_version() {
   if echo "$validVersions" | grep -q "\"$docker_version\""; then
-    echo "Your Docker version $docker_version is tested and working!"
+     echo "Your Docker version $docker_version is tested and working!"
   else
-   echo "This Docker version is not tested!"
-   read -p "Do you want to continue? [y/n]: " continue
-   if [ "$continue" != "y" ]; then
-     exit
-   fi
+     echo "This Docker version is not tested!"
+     read -p "Do you want to continue? [y/n]: " continue
+     if [ "$continue" != "y" ]; then
+        exit
+     fi
+  fi
 }
 
 # Function to check if the web API is up
