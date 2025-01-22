@@ -42,8 +42,9 @@ echo "Docker version: $docker_version"
 
 check_valid_version() {
   if echo "$validVersions" | grep -q "\"$docker_version\""; then
-    echo "Version $docker_version exists."
+    echo "Your Docker version $docker_version is tested and working!"
   else
+   echo "This Docker version is not tested!"
    read -p "Do you want to continue? [y/n]: " continue
    if [ "$continue" != "y" ]; then
      exit
