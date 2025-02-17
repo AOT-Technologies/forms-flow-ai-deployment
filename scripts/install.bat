@@ -79,7 +79,7 @@ if %choice%==y (
 
 echo For opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis
 set /p includeDataAnalysis=Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
-if %choice%==y (
+if %includeDataAnalysis%==y (
     set /a dataanalysis =1
 ) else (
     set /a dataanalysis=0
