@@ -101,7 +101,7 @@ EXIT /B %ERRORLEVEL%
     call:forms-flow-api ..\docker-compose %~1
     call:forms-flow-web ..\docker-compose
     call:forms-flow-documents ..\docker-compose
-    if %~1==1 (
+    if %dataanalysis%==1 (
           call:forms-flow-data-analysis-api ..\docker-compose
     )
     call:isUp
