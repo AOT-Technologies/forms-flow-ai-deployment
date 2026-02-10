@@ -74,7 +74,7 @@ services:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
-      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web@v8.0.1/forms-flow-web.gz.js}
+      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web-ee@v8.0.1/forms-flow-web.gz.js}
       # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.0.1/forms-flow-nav.gz.js}
       # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.0.1/forms-flow-service.gz.js}
       # - MF_FORMSFLOW_COMPONENTS_URL=${MF_FORMSFLOW_COMPONENTS_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.0.1/forms-flow-components.gz.js}
