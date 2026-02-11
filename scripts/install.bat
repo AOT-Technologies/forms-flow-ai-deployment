@@ -5,7 +5,7 @@ REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
 set "CE_VERSION=v8.0.0-alpha"
-set "EE_VERSION=v8.0.0"
+set "EE_VERSION=v8.0.1"
 set "FORMS_VERSION=v7.3.0"
 
 REM Docker registry configuration
