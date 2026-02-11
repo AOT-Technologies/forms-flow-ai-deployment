@@ -5,7 +5,7 @@
 # ============================================
 # Modify these tags for testing alpha/beta versions
 CE_VERSION="v8.0.0-alpha"
-EE_VERSION="v8.0.0"
+EE_VERSION="v8.0.1"
 FORMS_VERSION="v7.3.0"
 
 # Docker registry configuration
