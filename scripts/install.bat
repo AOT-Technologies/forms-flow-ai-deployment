@@ -4,8 +4,8 @@ setlocal EnableDelayedExpansion
 REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
-set "CE_VERSION=v8.0.0-alpha"
-set "EE_VERSION=v8.0.1"
+set "CE_VERSION=v8.1.0-alpha"
+set "EE_VERSION=v8.1.0-rc"
 set "FORMS_VERSION=v7.3.0"
 
 REM Docker registry configuration
@@ -370,13 +370,13 @@ echo FORMS_TAG=!FORMS_VERSION!
 echo DOCUMENTS_API_TAG=!DOCUMENTS_API_TAG!
 echo.
 echo # Microfrontend URLs ^(Commented out by default - uncomment in docker-compose if needed^)
-echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.0.0/forms-flow-web.gz.js
-echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.0.0/forms-flow-nav.gz.js
-echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.0.0/forms-flow-service.gz.js
-echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.0.0/forms-flow-components.gz.js
-echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.0.0/forms-flow-admin.gz.js
-echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.0.0/forms-flow-review.gz.js
-echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.0.0/forms-flow-submissions.gz.js
+echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.1.0-rc/forms-flow-web.gz.js
+echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.1.0-rc/forms-flow-nav.gz.js
+echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.1.0-rc/forms-flow-service.gz.js
+echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.1.0-rc/forms-flow-components.gz.js
+echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.1.0-rc/forms-flow-admin.gz.js
+echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.1.0-rc/forms-flow-review.gz.js
+echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.1.0-rc/forms-flow-submissions.gz.js
 echo.
 echo # Database Configuration
 echo KEYCLOAK_JDBC_DB=keycloak
@@ -405,6 +405,17 @@ echo KEYCLOAK_BPM_CLIENT_ID=forms-flow-bpm
 echo KEYCLOAK_BPM_CLIENT_SECRET=e4bdbd25-1467-4f7f-b993-bc4b1944c943
 echo KEYCLOAK_WEB_CLIENT_ID=forms-flow-web
 echo KEYCLOAK_ENABLE_CLIENT_AUTH=false
+echo.
+echo # Keycloak - HubSpot Integration
+echo #HUBSPOT_ACCESS_TOKEN=
+echo #HUBSPOT_PIPELINE_ID=
+echo #HUBSPOT_DEAL_STAGE_ID=
+echo #HUBSPOT_DEAL_OWNER_ID=
+echo HUBSPOT_DEAL_SOURCE=FFAI Try It Now form
+echo HUBSPOT_BASE_URL=https://api.hubapi.com 
+echo HUBSPOT_ENABLED=false
+echo FF_KEYCLOAK_PUBLIC_URL=http://!ip_add!:8080/auth
+echo FF_ADMIN_API_URL=http://!ip_add!:5010/api/v1
 echo.
 echo # API URLs
 echo FORMIO_DEFAULT_PROJECT_URL=http://!ip_add!:3001
@@ -455,6 +466,12 @@ echo # Database Connection Strings
 echo FORMSFLOW_API_DB_URL=postgresql://postgres:changeme@forms-flow-webapi-db:5432/webapi
 echo FORMSFLOW_API_DB_HOST=forms-flow-webapi-db
 echo FORMSFLOW_API_DB_PORT=5432
+echo.
+echo # Web - URL Configuration
+echo URL_UPGRADE=https://formsflow.ai/license-upgrade-call-scheduler/
+echo URL_CONTACT_SALES=https://formsflow.ai/about-us/
+echo URL_TERMS_AND_CONDITIONS=https://formsflow.ai/license-faq/
+echo URL_PRIVACY_POLICY=https://formsflow.ai/privacy-policy/
 echo.
 echo # Additional Configuration
 echo APP_SECURITY_ORIGIN=*
