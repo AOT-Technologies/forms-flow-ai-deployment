@@ -2,12 +2,10 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 8.1.0 - 2026-03-03 - Enterprise Edition
+## 8.1.0 - 26-2-2026 - Enterprise Edition
 
 `Added`
 
-**Roles & Permissions**
-* Added view-only permissions tab in user settings.
 * Added environment variables for external URLs
   * `URL_UPGRADE` for license upgrade
   * `URL_CONTACT_SALES` to contact sales
