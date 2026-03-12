@@ -2,6 +2,20 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.1.0 - 26-2-2026 - Enterprise Edition
+
+`Added`
+
+* Added environment variables for external URLs
+  * `URL_UPGRADE` for license upgrade
+  * `URL_CONTACT_SALES` to contact sales
+  * `URL_TERMS_AND_CONDITIONS` for terms and conditions
+  * `URL_PRIVACY_POLICY` for privacy policy
+
+`Changed`
+
+* Updated image versions to Enterprise Edition to **v8.1.0** and opensource Edition to **v8.1.0-alpha**
+
 ## 8.0.0 - 2025-12-05 - Enterprise Edition
 
 `Added`
