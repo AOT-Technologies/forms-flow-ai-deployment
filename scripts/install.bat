@@ -472,6 +472,7 @@ echo URL_UPGRADE=https://formsflow.ai/license-upgrade-call-scheduler/
 echo URL_CONTACT_SALES=https://formsflow.ai/about-us/
 echo URL_TERMS_AND_CONDITIONS=https://formsflow.ai/license-faq/
 echo URL_PRIVACY_POLICY=https://formsflow.ai/privacy-policy/
+echo GRAPHQL_API_URL=http://!ip_add!:5500/queries
 echo.
 echo # Additional Configuration
 echo APP_SECURITY_ORIGIN=*
