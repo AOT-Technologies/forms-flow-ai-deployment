@@ -514,6 +514,7 @@ URL_UPGRADE=https://formsflow.ai/license-upgrade-call-scheduler/
 URL_CONTACT_SALES=https://formsflow.ai/about-us/
 URL_TERMS_AND_CONDITIONS=https://formsflow.ai/license-faq/
 URL_PRIVACY_POLICY=https://formsflow.ai/privacy-policy/
+GRAPHQL_API_URL=http://$ip_add:5500/queries
 
 # Additional Configuration
 APP_SECURITY_ORIGIN=*
