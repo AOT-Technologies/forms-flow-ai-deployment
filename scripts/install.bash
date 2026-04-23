@@ -5,7 +5,7 @@
 # ============================================
 # Modify these tags for testing alpha/beta versions
 CE_VERSION="v8.1.0-alpha"
-EE_VERSION="v8.1.0"
+EE_VERSION="v8.2.0-rc"
 FORMS_VERSION="v7.3.0"
 
 # Docker registry configuration
@@ -412,13 +412,13 @@ FORMS_TAG=$FORMS_VERSION
 DOCUMENTS_API_TAG=$DOCUMENTS_API_TAG
 
 # Microfrontend URLs (Commented out by default - uncomment in docker-compose if needed)
-MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/$MF_WEB_PATH@v8.1.0/forms-flow-web.gz.js
-MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.1.0/forms-flow-nav.gz.js
-MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.1.0/forms-flow-service.gz.js
-MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.1.0/forms-flow-components.gz.js
-MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.1.0/forms-flow-admin.gz.js
-MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.1.0/forms-flow-review.gz.js
-MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.1.0/forms-flow-submissions.gz.js
+MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/$MF_WEB_PATH@v8.2.0-rc/forms-flow-web.gz.js
+MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.0-rc/forms-flow-nav.gz.js
+MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.0-rc/forms-flow-service.gz.js
+MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.0-rc/forms-flow-components.gz.js
+MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.0-rc/forms-flow-admin.gz.js
+MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.0-rc/forms-flow-review.gz.js
+MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.0-rc/forms-flow-submissions.gz.js
 
 # Database Configuration
 KEYCLOAK_JDBC_DB=keycloak
@@ -493,6 +493,11 @@ ENABLE_DASHBOARDS_MODULE=true
 ENABLE_PROCESSES_MODULE=true
 ENABLE_APPLICATIONS_MODULE=true
 ENABLE_APPLICATIONS_ACCESS_PERMISSION_CHECK=false
+
+# AI Configuration
+AI_FORM_GENERATION_LIMIT_TRIAL=10
+AI_FORM_GENERATION_LIMIT_PAID=100
+AI_BUILDER_QUOTA_TIMEZONE=""
 
 # Formio Configuration
 FORMIO_ROOT_EMAIL=admin@example.com
