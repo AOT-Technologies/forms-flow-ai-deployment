@@ -90,19 +90,8 @@ prompt_question() {
     else
         analytics=0
     fi
-
-    # Ask about forms-flow-data-analysis-api installation
-    echo "For open-source: Sentiment analysis allows assessing sentiments within forms by considering specific topics specified by the designer."
-    read -p "Do you want to install forms-flow-data-analysis-api? [y/n]: " Choice
-    if [ "$Choice" == "y" ]; then
-        forms_flow_data_analysis=1
-    else
-        forms_flow_data_analysis=0
-    fi
-
     # Export variables to make them available in the main function
     export analytics
-    export forms_flow_data_analysis
 }
 
 
@@ -288,15 +277,6 @@ forms_flow_data_layer() {
     sleep 5
 }
 
-# Function to start forms-flow-data-analysis-api
-forms_flow_data_analysis() {
-    DATA_ANALYSIS_API_BASE_URL="http://$ip_add:6001"
-    DATA_ANALYSIS_DB_URL="postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis"
-    echo "DATA_ANALYSIS_API_BASE_URL=$DATA_ANALYSIS_API_BASE_URL" >> "$1/.env"
-    echo "DATA_ANALYSIS_DB_URL=$DATA_ANALYSIS_DB_URL" >> "$1/.env"
-    $compose_cmd -p formsflow-ai -f "$1/$docker_compose_file" up --build -d forms-flow-data-analysis-api
-    sleep 5
-}
 
 # Main function
 main() {
@@ -317,9 +297,6 @@ main() {
     forms_flow_data_layer "$1"
     forms_flow_documents "$1"
     forms_flow_web "$1"
-    if [ "$forms_flow_data_analysis" -eq 1 ]; then
-        forms_flow_data_analysis "$1"
-    fi
     isUp
     echo "********************** formsflow.ai is successfully installed ****************************"
     exit 0

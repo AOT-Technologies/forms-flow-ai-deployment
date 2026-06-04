@@ -26,7 +26,6 @@ Variable name (Docker-compose) | Variable name (Docker) | Descreption | Default 
 `WEBSOCKET_ENCRYPT_KEY`|`REACT_APP_WEBSOCKET_ENCRYPT_KEY `|Camunda task event streaming. AES encryption of token|`giert989jkwrgb@DR55`
 `MULTI_TENANCY_ENABLED`|`enableMultiTenancy `|Multi tenancy enabled flag for the environment|`true/false`
 `FORMSFLOW_ADMIN_URL`|` formsFlowinUrAdml`|Only needed if multi tenancy is enabled|`http://{your-ip-address}:5001/`
-`DATA_ANALYSIS_URL`| |sentiment analysis url|`http://{your-ip-address}:6000/analysis`
 `APP_SECURITY_ORIGIN`| |CORS setup, for multiple origins you can separate them using a comma| `*`
 `CAMUNDA_APP_ROOT_LOG_FLAG`| |Log level setting|`error`
 `DATA_BUFFER_SIZE`|` maxInMemorySize`|Configure a limit on the number of bytes that can be buffered for webclient|`2  (In MB)`

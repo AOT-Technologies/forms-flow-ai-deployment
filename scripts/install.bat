@@ -263,26 +263,10 @@ if /i "!choice!"=="y" (
     echo Analytics will not be included.
 )
 
-REM Data Analysis selection
-echo.
-echo Sentiment Analysis enables assessment of sentiments within forms by
-echo considering specific topics specified during form creation.
-echo The data analysis API provides interfaces for sentiment analysis.
-echo.
-set /p "includeDataAnalysis=Do you want to include forms-flow-data-analysis-api? [y/n] "
-if /i "!includeDataAnalysis!"=="y" (
-    set "dataanalysis=1"
-    echo Data Analysis API will be included.
-) else (
-    set "dataanalysis=0"
-    echo Data Analysis API will not be included.
-)
 
-echo.
 echo Installation summary:
 echo - IP Address: !ip_add!
 echo - Analytics: !analytics!
-echo - Data Analysis API: !dataanalysis!
 echo - Docker Compose File: !COMPOSE_FILE!
 if !analytics!==1 (
     echo - Analytics Compose File: !ANALYTICS_COMPOSE_FILE!
@@ -383,7 +367,6 @@ echo WEBSOCKET_SECURITY_ORIGIN=http://!ip_add!:3000 >> "!DOCKER_COMPOSE_DIR!\.en
 echo SESSION_COOKIE_SECURE=false >> "!DOCKER_COMPOSE_DIR!\.env"
 echo REDIS_URL=redis://!ip_add!:6379/0 >> "!DOCKER_COMPOSE_DIR!\.env"
 echo FORMSFLOW_DOC_API_URL=http://!ip_add!:5006 >> "!DOCKER_COMPOSE_DIR!\.env"
-echo DATA_ANALYSIS_URL=http://!ip_add!:6001 >> "!DOCKER_COMPOSE_DIR!\.env"
 echo BPM_API_URL=http://!ip_add!:8000/camunda >> "!DOCKER_COMPOSE_DIR!\.env"
 echo USER_NAME_DISPLAY_CLAIM=preferred_username >> "!DOCKER_COMPOSE_DIR!\.env"
 
@@ -481,22 +464,6 @@ if !ERRORLEVEL! neq 0 (
 )
 echo Waiting for documents API to initialize...
 timeout /t 10 /nobreak >nul
-
-REM Setup Data Analysis if selected
-if !dataanalysis!==1 (
-    echo Setting up forms-flow-data-analysis-api...
-    echo DATA_ANALYSIS_DB_URL=postgresql://general:changeme@forms-flow-data-analysis-db:5432/dataanalysis >> "!DOCKER_COMPOSE_DIR!\.env"
-
-    echo Starting forms-flow-data-analysis-api container...
-    !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up --build -d forms-flow-data-analysis-api
-    if !ERRORLEVEL! neq 0 (
-        echo ERROR: Failed to start forms-flow-data-analysis-api
-        pause
-        exit /b !ERRORLEVEL!
-    )
-    echo Waiting for data analysis API to initialize...
-    timeout /t 10 /nobreak >nul
-)
 
 REM Verify installation
 echo Verifying installation...
