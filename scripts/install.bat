@@ -5,8 +5,9 @@ REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
 set "CE_VERSION=v8.1.0-alpha"
-set "EE_VERSION=v8.1.0"
+set "EE_VERSION=v8.2.0"
 set "FORMS_VERSION=v7.3.0"
+set "MCP_VERSION=v8.2.0"
 
 REM Docker registry configuration
 set "DOCKER_REGISTRY=docker.io"
@@ -290,19 +291,7 @@ if /i "!includeAnalytics!"=="y" (
     echo Analytics will not be included.
 )
 echo.
-echo Sentiment Analysis enables assessment of sentiments within forms by
-echo considering specific topics specified during form creation.
-echo The data analysis API provides interfaces for sentiment analysis.
-echo.
-set /p "includeDataAnalysis=Do you want to include forms-flow-data-analysis-api? [y/n] "
-if /i "!includeDataAnalysis!"=="y" (
-    set "dataanalysis=1"
-    echo Data Analysis API will be included.
-) else (
-    set "dataanalysis=0"
-    echo Data Analysis API will not be included.
-)
-echo.
+
 
 REM If analytics requested but analytics compose file is missing, warn and skip analytics
 if "!analytics!"=="1" (
@@ -321,7 +310,6 @@ echo - Edition: !EDITION!
 echo - Architecture: !ARCH!
 echo - PLATFORM: !PLATFORM!
 echo - Analytics: !analytics!
-echo - Data Analysis: !dataanalysis!
 echo ============================================
 echo.
 set /p "confirmInstall=Begin installation with these settings? [y/n] "
@@ -368,15 +356,16 @@ echo # Image Tags
 echo IMAGE_TAG=!IMAGE_TAG!
 echo FORMS_TAG=!FORMS_VERSION!
 echo DOCUMENTS_API_TAG=!DOCUMENTS_API_TAG!
+echo MCP_TAG=!MCP_VERSION!
 echo.
 echo # Microfrontend URLs ^(Commented out by default - uncomment in docker-compose if needed^)
-echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.1.0/forms-flow-web.gz.js
-echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.1.0/forms-flow-nav.gz.js
-echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.1.0/forms-flow-service.gz.js
-echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.1.0/forms-flow-components.gz.js
-echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.1.0/forms-flow-admin.gz.js
-echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.1.0/forms-flow-review.gz.js
-echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.1.0/forms-flow-submissions.gz.js
+echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.2.0/forms-flow-web.gz.js
+echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.0/forms-flow-nav.gz.js
+echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.0/forms-flow-service.gz.js
+echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.0/forms-flow-components.gz.js
+echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.0/forms-flow-admin.gz.js
+echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.0/forms-flow-review.gz.js
+echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.0/forms-flow-submissions.gz.js
 echo.
 echo # Database Configuration
 echo KEYCLOAK_JDBC_DB=keycloak
@@ -391,9 +380,6 @@ echo CAMUNDA_JDBC_DB_NAME=formsflow-bpm
 echo FORMSFLOW_API_DB_USER=postgres
 echo FORMSFLOW_API_DB_PASSWORD=changeme
 echo FORMSFLOW_API_DB_NAME=webapi
-echo DATA_ANALYSIS_DB_USER=general
-echo DATA_ANALYSIS_DB_PASSWORD=changeme
-echo DATA_ANALYSIS_DB_NAME=dataanalysis
 echo.
 echo # Keycloak Configuration
 echo KEYCLOAK_ADMIN_USER=admin
@@ -422,8 +408,6 @@ echo FORMIO_DEFAULT_PROJECT_URL=http://!ip_add!:3001
 echo FORMSFLOW_API_URL=http://!ip_add!:5001
 echo BPM_API_URL=http://!ip_add!:8000/camunda
 echo DOCUMENT_SERVICE_URL=http://!ip_add!:5006
-echo DATA_ANALYSIS_URL=http://!ip_add!:6001
-echo DATA_ANALYSIS_API_BASE_URL=http://!ip_add!:6001
 echo.
 echo # Application Configuration
 echo APPLICATION_NAME=formsflow.ai
@@ -451,6 +435,11 @@ echo ENABLE_DASHBOARDS_MODULE=true
 echo ENABLE_PROCESSES_MODULE=true
 echo ENABLE_APPLICATIONS_MODULE=true
 echo ENABLE_APPLICATIONS_ACCESS_PERMISSION_CHECK=false
+echo.
+echo # AI Configuration
+echo AI_FORM_GENERATION_LIMIT_TRIAL=10
+echo AI_FORM_GENERATION_LIMIT_PAID=100
+echo AI_BUILDER_QUOTA_TIMEZONE=America/Toronto
 echo.
 echo # Formio Configuration
 echo FORMIO_ROOT_EMAIL=admin@example.com
@@ -491,6 +480,19 @@ echo GUNICORN_WORKERS=5
 echo GUNICORN_THREADS=10
 echo GUNICORN_TIMEOUT=120
 echo FORMSFLOW_DATA_LAYER_WORKERS=4
+echo.
+echo # MCP Configuration
+echo MCP_HOST_PORT=5050
+echo MCP_FORWARDED_ALLOW_IPS=*
+echo MCP_FORMSFLOW_API_URL=http://forms-flow-webapi:5000
+echo MCP_API_TIMEOUT=30
+echo MCP_OIDC_BASE_URL=http://localhost:5050/mcp-protocol
+echo MCP_OIDC_ISSUER_URL=http://localhost:5050/mcp-protocol
+echo MCP_OIDC_REDIRECT_PATH=/oauth/callback
+echo MCP_OIDC_SCOPES=openid
+echo MCP_OIDC_VERIFY_ID_TOKEN=true
+echo MCP_OIDC_REQUIRE_CONSENT=false
+echo MCP_FORMIO_URL=http://forms-flow-forms:3001
 ) > "!DOCKER_COMPOSE_DIR!\.env"
 
 echo .env file created successfully!
@@ -532,13 +534,8 @@ echo ***********************************************
 echo *       Starting Main FormsFlow Stack...       *
 echo ***********************************************
 
-if "!dataanalysis!"=="1" (
-    echo Starting all services including Data Analysis API...
-    call !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up -d
-) else (
-    echo Starting core services ^(excluding Data Analysis API^)...
-    call !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up -d keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web redis
-)
+echo Starting core services...
+call !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up -d keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web forms-flow-mcp redis
 if errorlevel 1 (
     echo.
     echo ERROR: Failed to start main containers.
@@ -565,9 +562,6 @@ echo   - FormsFlow Web: http://!ip_add!:3000
 echo   - Keycloak:      http://!ip_add!:8080/auth
 echo   - API:           http://!ip_add!:5001
 echo   - BPM:           http://!ip_add!:8000
-if "!dataanalysis!"=="1" (
-    echo   - Data Analysis: http://!ip_add!:6001
-)
 if "!analytics!"=="1" (
     echo   - Analytics:     http://!ip_add!:7001
 )

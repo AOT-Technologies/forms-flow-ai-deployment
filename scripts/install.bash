@@ -5,8 +5,9 @@
 # ============================================
 # Modify these tags for testing alpha/beta versions
 CE_VERSION="v8.1.0-alpha"
-EE_VERSION="v8.1.0"
+EE_VERSION="v8.2.0"
 FORMS_VERSION="v7.3.0"
+MCP_VERSION="v8.2.0"
 
 # Docker registry configuration
 DOCKER_REGISTRY="docker.io"  # Change if using a different registry
@@ -333,19 +334,7 @@ else
 fi
 echo ""
 
-echo "Sentiment Analysis enables assessment of sentiments within forms by"
-echo "considering specific topics specified during form creation."
-echo "The data analysis API provides interfaces for sentiment analysis."
-echo ""
-read -p "Do you want to include forms-flow-data-analysis-api? [y/n] " includeDataAnalysis
-if [[ "$includeDataAnalysis" =~ ^[Yy]$ ]]; then
-    dataanalysis=1
-    echo "Data Analysis API will be included."
-else
-    dataanalysis=0
-    echo "Data Analysis API will not be included."
-fi
-echo ""
+
 
 # If analytics requested but analytics compose file is missing, warn and skip analytics
 if [ "$analytics" == "1" ]; then
@@ -364,7 +353,6 @@ echo "- Edition: $EDITION"
 echo "- Architecture: $ARCH"
 echo "- PLATFORM: $PLATFORM"
 echo "- Analytics: $analytics"
-echo "- Data Analysis: $dataanalysis"
 echo "============================================"
 echo ""
 read -p "Begin installation with these settings? [y/n] " confirmInstall
@@ -410,15 +398,16 @@ IMAGE_SUFFIX=$IMAGE_SUFFIX
 IMAGE_TAG=$IMAGE_TAG
 FORMS_TAG=$FORMS_VERSION
 DOCUMENTS_API_TAG=$DOCUMENTS_API_TAG
+MCP_TAG=$MCP_VERSION
 
 # Microfrontend URLs (Commented out by default - uncomment in docker-compose if needed)
-MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/$MF_WEB_PATH@v8.1.0/forms-flow-web.gz.js
-MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.1.0/forms-flow-nav.gz.js
-MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.1.0/forms-flow-service.gz.js
-MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.1.0/forms-flow-components.gz.js
-MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.1.0/forms-flow-admin.gz.js
-MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.1.0/forms-flow-review.gz.js
-MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.1.0/forms-flow-submissions.gz.js
+MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/$MF_WEB_PATH@v8.2.0/forms-flow-web.gz.js
+MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.0/forms-flow-nav.gz.js
+MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.0/forms-flow-service.gz.js
+MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.0/forms-flow-components.gz.js
+MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.0/forms-flow-admin.gz.js
+MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.0/forms-flow-review.gz.js
+MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.0/forms-flow-submissions.gz.js
 
 # Database Configuration
 KEYCLOAK_JDBC_DB=keycloak
@@ -433,10 +422,6 @@ CAMUNDA_JDBC_DB_NAME=formsflow-bpm
 FORMSFLOW_API_DB_USER=postgres
 FORMSFLOW_API_DB_PASSWORD=changeme
 FORMSFLOW_API_DB_NAME=webapi
-DATA_ANALYSIS_DB_USER=general
-DATA_ANALYSIS_DB_PASSWORD=changeme
-DATA_ANALYSIS_DB_NAME=dataanalysis
-
 # Keycloak Configuration
 KEYCLOAK_ADMIN_USER=admin
 KEYCLOAK_ADMIN_PASSWORD=changeme
@@ -464,9 +449,6 @@ FORMIO_DEFAULT_PROJECT_URL=http://$ip_add:3001
 FORMSFLOW_API_URL=http://$ip_add:5001
 BPM_API_URL=http://$ip_add:8000/camunda
 DOCUMENT_SERVICE_URL=http://$ip_add:5006
-DATA_ANALYSIS_URL=http://$ip_add:6001
-DATA_ANALYSIS_API_BASE_URL=http://$ip_add:6001
-
 # Application Configuration
 APPLICATION_NAME=formsflow.ai
 LANGUAGE=en
@@ -493,6 +475,11 @@ ENABLE_DASHBOARDS_MODULE=true
 ENABLE_PROCESSES_MODULE=true
 ENABLE_APPLICATIONS_MODULE=true
 ENABLE_APPLICATIONS_ACCESS_PERMISSION_CHECK=false
+
+# AI Configuration
+AI_FORM_GENERATION_LIMIT_TRIAL=10
+AI_FORM_GENERATION_LIMIT_PAID=100
+AI_BUILDER_QUOTA_TIMEZONE=America/Toronto
 
 # Formio Configuration
 FORMIO_ROOT_EMAIL=admin@example.com
@@ -533,6 +520,19 @@ GUNICORN_WORKERS=5
 GUNICORN_THREADS=10
 GUNICORN_TIMEOUT=120
 FORMSFLOW_DATA_LAYER_WORKERS=4
+
+# MCP Configuration
+MCP_HOST_PORT=5050
+MCP_FORWARDED_ALLOW_IPS=*
+MCP_FORMSFLOW_API_URL=http://forms-flow-webapi:5000
+MCP_API_TIMEOUT=30
+MCP_OIDC_BASE_URL=http://localhost:5050/mcp-protocol
+MCP_OIDC_ISSUER_URL=http://localhost:5050/mcp-protocol
+MCP_OIDC_REDIRECT_PATH=/oauth/callback
+MCP_OIDC_SCOPES=openid
+MCP_OIDC_VERIFY_ID_TOKEN=true
+MCP_OIDC_REQUIRE_CONSENT=false
+MCP_FORMIO_URL=http://forms-flow-forms:3001
 EOF
 
 echo ".env file created successfully!"
@@ -699,13 +699,8 @@ echo "***********************************************"
 echo "*       Starting Main FormsFlow Stack...       *"
 echo "***********************************************"
 
-if [ "$dataanalysis" == "1" ]; then
-    echo "Starting all services including Data Analysis API..."
-    $COMPOSE_COMMAND -p formsflow-ai -f "$COMPOSE_FILE" up -d
-else
-    echo "Starting core services..."
-    $COMPOSE_COMMAND -p formsflow-ai -f "$COMPOSE_FILE" up -d keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web redis
-fi
+echo "Starting core services..."
+$COMPOSE_COMMAND -p formsflow-ai -f "$COMPOSE_FILE" up -d keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web forms-flow-mcp redis
 
 if [ $? -ne 0 ]; then
     echo ""
@@ -732,9 +727,6 @@ echo "  - FormsFlow Web: http://$ip_add:3000"
 echo "  - Keycloak:      http://$ip_add:8080/auth"
 echo "  - API:           http://$ip_add:5001"
 echo "  - BPM:           http://$ip_add:8000"
-if [ "$dataanalysis" == "1" ]; then
-    echo "  - Data Analysis: http://$ip_add:6001"
-fi
 if [ "$analytics" == "1" ]; then
     echo "  - Analytics:     http://$ip_add:7001"
 fi

@@ -22,8 +22,6 @@ Confirm that your IPv4 address is (xyz)? [y/n]
 
 This file can be run multiple times, it will update the source if any new updates. 
 
-for opensource - One distinctive capability of the formsflow.ai involves Sentiment Analysis, allowing it to assess sentiments within forms by considering specific topics specified by the designer during form creation. The data analysis api encompasses access to all pertinent interfaces tailored for sentiment analysis
-Do you want to include forms-flow-data-analysis-api in the installation? [y/n]
 
 
 /uninstall

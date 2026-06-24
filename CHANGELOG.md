@@ -2,6 +2,21 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.2.0 - 10-5-2026 - Enterprise Edition
+
+`Added`
+
+* Added new environment variables for AI Configuration in WebAPI (`AI_FORM_GENERATION_LIMIT_TRIAL`, `AI_FORM_GENERATION_LIMIT_PAID`, `AI_BUILDER_QUOTA_TIMEZONE`).
+* Added the `forms-flow-mcp` service component and its associated environment variables.
+
+`Changed`
+
+* Updated image versions to Enterprise Edition **v8.2.0**.
+
+`Removed`
+
+* Removed the `data-analysis` component and its associated services and environment variables.
+
 ## 8.1.0 - 26-2-2026 - Enterprise Edition
 
 `Added`
