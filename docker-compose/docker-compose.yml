@@ -15,7 +15,7 @@ services:
       - formsflow
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.1.2
+    image: quay.io/keycloak/keycloak:26.6.2
     restart: always
     container_name: keycloak
     volumes:

@@ -5,7 +5,7 @@ REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
 set "CE_VERSION=v8.1.0-alpha"
-set "EE_VERSION=v8.2.0"
+set "EE_VERSION=v8.2.2"
 set "FORMS_VERSION=v7.3.0"
 set "MCP_VERSION=v8.2.0"
 
@@ -359,13 +359,13 @@ echo DOCUMENTS_API_TAG=!DOCUMENTS_API_TAG!
 echo MCP_TAG=!MCP_VERSION!
 echo.
 echo # Microfrontend URLs ^(Commented out by default - uncomment in docker-compose if needed^)
-echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.2.0/forms-flow-web.gz.js
-echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.0/forms-flow-nav.gz.js
-echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.0/forms-flow-service.gz.js
-echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.0/forms-flow-components.gz.js
-echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.0/forms-flow-admin.gz.js
-echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.0/forms-flow-review.gz.js
-echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.0/forms-flow-submissions.gz.js
+echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.2.2/forms-flow-web.gz.js
+echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.2/forms-flow-nav.gz.js
+echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.2/forms-flow-service.gz.js
+echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.2/forms-flow-components.gz.js
+echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.2/forms-flow-admin.gz.js
+echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.2/forms-flow-review.gz.js
+echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.2/forms-flow-submissions.gz.js
 echo.
 echo # Database Configuration
 echo KEYCLOAK_JDBC_DB=keycloak
