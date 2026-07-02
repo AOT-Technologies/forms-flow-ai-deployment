@@ -700,7 +700,11 @@ echo "*       Starting Main FormsFlow Stack...       *"
 echo "***********************************************"
 
 echo "Starting core services..."
-$COMPOSE_COMMAND -p formsflow-ai -f "$COMPOSE_FILE" up -d keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web forms-flow-mcp redis
+SERVICES_TO_START="keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web redis"
+if [ "$EDITION" == "ee" ]; then
+    SERVICES_TO_START="$SERVICES_TO_START forms-flow-mcp"
+fi
+$COMPOSE_COMMAND -p formsflow-ai -f "$COMPOSE_FILE" up -d $SERVICES_TO_START
 
 if [ $? -ne 0 ]; then
     echo ""
