@@ -5,7 +5,7 @@ REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
 set "CE_VERSION=v8.1.0-alpha"
-set "EE_VERSION=v8.2.0"
+set "EE_VERSION=v8.2.2"
 set "FORMS_VERSION=v7.3.0"
 set "MCP_VERSION=v8.2.0"
 
@@ -359,13 +359,13 @@ echo DOCUMENTS_API_TAG=!DOCUMENTS_API_TAG!
 echo MCP_TAG=!MCP_VERSION!
 echo.
 echo # Microfrontend URLs ^(Commented out by default - uncomment in docker-compose if needed^)
-echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.2.0/forms-flow-web.gz.js
-echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.0/forms-flow-nav.gz.js
-echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.0/forms-flow-service.gz.js
-echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.0/forms-flow-components.gz.js
-echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.0/forms-flow-admin.gz.js
-echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.0/forms-flow-review.gz.js
-echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.0/forms-flow-submissions.gz.js
+echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.2.2/forms-flow-web.gz.js
+echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.2/forms-flow-nav.gz.js
+echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.2/forms-flow-service.gz.js
+echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.2/forms-flow-components.gz.js
+echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.2/forms-flow-admin.gz.js
+echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.2/forms-flow-review.gz.js
+echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.2/forms-flow-submissions.gz.js
 echo.
 echo # Database Configuration
 echo KEYCLOAK_JDBC_DB=keycloak
@@ -535,7 +535,11 @@ echo *       Starting Main FormsFlow Stack...       *
 echo ***********************************************
 
 echo Starting core services...
-call !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up -d keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web forms-flow-mcp redis
+set "SERVICES_TO_START=keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web redis"
+if "!EDITION!"=="ee" (
+    set "SERVICES_TO_START=!SERVICES_TO_START! forms-flow-mcp"
+)
+call !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up -d !SERVICES_TO_START!
 if errorlevel 1 (
     echo.
     echo ERROR: Failed to start main containers.

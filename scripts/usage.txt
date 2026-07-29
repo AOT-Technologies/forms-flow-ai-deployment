@@ -6,29 +6,45 @@ for Windows:- Double click the file, install.bat.
 for Linux/Mac:- Open the terminal and set path to /scripts and run install.bash file.
 
 The following questionnaire will be asked during the formsflow.ai installation, it is mandatory to answer every question with the right data.
-This Docker version is not tested
-Do you want to continue? [y/n]
 
-If "y" will continue the installation with the non-tested docker version, else will exit.
-             
-                    OR
+1. Docker Version Validation:
+   If your Docker version is not in the tested list:
+   - Do you want to continue anyway? [y/n]
+   (Choosing "y" continues the installation; "n" cancels.)
 
-Your Docker version (xyz) is tested and working! ---> and continue working
+2. IP Address Confirmation:
+   - Detected IP address: (xyz)
+   - Is this correct? [y/n]
+   (If "n", you will be prompted to enter the correct IP address manually.)
 
-formsflow.ai leverages Redash to build interactive dashboards and gain insights. answer any of these options eg: y - Yes, n - No.
-Do you want analytics to include in the installation? [y/n]
+3. Select Installation Type (Edition):
+   - Select installation type:
+     1. Open Source (Community Edition)
+     2. Premium (Enterprise Edition)
+   - Enter your choice [1-2]:
+   
+   * Note on Editions:
+     - Open Source (Community Edition): The MCP service (forms-flow-mcp) is not needed and will not be installed.
+     - Premium (Enterprise Edition): Requires Docker registry credentials. It will prompt for your access token for the Docker username "formsflowaidev". All core components (except analytics) are considered a user need and will be installed.
 
-Confirm that your IPv4 address is (xyz)? [y/n]
+4. Include Analytics (Redash):
+   - Do you want to include analytics in the installation? [y/n]
+   (If "y", Redash will be configured to build interactive dashboards and gain insights. If running on ARM64 architecture, additional warnings and choices to continue without analytics might be shown due to compatibility.)
 
-This file can be run multiple times, it will update the source if any new updates. 
+5. Begin Installation:
+   - Begin installation with these settings? [y/n]
+   
+6. Redash API Key (Only if analytics was included):
+   - Enter your Redash API key:
+   (To get this key, open the running Redash console at http://<ip>:7001 in your browser, create an admin account, and copy the API key from Settings -> API Key.)
 
+This file can be run multiple times; it will update the configuration and recreate the .env file.
 
 
 /uninstall
 
-This will remove the source directory, remove images and prune all the dangling images.
+This will stop the containers, remove images, and prune all dangling Docker images.
 
-Make sure that their is no any important docker container in the docker, since the uninstall command will remove all the containers in the docker.
+Make sure there are no other important containers running, since the uninstall command is designed to clean up the Docker system.
 
-
-NOTE: Each time you restart or start again from the begginning, Remember to Delete all the images from docker-desktop, And prune volumes,network, and container.
+NOTE: Each time you restart or start again from the beginning, remember to delete all the images from docker-desktop, and prune volumes, networks, and containers.
