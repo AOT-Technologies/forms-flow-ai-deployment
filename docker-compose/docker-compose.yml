@@ -1,6 +1,6 @@
 services:
   keycloak-db:
-    image: postgres:latest
+    image: postgres:14
     restart: always
     container_name: keycloak_db
     volumes:
@@ -15,12 +15,31 @@ services:
       - formsflow
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.1.2
+    image: quay.io/keycloak/keycloak:26.6.2
     restart: always
     container_name: keycloak
     volumes:
       - keycloak_custom_data:/keycloak_custom_data
-    entrypoint: ["/bin/bash", "-c", "/keycloak_custom_data/start-keycloak.sh"]
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        mkdir -p /opt/keycloak/themes /opt/keycloak/data/import /opt/keycloak/providers
+        if [ -d /keycloak_custom_data/providers ] && [ "$(ls -A /keycloak_custom_data/providers 2>/dev/null)" ]; then
+          cp -rf /keycloak_custom_data/providers/* /opt/keycloak/providers/
+        fi
+        if [ -d /keycloak_custom_data/themes ] && [ "$(ls -A /keycloak_custom_data/themes 2>/dev/null)" ]; then
+          cp -rf /keycloak_custom_data/themes/* /opt/keycloak/themes/
+        fi
+        if [ -d /keycloak_custom_data/imports ] && [ "$(ls -A /keycloak_custom_data/imports 2>/dev/null)" ]; then
+          cp -rf /keycloak_custom_data/imports/* /opt/keycloak/data/import/
+          if [ -f /opt/keycloak/data/import/formsflow-ai-realm.json ]; then
+            mv -f /opt/keycloak/data/import/formsflow-ai-realm.json /opt/keycloak/data/import/forms-flow-ai-realm.json
+          fi
+        fi
+        START_MODE=$${KEYCLOAK_START_MODE:-start-dev}
+        HTTP_PATH=$${KEYCLOAK_HTTP_PATH:-/auth}
+        exec /opt/keycloak/bin/kc.sh $$START_MODE --import-realm --http-relative-path $$HTTP_PATH
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-db
