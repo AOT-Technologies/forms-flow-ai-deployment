@@ -4,7 +4,7 @@ setlocal EnableDelayedExpansion
 REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
-set "CE_VERSION=v8.1.0-alpha"
+set "CE_VERSION=v8.0.0-alpha"
 set "EE_VERSION=v8.2.5"
 set "FORMS_VERSION=v8.2.5-alpha"
 set "MCP_VERSION=v8.2.0"
