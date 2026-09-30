@@ -52,13 +52,13 @@ services:
       - formsflow
 
   redis:
-    image: redis:6-alpine
+    image: redis:alpine
     restart: always
     networks:
       - formsflow
 
   postgres:
-    image: postgres:9.6-alpine
+    image: postgres:14
     ports:
       - '7432:5432'
     restart: always
