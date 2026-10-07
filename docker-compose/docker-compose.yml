@@ -15,7 +15,7 @@ services:
       - formsflow
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.6.2
+    image: quay.io/keycloak/keycloak:26.7.2
     restart: always
     container_name: keycloak
     volumes:
@@ -93,13 +93,13 @@ services:
       - forms-flow-webapi
     entrypoint: /bin/sh -c "/usr/share/nginx/html/config/env.sh && nginx -g 'daemon off;'"
     environment:
-      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web-ee@v8.2.5/forms-flow-web.gz.js}
-      # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.5/forms-flow-nav.gz.js}
-      # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.5/forms-flow-service.gz.js}
-      # - MF_FORMSFLOW_COMPONENTS_URL=${MF_FORMSFLOW_COMPONENTS_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.5/forms-flow-components.gz.js}
-      # - MF_FORMSFLOW_ADMIN_URL=${MF_FORMSFLOW_ADMIN_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.5/forms-flow-admin.gz.js}
-      # - MF_FORMSFLOW_REVIEW_URL=${MF_FORMSFLOW_REVIEW_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.5/forms-flow-review.gz.js}
-      # - MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.5/forms-flow-submissions.gz.js
+      # - MF_FORMSFLOW_WEB_URL=${MF_FORMSFLOW_WEB_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-web-ee@v8.3.0/forms-flow-web.gz.js}
+      # - MF_FORMSFLOW_NAV_URL=${MF_FORMSFLOW_NAV_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.3.0/forms-flow-nav.gz.js}
+      # - MF_FORMSFLOW_SERVICE_URL=${MF_FORMSFLOW_SERVICE_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.3.0/forms-flow-service.gz.js}
+      # - MF_FORMSFLOW_COMPONENTS_URL=${MF_FORMSFLOW_COMPONENTS_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.3.0/forms-flow-components.gz.js}
+      # - MF_FORMSFLOW_ADMIN_URL=${MF_FORMSFLOW_ADMIN_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.3.0/forms-flow-admin.gz.js}
+      # - MF_FORMSFLOW_REVIEW_URL=${MF_FORMSFLOW_REVIEW_URL:-https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.3.0/forms-flow-review.gz.js}
+      # - MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.3.0/forms-flow-submissions.gz.js
       # - NODE_ENV=${NODE_ENV:-production}
       - NODE_ENV=${NODE_ENV:-production}
       - REACT_APP_API_SERVER_URL=${FORMIO_DEFAULT_PROJECT_URL}
@@ -108,6 +108,7 @@ services:
       - REACT_APP_KEYCLOAK_CLIENT=${KEYCLOAK_WEB_CLIENT_ID:-forms-flow-web}
       - REACT_APP_WEB_BASE_URL=${FORMSFLOW_API_URL}
       - REACT_APP_BPM_URL=${BPM_API_URL}
+      - REACT_APP_BPM_API_PREFIX=${BPM_API_URL_PREFIX:-/api/v1}
       - REACT_APP_WEBSOCKET_ENCRYPT_KEY=${WEBSOCKET_ENCRYPT_KEY:-giert989jkwrgb@DR55}
       - REACT_APP_KEYCLOAK_URL_REALM=${KEYCLOAK_URL_REALM:-forms-flow-ai}
       - REACT_APP_KEYCLOAK_URL=${KEYCLOAK_URL}
@@ -148,7 +149,7 @@ services:
       - formsflow
 
   forms-flow-forms:
-    image: ${FORMS_FLOW_FORMS_IMAGE:-formsflow/forms-flow-forms}:${FORMS_TAG:-v7.3.0}
+    image: ${FORMS_FLOW_FORMS_IMAGE:-formsflow/forms-flow-forms}:${FORMS_TAG:-v8.3.0}
     restart: always
     environment:
       DEBUG: formio:*
@@ -278,6 +279,7 @@ services:
       BPM_CLIENT_ID: ${KEYCLOAK_BPM_CLIENT_ID:-forms-flow-bpm}
       BPM_CLIENT_SECRET: ${KEYCLOAK_BPM_CLIENT_SECRET:-e4bdbd25-1467-4f7f-b993-bc4b1944c943}
       BPM_API_URL: ${BPM_API_URL}
+      BPM_API_URL_PREFIX: ${BPM_API_URL_PREFIX:-/api/v1}
       FORMSFLOW_API_CORS_ORIGINS: ${FORMSFLOW_API_CORS_ORIGINS:-*}
       JWT_OIDC_WELL_KNOWN_CONFIG: ${KEYCLOAK_URL}${KEYCLOAK_URL_HTTP_RELATIVE_PATH:-/auth}/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/.well-known/openid-configuration
       JWT_OIDC_ALGORITHMS: 'RS256'
@@ -414,6 +416,7 @@ services:
     links:
       - forms-flow-webapi
       - forms-flow-forms
+      - forms-flow-data-layer
     ports:
       - "${MCP_HOST_PORT:-5050}:5050"
     environment:
@@ -436,6 +439,9 @@ services:
       FORMIO_URL: ${MCP_FORMIO_URL:-http://forms-flow-forms:3001}
       FORMIO_ROOT_EMAIL: ${FORMIO_ROOT_EMAIL:-admin@example.com}
       FORMIO_ROOT_PASSWORD: ${FORMIO_ROOT_PASSWORD:-changeme}
+      # Data layer GraphQL endpoint and public web URL, used by analyze_submissions
+      GRAPHQL_API_URL: ${MCP_GRAPHQL_API_URL:-http://forms-flow-data-layer:8000/queries}
+      FORMSFLOW_PUBLIC_BASE_URL: ${MCP_FORMSFLOW_PUBLIC_BASE_URL:-http://localhost:3000}
     healthcheck:
       test:
         [
@@ -446,6 +452,70 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:mode=1777,size=128m
+    networks:
+      - formsflow
+
+  forms-flow-process-gateway:
+    image: ${FORMS_FLOW_PROCESS_GATEWAY_IMAGE:-formsflow/forms-flow-process-gateway}${IMAGE_SUFFIX}:${IMAGE_TAG:-v8.3.0}
+    container_name: forms-flow-process-gateway
+    restart: always
+    depends_on:
+      - forms-flow-bpm
+    links:
+      - forms-flow-bpm
+      - keycloak
+    ports:
+      - "${PROCESS_GATEWAY_HOST_PORT:-8500}:8000"
+    # The image ships a default gateway_config.yaml at /app/config/gateway_config.yaml (Camunda adapter).
+    # To use a custom engine topology, mount your own file, e.g.:
+    # volumes:
+    #   - ./gateway_config.yaml:/app/config/gateway_config.yaml:ro
+    environment:
+      PYTHONUNBUFFERED: "1"
+      FASTAPI_ENV: ${FASTAPI_ENV:-production}
+      FORMSFLOW_PROCESS_GATEWAY_WORKERS: ${FORMSFLOW_PROCESS_GATEWAY_WORKERS:-1}
+      FORWARDED_ALLOW_IPS: ${PROCESS_GATEWAY_FORWARDED_ALLOW_IPS:-*}
+      LOG_LEVEL: ${PROCESS_GATEWAY_LOG_LEVEL:-INFO}
+      ENGINE_CONFIG_FILE: /app/config/gateway_config.yaml
+      KEYCLOAK_URL: ${KEYCLOAK_URL}${KEYCLOAK_URL_HTTP_RELATIVE_PATH:-/auth}
+      KEYCLOAK_URL_REALM: ${KEYCLOAK_URL_REALM:-forms-flow-ai}
+      KEYCLOAK_URL_HTTP_RELATIVE_PATH: ${KEYCLOAK_URL_HTTP_RELATIVE_PATH:-/auth}
+      JWT_OIDC_JWKS_URI: ${KEYCLOAK_URL}${KEYCLOAK_URL_HTTP_RELATIVE_PATH:-/auth}/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}/protocol/openid-connect/certs
+      JWT_OIDC_ISSUER: ${KEYCLOAK_URL}${KEYCLOAK_URL_HTTP_RELATIVE_PATH:-/auth}/realms/${KEYCLOAK_URL_REALM:-forms-flow-ai}
+      JWT_OIDC_AUDIENCE: ${KEYCLOAK_WEB_CLIENT_ID:-forms-flow-web}
+      JWT_OIDC_ALGORITHMS: ${JWT_OIDC_ALGORITHMS:-RS256}
+      JWT_OIDC_JWKS_CACHE_TIMEOUT: ${JWT_OIDC_JWKS_CACHE_TIMEOUT:-3600}
+      KEYCLOAK_ENABLE_CLIENT_AUTH: ${KEYCLOAK_ENABLE_CLIENT_AUTH:-false}
+      MULTI_TENANCY_ENABLED: ${MULTI_TENANCY_ENABLED:-false}
+      # CORS allow-list
+      FORMS_FLOW_WEB_URL: ${PROCESS_GATEWAY_WEB_URL:-${WEBSOCKET_SECURITY_ORIGIN}}
+      FORMS_FLOW_API_URL: ${FORMSFLOW_API_URL}
+      FORMS_FLOW_ADMIN_URL: ${FORMSFLOW_ADMIN_URL:-}
+      CAMUNDA_BASE_URL: ${PROCESS_GATEWAY_CAMUNDA_BASE_URL:-http://forms-flow-bpm:8080/camunda}
+      CAMUNDA_URL_PREFIX: ${PROCESS_GATEWAY_CAMUNDA_URL_PREFIX:-/engine-rest-ext/v1}
+      BPM_CLIENT_ID: ${KEYCLOAK_BPM_CLIENT_ID:-forms-flow-bpm}
+      KEYCLOAK_BPM_CLIENT_ID: ${KEYCLOAK_BPM_CLIENT_ID:-forms-flow-bpm}
+      BPM_CLIENT_SECRET: ${KEYCLOAK_BPM_CLIENT_SECRET:-e4bdbd25-1467-4f7f-b993-bc4b1944c943}
+      WEBSOCKET_ENCRYPT_KEY: ${WEBSOCKET_ENCRYPT_KEY:-giert989jkwrgb@DR55}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://127.0.0.1:8000/health'', timeout=5)"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
     logging:
       driver: json-file
       options:

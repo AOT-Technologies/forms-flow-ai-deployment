@@ -26,6 +26,7 @@ EXIT /B %ERRORLEVEL%
 :main
     call:forms-flow-all ..\docker-compose
     call:forms-flow-analytics ..\docker-compose
+    call:remove-keycloak-customizations
     call:prune-docker
     call:clear-env ..\docker-compose
     call:remove-folders ..\docker-compose
@@ -83,6 +84,21 @@ EXIT /B %ERRORLEVEL%
     exit /b 0
     
 	
+:: #############################################################
+:: ########## Remove Keycloak customizations volume ############
+:: #############################################################
+
+:: The keycloak_custom_data volume only holds files copied from the keycloak-customizations
+:: image (realm import, themes, providers), never user data. Docker fills a named volume only
+:: when it is first created, so remove it to make the next install use the realm and providers
+:: of the version and edition being installed.
+:remove-keycloak-customizations
+    docker volume inspect formsflow-ai_keycloak_custom_data >nul 2>&1 && (
+        echo Removing Keycloak customizations volume...
+        docker volume rm formsflow-ai_keycloak_custom_data >nul 2>&1
+    )
+    exit /b 0
+
 :: #############################################################
 :: ############# clearing dangling images ######################
 :: #############################################################
