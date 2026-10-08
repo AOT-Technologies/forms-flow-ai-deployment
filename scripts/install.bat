@@ -5,8 +5,8 @@ REM ============================================
 REM VERSION CONFIGURATION
 REM ============================================
 set "CE_VERSION=v8.0.0-alpha"
-set "EE_VERSION=v8.2.5"
-set "FORMS_VERSION=v8.2.5-alpha"
+set "EE_VERSION=v8.3.0"
+set "FORMS_VERSION=v8.3.0"
 set "MCP_VERSION=v8.2.0"
 
 REM Docker registry configuration
@@ -274,11 +274,13 @@ if not defined COMPOSE_FILE (
     exit /b 1
 )
 
-REM --- Set Documents API tag based on architecture ---
+REM --- Set Documents API tag and Chrome driver path based on architecture ---
 if "!ARCH!"=="arm64" (
     set "DOCUMENTS_API_TAG=!IMAGE_TAG!-arm64"
+    set "CHROME_DRIVER_PATH=/usr/bin/chromedriver"
 ) else (
     set "DOCUMENTS_API_TAG=!IMAGE_TAG!"
+    set "CHROME_DRIVER_PATH=/usr/local/bin/chromedriver"
 )
 
 REM --- Analytics & Data Analysis selections ---
@@ -333,6 +335,14 @@ if "!EDITION!"=="ee" (
     set "MF_WEB_PATH=forms-flow-web/web"
 )
 
+REM --- Set BPM API URL based on edition ---
+REM Enterprise Edition (v8.3.0+) routes workflow calls through forms-flow-process-gateway
+if "!EDITION!"=="ee" (
+    set "BPM_API_URL=http://!ip_add!:8500"
+) else (
+    set "BPM_API_URL=http://!ip_add!:8000/camunda"
+)
+
 REM --- Create .env file ---
 echo Creating .env file...
 (
@@ -359,13 +369,13 @@ echo DOCUMENTS_API_TAG=!DOCUMENTS_API_TAG!
 echo MCP_TAG=!MCP_VERSION!
 echo.
 echo # Microfrontend URLs ^(Commented out by default - uncomment in docker-compose if needed^)
-echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.2.5/forms-flow-web.gz.js
-echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.2.5/forms-flow-nav.gz.js
-echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.2.5/forms-flow-service.gz.js
-echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.2.5/forms-flow-components.gz.js
-echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.2.5/forms-flow-admin.gz.js
-echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.2.5/forms-flow-review.gz.js
-echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.2.5/forms-flow-submissions.gz.js
+echo MF_FORMSFLOW_WEB_URL=https://forms-flow-microfrontends.aot-technologies.com/!MF_WEB_PATH!@v8.3.0/forms-flow-web.gz.js
+echo MF_FORMSFLOW_NAV_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-nav@v8.3.0/forms-flow-nav.gz.js
+echo MF_FORMSFLOW_SERVICE_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-service@v8.3.0/forms-flow-service.gz.js
+echo MF_FORMSFLOW_COMPONENTS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-components@v8.3.0/forms-flow-components.gz.js
+echo MF_FORMSFLOW_ADMIN_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-admin@v8.3.0/forms-flow-admin.gz.js
+echo MF_FORMSFLOW_REVIEW_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-review@v8.3.0/forms-flow-review.gz.js
+echo MF_FORMSFLOW_SUBMISSIONS_URL=https://forms-flow-microfrontends.aot-technologies.com/forms-flow-submissions@v8.3.0/forms-flow-submissions.gz.js
 echo.
 echo # Database Configuration
 echo KEYCLOAK_JDBC_DB=keycloak
@@ -406,8 +416,10 @@ echo.
 echo # API URLs
 echo FORMIO_DEFAULT_PROJECT_URL=http://!ip_add!:3001
 echo FORMSFLOW_API_URL=http://!ip_add!:5001
-echo BPM_API_URL=http://!ip_add!:8000/camunda
+echo BPM_API_URL=!BPM_API_URL!
+echo BPM_API_URL_PREFIX=/api/v1
 echo DOCUMENT_SERVICE_URL=http://!ip_add!:5006
+echo CHROME_DRIVER_PATH=!CHROME_DRIVER_PATH!
 echo.
 echo # Application Configuration
 echo APPLICATION_NAME=formsflow.ai
@@ -493,6 +505,13 @@ echo MCP_OIDC_SCOPES=openid
 echo MCP_OIDC_VERIFY_ID_TOKEN=true
 echo MCP_OIDC_REQUIRE_CONSENT=false
 echo MCP_FORMIO_URL=http://forms-flow-forms:3001
+echo MCP_GRAPHQL_API_URL=http://forms-flow-data-layer:8000/queries
+echo MCP_FORMSFLOW_PUBLIC_BASE_URL=http://!ip_add!:3000
+echo.
+echo # Process Gateway Configuration ^(Enterprise Edition^)
+echo PROCESS_GATEWAY_HOST_PORT=8500
+echo FORMSFLOW_PROCESS_GATEWAY_WORKERS=1
+echo PROCESS_GATEWAY_WEB_URL=http://!ip_add!:3000
 ) > "!DOCKER_COMPOSE_DIR!\.env"
 
 echo .env file created successfully!
@@ -537,7 +556,7 @@ echo ***********************************************
 echo Starting core services...
 set "SERVICES_TO_START=keycloak keycloak-db keycloak-customizations forms-flow-forms-db forms-flow-webapi forms-flow-webapi-db forms-flow-bpm forms-flow-bpm-db forms-flow-forms forms-flow-documents-api forms-flow-data-layer forms-flow-web redis"
 if "!EDITION!"=="ee" (
-    set "SERVICES_TO_START=!SERVICES_TO_START! forms-flow-mcp"
+    set "SERVICES_TO_START=!SERVICES_TO_START! forms-flow-mcp forms-flow-process-gateway"
 )
 call !COMPOSE_COMMAND! -p formsflow-ai -f "!COMPOSE_FILE!" up -d !SERVICES_TO_START!
 if errorlevel 1 (
@@ -566,6 +585,10 @@ echo   - FormsFlow Web: http://!ip_add!:3000
 echo   - Keycloak:      http://!ip_add!:8080/auth
 echo   - API:           http://!ip_add!:5001
 echo   - BPM:           http://!ip_add!:8000
+if "!EDITION!"=="ee" (
+    echo   - Process Gateway: http://!ip_add!:8500
+    echo   - MCP Server:    http://!ip_add!:5050
+)
 if "!analytics!"=="1" (
     echo   - Analytics:     http://!ip_add!:7001
 )
