@@ -245,7 +245,7 @@ services:
       - formsflow
 
   redis:
-    image: "redis:alpine"
+    image: "redis:7.2.16-alpine"
     ports:
       - "6379:6379"
     networks:
