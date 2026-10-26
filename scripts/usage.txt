@@ -24,8 +24,8 @@ The following questionnaire will be asked during the formsflow.ai installation, 
    - Enter your choice [1-2]:
    
    * Note on Editions:
-     - Open Source (Community Edition): The MCP service (forms-flow-mcp) is not needed and will not be installed.
-     - Premium (Enterprise Edition): Requires Docker registry credentials. It will prompt for your access token for the Docker username "formsflowaidev". All core components (except analytics) are considered a user need and will be installed.
+     - Open Source (Community Edition): The MCP service (forms-flow-mcp) and the Process Gateway (forms-flow-process-gateway) are not needed and will not be installed. Workflow calls go directly to Camunda (port 8000).
+     - Premium (Enterprise Edition): Requires Docker registry credentials. It will prompt for your access token for the Docker username "formsflowaidev". All core components (except analytics) are considered a user need and will be installed, including forms-flow-mcp (port 5050) and forms-flow-process-gateway (port 8500). Workflow calls are routed through the Process Gateway.
 
 4. Include Analytics (Redash):
    - Do you want to include analytics in the installation? [y/n]

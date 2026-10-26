@@ -2,6 +2,31 @@
 
 Mark  items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.3.0 - 2026-10-05 - Enterprise Edition
+
+`Added`
+
+* Added the `forms-flow-process-gateway` service (Enterprise Edition only), which sits between formsflow and the workflow engine (Camunda 7 adapter bundled). It is exposed on port `8500` and started by the install scripts for the Enterprise Edition.
+* Added environment variables for `forms-flow-process-gateway` (`PROCESS_GATEWAY_HOST_PORT`, `FORMSFLOW_PROCESS_GATEWAY_WORKERS`, `PROCESS_GATEWAY_WEB_URL`, `PROCESS_GATEWAY_CAMUNDA_BASE_URL`, `PROCESS_GATEWAY_CAMUNDA_URL_PREFIX`, `PROCESS_GATEWAY_LOG_LEVEL`, `PROCESS_GATEWAY_FORWARDED_ALLOW_IPS`, `FASTAPI_ENV`, `JWT_OIDC_ALGORITHMS`, `JWT_OIDC_JWKS_CACHE_TIMEOUT`).
+* Added `BPM_API_URL_PREFIX` (default `/api/v1`) for `forms-flow-webapi` (`BPM_API_URL_PREFIX`) and `forms-flow-web` (`REACT_APP_BPM_API_PREFIX`).
+* Added environment variables `MCP_GRAPHQL_API_URL` and `MCP_FORMSFLOW_PUBLIC_BASE_URL` for `forms-flow-mcp` (mapped to `GRAPHQL_API_URL` and `FORMSFLOW_PUBLIC_BASE_URL`, used by the new `analyze_submissions` tool).
+
+`Changed`
+
+* Updated image versions to Enterprise Edition **v8.3.0** and `forms-flow-forms` to **v8.3.0**.
+* Updated microfrontend URLs to **v8.3.0**.
+* Updated the Keycloak image to **26.7.2** to match the 8.3.0 Keycloak customizations.
+* For the Enterprise Edition, `BPM_API_URL` now points to `forms-flow-process-gateway` (`http://{your-ip-address}:8500`) instead of Camunda directly. The Community Edition still uses `http://{your-ip-address}:8000/camunda`.
+
+`Fixed`
+
+* The uninstall scripts now always remove the `keycloak_custom_data` volume. A volume left over from a previous install or a different edition kept its old realm, themes and providers, so new permissions such as `analyze_submissions_view` were missing after reinstalling. The volume holds no user data, so it is removed even when the other volumes are kept.
+* The install scripts now set `CHROME_DRIVER_PATH` based on architecture (`/usr/local/bin/chromedriver` for amd64, `/usr/bin/chromedriver` for arm64). It was previously passed as an empty value.
+
+*Upgrade notes:*
+
+* Enterprise Edition deployments must run `forms-flow-process-gateway` alongside the existing services and set `BPM_API_URL` to the gateway.
+
 ## 8.2.0 - 10-5-2026 - Enterprise Edition
 
 `Added`
